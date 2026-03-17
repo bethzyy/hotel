@@ -15,6 +15,36 @@ from mcp.client.streamable_http import streamable_http_client
 
 logger = logging.getLogger(__name__)
 
+# 国家代码映射表 (ISO2 -> 中文名称)
+AREA_CODE_MAP = {
+    # 亚洲
+    'JP': '日本', 'CN': '中国', 'KR': '韩国', 'KP': '朝鲜',
+    'TH': '泰国', 'SG': '新加坡', 'MY': '马来西亚', 'VN': '越南',
+    'ID': '印度尼西亚', 'PH': '菲律宾', 'MM': '缅甸', 'LA': '老挝',
+    'KH': '柬埔寨', 'BN': '文莱', 'TL': '东帝汶',
+    # 北美
+    'US': '美国', 'CA': '加拿大', 'MX': '墨西哥',
+    # 欧洲
+    'GB': '英国', 'FR': '法国', 'DE': '德国', 'IT': '意大利',
+    'ES': '西班牙', 'PT': '葡萄牙', 'NL': '荷兰', 'BE': '比利时',
+    'CH': '瑞士', 'AT': '奥地利', 'SE': '瑞典', 'NO': '挪威',
+    'DK': '丹麦', 'FI': '芬兰', 'PL': '波兰', 'GR': '希腊',
+    # 大洋洲
+    'AU': '澳大利亚', 'NZ': '新西兰',
+    # 中东
+    'AE': '阿联酋', 'SA': '沙特阿拉伯', 'IL': '以色列',
+    'TR': '土耳其', 'QA': '卡塔尔', 'KW': '科威特',
+    # 其他
+    'IN': '印度', 'RU': '俄罗斯', 'BR': '巴西', 'ZA': '南非',
+}
+
+
+def get_area_name(code: Optional[str]) -> Optional[str]:
+    """将国家代码转换为中文名称"""
+    if not code:
+        return None
+    return AREA_CODE_MAP.get(code.upper(), code)
+
 
 class RollingGoError(Exception):
     """Exception raised for RollingGo CLI errors."""
@@ -604,6 +634,10 @@ class RollingGoService:
             price_per_night = raw_hotel.get('pricePerNight')
             currency = raw_hotel.get('currency', 'CNY')
 
+        # 获取国家代码和名称
+        area_code = raw_hotel.get('areaCode') or raw_hotel.get('area_code')
+        area_name = get_area_name(area_code)
+
         return {
             'hotel_id': str(raw_hotel.get('hotelId') or raw_hotel.get('hotel_id', '')),
             'name': raw_hotel.get('name', ''),
@@ -621,6 +655,8 @@ class RollingGoService:
             'description': raw_hotel.get('description', ''),  # MCP API 可能返回描述
             'brand': raw_hotel.get('brand'),  # MCP API 返回品牌
             'amenities': raw_hotel.get('hotelAmenities') or raw_hotel.get('amenities', []),  # MCP API 返回设施
+            'area_code': area_code,  # 国家代码
+            'area_name': area_name,  # 国家名称（中文）
         }
 
     @staticmethod
@@ -640,29 +676,130 @@ class RollingGoService:
         # Get amenities from either hotelAmenities or amenities
         amenities = raw_detail.get('hotelAmenities') or raw_detail.get('amenities', [])
 
+        # 获取入住/退房日期
+        check_in = raw_detail.get('checkIn') or raw_detail.get('check_in')
+        check_out = raw_detail.get('checkOut') or raw_detail.get('check_out')
+
         # Add detail-specific fields
         normalized.update({
             'description': raw_detail.get('description', ''),
             'images': raw_detail.get('images', []),
             'amenities': amenities,
+            'check_in': check_in,  # 入住日期
+            'check_out': check_out,  # 退房日期
             'room_plans': RollingGoService._normalize_room_plans(
-                raw_detail.get('roomPlans') or raw_detail.get('room_plans', [])
+                raw_detail.get('roomPlans') or raw_detail.get('room_plans', []),
+                check_in,
+                check_out
             )
         })
 
         return normalized
 
     @staticmethod
-    def _normalize_room_plans(raw_plans: List) -> List[Dict]:
-        """Normalize room plans to standard format."""
+    def _normalize_room_plans(raw_plans: List, check_in: str = None, check_out: str = None) -> List[Dict]:
+        """
+        Normalize room plans to standard format.
+
+        Args:
+            raw_plans: Raw room plans list
+            check_in: Check-in date (for calculating nights)
+            check_out: Check-out date (for calculating nights)
+
+        Returns:
+            List of normalized room plans
+        """
+        # 计算入住晚数
+        nights = 1
+        if check_in and check_out:
+            try:
+                from datetime import datetime
+                check_in_date = datetime.strptime(check_in, '%Y-%m-%d')
+                check_out_date = datetime.strptime(check_out, '%Y-%m-%d')
+                nights = (check_out_date - check_in_date).days
+                if nights < 1:
+                    nights = 1
+            except (ValueError, TypeError):
+                pass
+
         plans = []
         for plan in raw_plans:
+            # 获取价格信息
+            total_price = plan.get('totalPrice') or plan.get('price')
+            price_per_night = plan.get('pricePerNight') or plan.get('price')
+
+            # 如果只有总价，计算每晚价格
+            if total_price and not price_per_night:
+                try:
+                    price_per_night = round(total_price / nights, 2)
+                except (TypeError, ZeroDivisionError):
+                    price_per_night = total_price
+
+            # 如果只有每晚价格，计算总价
+            if price_per_night and not total_price:
+                try:
+                    total_price = round(price_per_night * nights, 2)
+                except TypeError:
+                    total_price = price_per_night
+
+            # 格式化取消政策
+            cancellation = RollingGoService._format_cancellation(
+                plan.get('cancellationPolicies') or plan.get('cancellation_policies')
+            )
+
+            # 优先显示中文名称
+            room_name = plan.get('roomNameCn') or plan.get('name') or plan.get('roomName', '')
+
             plans.append({
-                'name': plan.get('name') or plan.get('roomName', ''),
+                'name': room_name,
+                'name_en': plan.get('roomName') or plan.get('name', ''),  # 英文名称
                 'description': plan.get('description', ''),
-                'price': plan.get('price') or plan.get('pricePerNight'),
+                'bed_type': plan.get('bedTypeDescription') or plan.get('bed_type'),  # 床型
+                'price': price_per_night,  # 每晚价格（兼容旧字段）
+                'price_per_night': price_per_night,  # 每晚价格
+                'total_price': total_price,  # 总价
                 'currency': plan.get('currency', 'CNY'),
                 'available': plan.get('available', True),
-                'amenities': plan.get('amenities', [])
+                'amenities': plan.get('amenities', []),
+                'cancellation': cancellation,  # 取消政策摘要
+                'cancellation_policies': plan.get('cancellationPolicies') or plan.get('cancellation_policies', []),  # 原始取消政策
+                'included_fees': plan.get('includedFees') or plan.get('included_fees', []),  # 包含费用
+                'excluded_fees': plan.get('excludedFees') or plan.get('excluded_fees', []),  # 不包含费用
             })
         return plans
+
+    @staticmethod
+    def _format_cancellation(policies: Optional[List]) -> Optional[str]:
+        """
+        格式化取消政策为简短摘要
+
+        Args:
+            policies: 取消政策列表
+
+        Returns:
+            取消政策摘要字符串
+        """
+        if not policies:
+            return None
+
+        # 提取第一个政策作为摘要
+        if isinstance(policies, list) and len(policies) > 0:
+            policy = policies[0]
+            if isinstance(policy, dict):
+                # 尝试获取描述
+                description = policy.get('description') or policy.get('policyText')
+                if description:
+                    # 截断过长的描述
+                    if len(description) > 60:
+                        return description[:60] + '...'
+                    return description
+
+                # 尝试构建简单摘要
+                deadline = policy.get('deadline') or policy.get('cancelBefore')
+                penalty = policy.get('penaltyAmount') or policy.get('penalty')
+                if deadline:
+                    if penalty:
+                        return f'{deadline}前取消，收费{penalty}'
+                    return f'{deadline}前免费取消'
+
+        return None

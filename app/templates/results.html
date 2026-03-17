@@ -36,9 +36,10 @@
                     </h4>
                     <div id="searchParams" class="text-muted"></div>
                 </div>
-                <div id="providerInfo" class="text-end">
-                    <span class="badge" id="currentProvider"></span>
-                    <small class="d-block text-muted mt-1" id="providerDesc"></small>
+                <div class="text-end">
+                    <span class="badge bg-info rounded-pill px-3 py-2">
+                        <i class="bi bi-globe2 me-1"></i> RollingGo
+                    </span>
                 </div>
             </div>
         </div>
@@ -134,27 +135,6 @@
             </div>
         </div>
 
-        <!-- Pagination (for Tuniu) -->
-        <div id="paginationSection" class="d-flex justify-content-center mt-5" style="display: none !important;">
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item" id="prevPage">
-                        <a class="page-link rounded-pill me-2" href="#" onclick="loadPrevPage()">
-                            <i class="bi bi-chevron-left"></i> 上一页
-                        </a>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link rounded-pill bg-light border-0" id="pageInfo">第 1 页</span>
-                    </li>
-                    <li class="page-item" id="nextPage">
-                        <a class="page-link rounded-pill ms-2" href="#" onclick="loadNextPage()">
-                            下一页 <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-
         <!-- No Results -->
         <div id="noResults" class="empty-state" style="display: none;">
             <div class="empty-state-icon">
@@ -193,19 +173,13 @@
         // Global variables
         let allHotels = [];
         let currentSort = 'default';
-        let priceSortAsc = true;  // 价格排序方向：true=升序，false=降序
-        let currentProvider = 'tuniu';
-        let queryId = null;
-        let pageNum = 1;
-        let hasMore = false;
-        let supportsBooking = false;
+        let priceSortAsc = true;
         let searchData = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             // Get search data from session storage
             const searchDataStr = sessionStorage.getItem('searchData');
             const searchPlace = sessionStorage.getItem('searchPlace');
-            currentProvider = sessionStorage.getItem('currentProvider') || 'tuniu';
 
             if (!searchDataStr) {
                 window.location.href = '/';
@@ -231,20 +205,11 @@
             const paramsDiv = document.getElementById('searchParams');
             let params = [];
 
-            if (data.provider === 'tuniu') {
-                if (data.check_in) {
-                    params.push(`入住: ${data.check_in}`);
-                }
-                if (data.check_out) {
-                    params.push(`离店: ${data.check_out}`);
-                }
-            } else {
-                if (data.check_in_date) {
-                    params.push(`入住: ${data.check_in_date}`);
-                }
-                if (data.stay_nights) {
-                    params.push(`${data.stay_nights} 晚`);
-                }
+            if (data.check_in_date) {
+                params.push(`入住: ${data.check_in_date}`);
+            }
+            if (data.stay_nights) {
+                params.push(`${data.stay_nights} 晚`);
             }
 
             params.push(`${data.adult_count} 成人`);
@@ -271,19 +236,6 @@
 
                 if (result.success) {
                     allHotels = result.data.hotels || [];
-                    currentProvider = result.data.provider || currentProvider;
-                    supportsBooking = result.data.supports_booking || false;
-
-                    // Update provider info
-                    updateProviderInfo(result.data);
-
-                    // Pagination info (Tuniu)
-                    if (currentProvider === 'tuniu') {
-                        queryId = result.data.query_id;
-                        pageNum = result.data.page_num || 1;
-                        hasMore = result.data.has_more || false;
-                        updatePagination();
-                    }
 
                     document.getElementById('resultsCount').textContent = allHotels.length;
                     renderHotels(allHotels);
@@ -298,72 +250,6 @@
                 document.getElementById('loadingPlaceholder').style.display = 'none';
                 showError('网络错误，请检查网络连接后重试');
                 console.error('Search error:', error);
-            }
-        }
-
-        function updateProviderInfo(data) {
-            const providerBadge = document.getElementById('currentProvider');
-            const providerDesc = document.getElementById('providerDesc');
-
-            if (data.provider === 'tuniu') {
-                providerBadge.textContent = '途牛 MCP';
-                providerBadge.className = 'badge bg-success';
-                providerDesc.textContent = data.supports_booking ? '支持预订' : '';
-            } else {
-                providerBadge.textContent = 'RollingGo';
-                providerBadge.className = 'badge bg-info';
-                providerDesc.textContent = '全球酒店搜索';
-            }
-        }
-
-        function updatePagination() {
-            const paginationSection = document.getElementById('paginationSection');
-
-            if (currentProvider === 'tuniu' && (hasMore || pageNum > 1)) {
-                paginationSection.style.display = 'flex';
-                document.getElementById('pageInfo').textContent = `第 ${pageNum} 页`;
-                document.getElementById('prevPage').classList.toggle('disabled', pageNum <= 1);
-                document.getElementById('nextPage').classList.toggle('disabled', !hasMore);
-            } else {
-                paginationSection.style.display = 'none';
-            }
-        }
-
-        async function loadPrevPage() {
-            if (pageNum <= 1 || !searchData) return;
-
-            searchData.page_num = pageNum - 1;
-            if (queryId) {
-                searchData.query_id = queryId;
-            }
-
-            sessionStorage.setItem('searchData', JSON.stringify(searchData));
-            showLoading();
-
-            try {
-                await performSearch(searchData);
-                window.scrollTo(0, 0);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function loadNextPage() {
-            if (!hasMore || !searchData) return;
-
-            searchData.page_num = pageNum + 1;
-            if (queryId) {
-                searchData.query_id = queryId;
-            }
-
-            sessionStorage.setItem('searchData', JSON.stringify(searchData));
-            showLoading();
-
-            try {
-                await performSearch(searchData);
-                window.scrollTo(0, 0);
-            } finally {
-                hideLoading();
             }
         }
 
@@ -383,22 +269,52 @@
             div.style.setProperty('--index', index);
 
             const imageUrl = hotel.image_url || '/static/img/placeholder-hotel.png';
+            console.log('Hotel data:', hotel);
+            console.log('Image URL:', imageUrl);
             const price = hotel.price_per_night ? `${hotel.currency || '¥'}${hotel.price_per_night}` : '暂无报价';
             const distance = hotel.distance ? `${(hotel.distance / 1000).toFixed(1)} km` : '';
-            const rating = hotel.rating ? hotel.rating.toFixed(1) : hotel.star_rating ? hotel.star_rating.toFixed(1) : '';
+            const rating = hotel.rating ? hotel.rating.toFixed(1) : '';
             const starRating = hotel.star_rating ? '★'.repeat(Math.round(hotel.star_rating)) : '';
 
             const isFavorite = hotel.is_favorite || false;
             const heartClass = isFavorite ? 'bi-heart-fill text-danger' : 'bi-heart';
 
-            // Tuniu specific info
-            const brandInfo = hotel.brand_name ? `<span class="badge bg-light text-dark me-1">${hotel.brand_name}</span>` : '';
-            const businessInfo = hotel.business ? `<small class="text-muted"><i class="bi bi-geo"></i> ${hotel.business}</small>` : '';
+            // 国家/地区标签
+            const areaBadge = hotel.area_name ? `
+                <span class="badge bg-info bg-opacity-10 text-info me-2">
+                    <i class="bi bi-globe me-1"></i>${hotel.area_name}
+                </span>
+            ` : '';
 
-            // 预订链接按钮
+            // RollingGo 品牌标签
+            const brandBadge = hotel.brand ? `<span class="badge bg-light text-dark border me-2">${hotel.brand}</span>` : '';
+
+            // 改进的距离显示（显示搜索地点）
+            const searchPlace = sessionStorage.getItem('searchPlace') || '目的地';
+            const distanceText = hotel.distance ? `
+                <span class="text-muted small">
+                    <i class="bi bi-geo-alt"></i> 距${searchPlace} ${distance}
+                </span>
+            ` : '';
+
+            // 设施预览（前4个）
+            const amenitiesPreview = hotel.amenities && hotel.amenities.length > 0 ? `
+                <div class="amenities-preview mt-2">
+                    ${hotel.amenities.slice(0, 4).map(a => `<span class="amenity-tag"><i class="bi bi-check-circle-fill text-success me-1"></i>${a}</span>`).join('')}
+                </div>
+            ` : '';
+
+            // 描述预览（前100字，最多2行）
+            const descPreview = hotel.description ? `
+                <p class="text-muted small mt-2 mb-0 desc-preview">
+                    ${hotel.description.length > 80 ? hotel.description.substring(0, 80) + '...' : hotel.description}
+                </p>
+            ` : '';
+
+            // 预订按钮 (booking_url from RollingGo)
             const bookingBtn = hotel.booking_url ? `
-                <a href="${hotel.booking_url}" target="_blank" class="btn btn-success btn-sm">
-                    <i class="bi bi-box-arrow-up-right me-1"></i> 立即预订
+                <a href="${hotel.booking_url}" target="_blank" class="btn btn-success btn-sm ms-2">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> 前往预订
                 </a>
             ` : '';
 
@@ -417,7 +333,9 @@
                     <div class="col-md-8">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="hotel-name mb-0 flex-grow-1 me-3">${hotel.name}</h5>
+                                <h5 class="hotel-name mb-0 flex-grow-1 me-3">
+                                    ${areaBadge}${brandBadge}${hotel.name}
+                                </h5>
                                 <div class="text-end flex-shrink-0">
                                     <div class="price-badge">${price}</div>
                                     <small class="text-muted">每晚</small>
@@ -428,26 +346,21 @@
                                 ${hotel.address || ''}
                             </p>
                             <div class="d-flex align-items-center gap-3 mb-2 flex-wrap">
-                                ${brandInfo}
                                 ${rating ? `<span class="rating-badge"><i class="bi bi-star-fill"></i> ${rating}</span>` : ''}
-                                ${distance ? `<span class="text-muted small"><i class="bi bi-geo-alt"></i> ${distance}</span>` : ''}
+                                ${distanceText}
                             </div>
-                            ${businessInfo}
                             ${hotel.tags && hotel.tags.length > 0 ? `
                                 <div class="hotel-tags mt-2">
                                     ${hotel.tags.slice(0, 4).map(tag => `<span class="tag">${tag}</span>`).join('')}
                                 </div>
                             ` : ''}
-                            <div class="mt-3 d-flex align-items-center gap-2">
+                            ${amenitiesPreview}
+                            ${descPreview}
+                            <div class="mt-3">
                                 <a href="/detail/${hotel.hotel_id}" class="btn btn-primary btn-sm" onclick="storeHotelData(event, '${hotel.hotel_id}')">
                                     <i class="bi bi-eye me-1"></i> 查看详情
                                 </a>
                                 ${bookingBtn}
-                                ${hotel.provider === 'tuniu' || supportsBooking ? `
-                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                        <i class="bi bi-check-circle"></i> 可预订
-                                    </span>
-                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -460,6 +373,22 @@
         function storeHotelData(event, hotelId) {
             // Store current search params for detail page
             sessionStorage.setItem('detailSearchParams', JSON.stringify(searchData));
+
+            // Store hotel list data (including image_url) for detail page
+            // 详情 API 不返回图片，需要从搜索列表传递
+            const hotelDataMap = {};
+            allHotels.forEach(h => {
+                hotelDataMap[h.hotel_id] = {
+                    image_url: h.image_url,
+                    name: h.name,
+                    address: h.address,
+                    star_rating: h.star_rating,
+                    rating: h.rating,
+                    brand: h.brand,
+                    area_name: h.area_name
+                };
+            });
+            sessionStorage.setItem('hotelListData', JSON.stringify(hotelDataMap));
         }
 
         function sortResults(sortType) {

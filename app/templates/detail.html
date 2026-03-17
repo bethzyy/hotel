@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
@@ -37,9 +39,8 @@
         <div id="hotelContent" style="display: none;">
             <!-- Provider Badge -->
             <div class="mb-3 page-enter">
-                <span class="badge" id="providerBadge"></span>
-                <span class="badge bg-success" id="bookingBadge" style="display: none;">
-                    <i class="bi bi-check-circle"></i> 支持预订
+                <span class="badge bg-info" id="providerBadge">
+                    <i class="bi bi-globe2 me-1"></i> RollingGo
                 </span>
             </div>
 
@@ -54,10 +55,9 @@
                             <span id="hotelRating" class="rating-badge" style="display: none;"></span>
                             <span id="hotelDistance" class="text-muted"></span>
                         </div>
-                        <!-- Tuniu specific info -->
-                        <div id="tuniuInfo" class="mt-2" style="display: none;">
-                            <span id="brandName" class="badge bg-light text-dark me-1"></span>
-                            <small id="businessArea" class="text-muted"></small>
+                        <!-- Brand info -->
+                        <div id="brandInfo" class="mt-2" style="display: none;">
+                            <span id="brandName" class="badge bg-light text-dark border"></span>
                         </div>
                     </div>
                     <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
@@ -73,8 +73,13 @@
             <!-- Image Gallery -->
             <div class="row mb-4">
                 <div class="col-12">
-                    <div id="mainImage" class="hotel-main-image"></div>
+                    <div id="mainImage" class="hotel-main-image" onclick="openLightbox(currentImageUrl)"></div>
                     <div id="imageGallery" class="image-gallery mt-3"></div>
+                    <div id="moreImagesBtn" class="text-center mt-2" style="display: none;">
+                        <button class="btn btn-outline-primary btn-sm" onclick="showAllImages()">
+                            <i class="bi bi-images me-1"></i> 查看更多图片 (<span id="totalImages">0</span>张)
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -87,7 +92,18 @@
                     <h5 class="card-title">
                         <i class="bi bi-info-circle text-primary me-2"></i> 酒店介绍
                     </h5>
-                    <p id="hotelDescription" class="text-muted mb-0"></p>
+                    <div id="hotelDescription" class="text-muted mb-0"></div>
+                </div>
+            </div>
+
+            <!-- Location Map -->
+            <div id="mapSection" class="card mb-4" style="display: none;">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-geo-alt text-primary me-2"></i> 酒店位置
+                    </h5>
+                    <div id="hotelMap" style="height: 300px; border-radius: var(--radius-lg);"></div>
+                    <p id="mapAddress" class="text-muted small mt-2"></p>
                 </div>
             </div>
 
@@ -98,6 +114,29 @@
                         <i class="bi bi-check2-circle text-primary me-2"></i> 酒店设施
                     </h5>
                     <div id="amenitiesList" class="row g-3"></div>
+                </div>
+            </div>
+
+            <!-- Booking Dates -->
+            <div id="bookingDatesSection" class="card mb-4" style="display: none;">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-calendar-check text-primary me-2"></i> 预订日期
+                    </h5>
+                    <div class="d-flex align-items-center gap-4">
+                        <div>
+                            <span class="text-muted small">入住</span>
+                            <div id="checkInDate" class="fw-bold"></div>
+                        </div>
+                        <i class="bi bi-arrow-right text-muted"></i>
+                        <div>
+                            <span class="text-muted small">退房</span>
+                            <div id="checkOutDate" class="fw-bold"></div>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge bg-primary bg-opacity-10 text-primary" id="stayNights"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -118,9 +157,9 @@
 
             <!-- Action Buttons -->
             <div class="d-flex gap-3 mb-4 flex-wrap">
-                <!-- 预订链接按钮 (booking_url) -->
+                <!-- 预订链接按钮 (booking_url from RollingGo) -->
                 <a id="bookingUrlBtn" class="btn btn-primary btn-lg" style="display: none;" target="_blank">
-                    <i class="bi bi-box-arrow-up-right me-2"></i> 立即预订
+                    <i class="bi bi-box-arrow-up-right me-2"></i> 前往 RollingGo 预订
                 </a>
                 <button id="favoriteBtn" class="btn btn-outline-danger" onclick="toggleFavorite()">
                     <i class="bi bi-heart me-2"></i> <span>收藏</span>
@@ -141,7 +180,7 @@
     <!-- Footer -->
     <footer class="bg-light py-4 mt-5">
         <div class="container text-center text-muted">
-            <p id="footerText">本站提供酒店搜索与预订服务</p>
+            <p>酒店搜索服务由 RollingGo 提供</p>
         </div>
     </footer>
 
@@ -154,78 +193,57 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     <script>
         // Global variables
         let currentHotel = null;
         let searchParams = null;
         const hotelId = '{{ hotel_id }}';
+        let currentImageUrl = null;
+        let allHotelImages = [];
+        let displayedImageCount = 6;
+        let mapInstance = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             // Get search data from session storage
             const searchParamsStr = sessionStorage.getItem('detailSearchParams') || sessionStorage.getItem('searchData');
-            const providerStr = sessionStorage.getItem('currentProvider');
 
             searchParams = searchParamsStr ? JSON.parse(searchParamsStr) : {};
-            const provider = providerStr || searchParams.provider || 'tuniu';
 
             // Load favorites count
             loadFavoritesCount();
 
-            // Load hotel detail
-            loadHotelDetail(provider);
+            // Load hotel detail (always RollingGo)
+            loadHotelDetail('rollinggo');
         });
 
         async function loadHotelDetail(provider) {
             try {
-                // Build query parameters based on provider
+                // Build query parameters for RollingGo
                 const params = new URLSearchParams();
-                params.append('provider', provider);
+                params.append('provider', 'rollinggo');
 
-                if (provider === 'tuniu') {
-                    // Tuniu requires check_in and check_out
-                    const checkIn = searchParams.check_in || searchParams.check_in_date;
-                    const checkOut = searchParams.check_out || searchParams.check_out_date;
+                // RollingGo date parameters
+                let checkInDate = searchParams.check_in_date || searchParams.check_in;
+                let stayNights = searchParams.stay_nights || 1;
 
-                    if (!checkIn || !checkOut) {
-                        // Use default dates if not provided
-                        const tomorrow = new Date();
-                        tomorrow.setDate(tomorrow.getDate() + 1);
-                        const dayAfter = new Date(tomorrow);
-                        dayAfter.setDate(dayAfter.getDate() + 1);
-
-                        params.append('check_in', checkIn || tomorrow.toISOString().split('T')[0]);
-                        params.append('check_out', checkOut || dayAfter.toISOString().split('T')[0]);
-                    } else {
-                        params.append('check_in', checkIn);
-                        params.append('check_out', checkOut);
-                    }
-
-                    params.append('adult_count', searchParams.adult_count || 2);
-                    params.append('child_count', searchParams.child_count || 0);
-                } else {
-                    // RollingGo
-                    // 如果没有日期，使用默认日期（明天和后天）
-                    let checkInDate = searchParams.check_in_date || searchParams.check_in;
-                    let stayNights = searchParams.stay_nights || 1;
-
-                    if (!checkInDate) {
-                        const tomorrow = new Date();
-                        tomorrow.setDate(tomorrow.getDate() + 1);
-                        checkInDate = tomorrow.toISOString().split('T')[0];
-                    }
-
-                    params.append('check_in_date', checkInDate);
-
-                    // 计算 check_out_date
-                    const checkInDateObj = new Date(checkInDate);
-                    const checkOutDateObj = new Date(checkInDateObj);
-                    checkOutDateObj.setDate(checkOutDateObj.getDate() + stayNights);
-                    params.append('check_out_date', checkOutDateObj.toISOString().split('T')[0]);
-
-                    params.append('adult_count', searchParams.adult_count || 2);
-                    params.append('child_count', searchParams.child_count || 0);
+                if (!checkInDate) {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    checkInDate = tomorrow.toISOString().split('T')[0];
                 }
+
+                params.append('check_in_date', checkInDate);
+
+                // 计算 check_out_date
+                const checkInDateObj = new Date(checkInDate);
+                const checkOutDateObj = new Date(checkInDateObj);
+                checkOutDateObj.setDate(checkOutDateObj.getDate() + stayNights);
+                params.append('check_out_date', checkOutDateObj.toISOString().split('T')[0]);
+
+                params.append('adult_count', searchParams.adult_count || 2);
+                params.append('child_count', searchParams.child_count || 0);
 
                 const url = `/api/hotel/${hotelId}?${params.toString()}`;
                 const response = await fetch(url);
@@ -235,6 +253,22 @@
 
                 if (result.success) {
                     currentHotel = result.data;
+
+                    // 从搜索列表缓存中获取图片 URL（详情 API 不返回图片）
+                    const hotelListDataStr = sessionStorage.getItem('hotelListData');
+                    if (hotelListDataStr && !currentHotel.image_url) {
+                        try {
+                            const hotelListData = JSON.parse(hotelListDataStr);
+                            const cachedData = hotelListData[hotelId];
+                            if (cachedData && cachedData.image_url) {
+                                currentHotel.image_url = cachedData.image_url;
+                                console.log('[Detail] Using cached image_url from search list');
+                            }
+                        } catch (e) {
+                            console.warn('[Detail] Failed to parse hotelListData:', e);
+                        }
+                    }
+
                     renderHotelDetail(currentHotel);
                     document.getElementById('hotelContent').style.display = 'block';
                 } else {
@@ -248,22 +282,7 @@
         }
 
         function renderHotelDetail(hotel) {
-            // Provider info
-            const provider = hotel.provider || 'rollinggo';
-            const providerBadge = document.getElementById('providerBadge');
-            const bookingBadge = document.getElementById('bookingBadge');
-
-            if (provider === 'tuniu') {
-                providerBadge.textContent = '途牛 MCP';
-                providerBadge.className = 'badge bg-success';
-            } else {
-                providerBadge.textContent = 'RollingGo';
-                providerBadge.className = 'badge bg-info';
-            }
-
-            if (hotel.supports_booking) {
-                bookingBadge.style.display = 'inline-block';
-            }
+            // Provider badge is already set in HTML
 
             // Basic info
             document.getElementById('hotelName').textContent = hotel.name;
@@ -295,16 +314,21 @@
                 document.getElementById('hotelPrice').textContent = '暂无报价';
             }
 
+            // Brand info (RollingGo)
+            if (hotel.brand) {
+                document.getElementById('brandInfo').style.display = 'block';
+                document.getElementById('brandName').textContent = hotel.brand;
+            }
+
             // Main image
             const mainImageUrl = hotel.image_url || hotel.images?.[0] || '/static/img/placeholder-hotel.png';
+            currentImageUrl = mainImageUrl;
             document.getElementById('mainImage').style.backgroundImage = `url('${mainImageUrl}')`;
 
-            // Image gallery
-            if (hotel.images && hotel.images.length > 0) {
-                const galleryHtml = hotel.images.slice(0, 6).map((img, i) => `
-                    <div class="gallery-thumb ${i === 0 ? 'active' : ''}" style="background-image: url('${img}')" onclick="setMainImage('${img}', this)"></div>
-                `).join('');
-                document.getElementById('imageGallery').innerHTML = galleryHtml;
+            // Image gallery - 支持显示更多图片
+            allHotelImages = hotel.images || [];
+            if (allHotelImages.length > 0) {
+                renderImageGallery();
             }
 
             // Tags
@@ -313,10 +337,15 @@
                 document.getElementById('hotelTags').innerHTML = tagsHtml;
             }
 
-            // Description
+            // Description - 添加展开/收起功能
             if (hotel.description) {
-                document.getElementById('hotelDescription').textContent = hotel.description;
+                renderDescription(hotel.description);
                 document.getElementById('descriptionSection').style.display = 'block';
+            }
+
+            // Map - 使用经纬度初始化地图
+            if (hotel.latitude && hotel.longitude) {
+                initMap(hotel.latitude, hotel.longitude, hotel.name, hotel.address);
             }
 
             // Amenities
@@ -333,21 +362,22 @@
                 document.getElementById('amenitiesSection').style.display = 'block';
             }
 
-            // Tuniu specific info
-            if (provider === 'tuniu') {
-                document.getElementById('tuniuInfo').style.display = 'block';
-                if (hotel.brand_name) {
-                    document.getElementById('brandName').textContent = hotel.brand_name;
-                }
-                if (hotel.business) {
-                    document.getElementById('businessArea').innerHTML = `<i class="bi bi-geo"></i> ${hotel.business}`;
-                }
+            // Booking dates - 显示预订日期信息
+            if (hotel.check_in && hotel.check_out) {
+                document.getElementById('checkInDate').textContent = formatDate(hotel.check_in);
+                document.getElementById('checkOutDate').textContent = formatDate(hotel.check_out);
+                // 计算入住晚数
+                const checkIn = new Date(hotel.check_in);
+                const checkOut = new Date(hotel.check_out);
+                const nights = Math.round((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                document.getElementById('stayNights').textContent = `${nights} 晚`;
+                document.getElementById('bookingDatesSection').style.display = 'block';
             }
 
-            // Room plans
-            renderRoomPlans(hotel.room_plans || [], hotel.supports_booking, provider);
+            // Room plans - 只展示信息，不需要站内预订按钮
+            renderRoomPlans(hotel.room_plans || []);
 
-            // 预订链接按钮 (booking_url from MCP API)
+            // 预订链接按钮 (booking_url from RollingGo)
             const bookingUrlBtn = document.getElementById('bookingUrlBtn');
             if (hotel.booking_url) {
                 bookingUrlBtn.href = hotel.booking_url;
@@ -358,16 +388,128 @@
 
             // Update favorite button
             updateFavoriteButton(hotel.is_favorite);
+        }
 
-            // Update footer
-            if (hotel.supports_booking) {
-                document.getElementById('footerText').textContent = '本站提供酒店搜索与预订服务';
+        // 渲染图片画廊
+        function renderImageGallery() {
+            const imagesToShow = allHotelImages.slice(0, displayedImageCount);
+            const galleryHtml = imagesToShow.map((img, i) => `
+                <div class="gallery-thumb ${i === 0 ? 'active' : ''}" style="background-image: url('${img}')" onclick="setMainImage('${img}', this)"></div>
+            `).join('');
+            document.getElementById('imageGallery').innerHTML = galleryHtml;
+
+            // 显示"查看更多"按钮
+            const moreBtn = document.getElementById('moreImagesBtn');
+            if (allHotelImages.length > displayedImageCount) {
+                document.getElementById('totalImages').textContent = allHotelImages.length - displayedImageCount;
+                moreBtn.style.display = 'block';
             } else {
-                document.getElementById('footerText').textContent = '本站仅提供酒店搜索与比价服务，不支持直接预订';
+                moreBtn.style.display = 'none';
             }
         }
 
-        function renderRoomPlans(roomPlans, supportsBooking, provider) {
+        // 显示所有图片
+        function showAllImages() {
+            displayedImageCount = 20; // 最多显示20张
+            renderImageGallery();
+        }
+
+        // 渲染描述（支持展开/收起）
+        function renderDescription(description) {
+            const maxLength = 300;
+            const descDiv = document.getElementById('hotelDescription');
+
+            if (description.length <= maxLength) {
+                descDiv.textContent = description;
+            } else {
+                const shortDesc = description.substring(0, maxLength);
+                descDiv.innerHTML = `
+                    <span id="descShort">${shortDesc}...</span>
+                    <span id="descFull" style="display: none;">${description}</span>
+                    <span class="description-toggle" onclick="toggleDescription()">
+                        <i class="bi bi-chevron-down ms-1"></i> 展开全部
+                    </span>
+                `;
+            }
+        }
+
+        // 切换描述展开/收起
+        function toggleDescription() {
+            const shortDesc = document.getElementById('descShort');
+            const fullDesc = document.getElementById('descFull');
+            const toggle = document.querySelector('.description-toggle');
+
+            if (fullDesc.style.display === 'none') {
+                shortDesc.style.display = 'none';
+                fullDesc.style.display = 'inline';
+                toggle.innerHTML = '<i class="bi bi-chevron-up ms-1"></i> 收起';
+            } else {
+                shortDesc.style.display = 'inline';
+                fullDesc.style.display = 'none';
+                toggle.innerHTML = '<i class="bi bi-chevron-down ms-1"></i> 展开全部';
+            }
+        }
+
+        // 初始化地图
+        function initMap(lat, lng, hotelName, address) {
+            const mapSection = document.getElementById('mapSection');
+            mapSection.style.display = 'block';
+
+            // 初始化地图
+            mapInstance = L.map('hotelMap').setView([lat, lng], 15);
+
+            // 使用 OpenStreetMap 免费瓦片
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(mapInstance);
+
+            // 添加标记点
+            L.marker([lat, lng]).addTo(mapInstance)
+                .bindPopup(`<strong>${hotelName}</strong><br>${address || ''}`);
+
+            // 显示地址
+            document.getElementById('mapAddress').innerHTML = `<i class="bi bi-geo-alt me-1"></i>${address || ''}`;
+        }
+
+        // 图片灯箱
+        function openLightbox(imageUrl) {
+            const lightbox = document.createElement('div');
+            lightbox.className = 'image-lightbox';
+            lightbox.innerHTML = `
+                <img src="${imageUrl}" style="max-width: 90%; max-height: 90%; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+                <button class="btn btn-light position-absolute top-0 end-0 m-3" onclick="this.parentElement.remove()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                <div class="lightbox-nav position-absolute top-50 start-0 translate-middle-y ms-3">
+                    <button class="btn btn-light btn-lg rounded-circle" onclick="navigateLightbox(-1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                </div>
+                <div class="lightbox-nav position-absolute top-50 end-0 translate-middle-y me-3">
+                    <button class="btn btn-light btn-lg rounded-circle" onclick="navigateLightbox(1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            `;
+            lightbox.onclick = (e) => { if (e.target === lightbox) lightbox.remove(); };
+            document.body.appendChild(lightbox);
+            currentImageUrl = imageUrl;
+        }
+
+        // 灯箱图片导航
+        function navigateLightbox(direction) {
+            const currentIndex = allHotelImages.indexOf(currentImageUrl);
+            let newIndex = currentIndex + direction;
+
+            if (newIndex < 0) newIndex = allHotelImages.length - 1;
+            if (newIndex >= allHotelImages.length) newIndex = 0;
+
+            const newUrl = allHotelImages[newIndex];
+            document.querySelector('.image-lightbox img').src = newUrl;
+            currentImageUrl = newUrl;
+        }
+
+        function renderRoomPlans(roomPlans) {
             const container = document.getElementById('roomPlansList');
 
             if (!roomPlans || roomPlans.length === 0) {
@@ -380,99 +522,82 @@
                 return;
             }
 
-            const html = roomPlans.map((plan, index) => `
-                <div class="room-plan-card mb-3" style="animation-delay: ${index * 0.1}s;">
-                    <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center p-4">
-                        <div class="flex-grow-1 mb-3 mb-md-0">
-                            <h6 class="mb-2 fw-bold">${plan.name || '标准房型'}</h6>
-                            <p class="text-muted small mb-2">${plan.description || ''}</p>
-                            ${plan.amenities && plan.amenities.length > 0 ? `
-                                <div class="d-flex flex-wrap gap-2">
-                                    ${plan.amenities.slice(0, 3).map(a => `<span class="badge bg-light text-dark border">${a}</span>`).join('')}
-                                    ${plan.amenities.length > 3 ? `<span class="badge bg-light text-muted">+${plan.amenities.length - 3}</span>` : ''}
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div class="text-md-end ms-md-4">
-                            ${plan.available ? `
+            const html = roomPlans.map((plan, index) => {
+                // 床型标签
+                const bedTypeBadge = plan.bed_type ? `
+                    <span class="badge bg-light text-dark border me-2">
+                        <i class="bi bi-bed me-1"></i>${plan.bed_type}
+                    </span>
+                ` : '';
+
+                // 取消政策
+                const cancellationInfo = plan.cancellation ? `
+                    <div class="text-muted small mt-2">
+                        <i class="bi bi-info-circle me-1"></i>${plan.cancellation}
+                    </div>
+                ` : '';
+
+                // 总价显示
+                const totalPriceHtml = plan.total_price ? `
+                    <div class="text-muted small">
+                        总价: ${plan.currency || '¥'}${plan.total_price}
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="room-plan-card mb-3" style="animation-delay: ${index * 0.1}s;">
+                        <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center p-4">
+                            <div class="flex-grow-1 mb-3 mb-md-0">
+                                <h6 class="mb-2 fw-bold">${plan.name || '标准房型'}</h6>
                                 <div class="mb-2">
-                                    <span class="fs-4 fw-bold text-primary" style="font-family: var(--font-number);">${plan.currency || '¥'}${plan.price || '询价'}</span>
-                                    <span class="text-muted small">/晚</span>
+                                    ${bedTypeBadge}
                                 </div>
-                                ${supportsBooking && provider === 'tuniu' ? `
-                                    <button class="btn btn-success btn-sm" onclick="goToBooking('${plan.room_id || ''}', ${JSON.stringify(plan).replace(/"/g, '&quot;')})">
-                                        <i class="bi bi-cart-check me-1"></i> 立即预订
-                                    </button>
+                                <p class="text-muted small mb-2">${plan.description || ''}</p>
+                                ${plan.amenities && plan.amenities.length > 0 ? `
+                                    <div class="d-flex flex-wrap gap-2">
+                                        ${plan.amenities.slice(0, 3).map(a => `<span class="badge bg-light text-dark border">${a}</span>`).join('')}
+                                        ${plan.amenities.length > 3 ? `<span class="badge bg-light text-muted">+${plan.amenities.length - 3}</span>` : ''}
+                                    </div>
+                                ` : ''}
+                                ${cancellationInfo}
+                            </div>
+                            <div class="text-md-end ms-md-4">
+                                ${plan.available ? `
+                                    <div class="mb-2">
+                                        <span class="fs-4 fw-bold text-primary" style="font-family: var(--font-number);">${plan.currency || '¥'}${plan.price_per_night || plan.price || '询价'}</span>
+                                        <span class="text-muted small">/晚</span>
+                                    </div>
+                                    ${totalPriceHtml}
+                                    <span class="badge bg-light text-muted">请使用上方预订按钮</span>
                                 ` : `
-                                    <span class="badge bg-light text-muted">仅查看</span>
+                                    <div class="text-center">
+                                        <span class="badge bg-danger bg-opacity-10 text-danger">
+                                            <i class="bi bi-x-circle me-1"></i> 满房
+                                        </span>
+                                    </div>
                                 `}
-                            ` : `
-                                <div class="text-center">
-                                    <span class="badge bg-danger bg-opacity-10 text-danger">
-                                        <i class="bi bi-x-circle me-1"></i> 满房
-                                    </span>
-                                </div>
-                            `}
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
             container.innerHTML = html;
         }
 
-        function goToBooking(roomId, roomPlan) {
-            if (!currentHotel) return;
-
-            // Build booking data
-            const provider = currentHotel.provider || 'tuniu';
-            let checkIn, checkOut, adultCount, childCount;
-
-            if (provider === 'tuniu') {
-                checkIn = searchParams.check_in || searchParams.check_in_date;
-                checkOut = searchParams.check_out || searchParams.check_out_date;
-                adultCount = searchParams.adult_count || 2;
-                childCount = searchParams.child_count || 0;
-            } else {
-                checkIn = searchParams.check_in_date;
-                if (searchParams.stay_nights && searchParams.check_in_date) {
-                    const checkOutDate = new Date(searchParams.check_in_date);
-                    checkOutDate.setDate(checkOutDate.getDate() + searchParams.stay_nights);
-                    checkOut = checkOutDate.toISOString().split('T')[0];
-                }
-                adultCount = searchParams.adult_count || 2;
-                childCount = searchParams.child_count || 0;
-            }
-
-            // Calculate nights
-            const checkInDate = new Date(checkIn);
-            const checkOutDate = new Date(checkOut);
-            const nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-
-            const bookingData = {
-                provider: provider,
-                hotel: {
-                    hotel_id: currentHotel.hotel_id,
-                    name: currentHotel.name,
-                    address: currentHotel.address,
-                    image_url: currentHotel.image_url,
-                    pre_book_param: currentHotel.pre_book_param
-                },
-                selected_room: roomPlan,
-                check_in: checkIn,
-                check_out: checkOut,
-                nights: nights,
-                adult_count: adultCount,
-                child_count: childCount,
-                room_count: 1
-            };
-
-            // Store booking data and redirect
-            sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
-            window.location.href = '/booking';
+        // 格式化日期为友好格式 (YYYY-MM-DD -> MM月DD日 周X)
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            const weekDay = weekDays[date.getDay()];
+            return `${month}月${day}日 ${weekDay}`;
         }
 
         function setMainImage(url, thumbElement) {
+            currentImageUrl = url;
             document.getElementById('mainImage').style.backgroundImage = `url('${url}')`;
             // Update active thumbnail
             document.querySelectorAll('.gallery-thumb').forEach(thumb => thumb.classList.remove('active'));
@@ -569,6 +694,74 @@
             background: var(--primary-50);
             box-shadow: var(--shadow-md);
             transform: translateX(4px);
+        }
+
+        /* Map container */
+        #hotelMap {
+            background: var(--gray-100);
+            border-radius: var(--radius-lg);
+            z-index: 1;
+        }
+
+        /* Description toggle */
+        .description-toggle {
+            cursor: pointer;
+            color: var(--primary-500);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .description-toggle:hover {
+            color: var(--primary-600);
+        }
+
+        /* Image lightbox */
+        .image-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .lightbox-nav button {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main image cursor */
+        #mainImage {
+            cursor: zoom-in;
+        }
+
+        /* Gallery thumb hover */
+        .gallery-thumb {
+            cursor: pointer;
+        }
+
+        /* More images button */
+        #moreImagesBtn button {
+            transition: all var(--transition-fast);
+        }
+
+        #moreImagesBtn button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
     </style>
 </body>

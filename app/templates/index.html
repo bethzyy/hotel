@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>酒店搜索与预订 - Hotel Search</title>
+    <title>酒店搜索 - Hotel Search</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
@@ -12,7 +12,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <i class="bi bi-building"></i> 酒店搜索与预订
+                <i class="bi bi-building"></i> 酒店搜索
             </a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="#" id="favoritesLink">
@@ -26,112 +26,32 @@
     <main class="container py-5">
         <!-- Search Form -->
         <div class="search-container page-enter">
-            <div class="text-center mb-5">
-                <h1 class="display-4 fw-bold" style="background: linear-gradient(135deg, var(--primary-600), var(--primary-800)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">搜索酒店</h1>
-                <p class="text-muted fs-5">输入目的地，发现完美住宿</p>
+            <div class="text-center mb-4">
+                <h1 class="display-4 fw-bold gradient-text">酒店搜索</h1>
+                <p class="text-muted fs-6">
+                    <i class="bi bi-globe2 me-1"></i>
+                    全球酒店搜索 · Powered by <strong>RollingGo</strong>
+                </p>
             </div>
 
             <form id="searchForm" class="search-form">
-                <div class="row g-3">
-                    <!-- Provider Selection -->
-                    <div class="col-12">
-                        <label class="form-label">
-                            <i class="bi bi-cloud-check" style="color: var(--primary-500);"></i> 服务选择
-                        </label>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="provider-card selected" id="providerTuniu" onclick="selectProvider('tuniu')">
-                                    <div class="card-body d-flex align-items-center p-3">
-                                        <input type="radio" name="provider" value="tuniu" class="me-3" checked>
-                                        <div class="flex-grow-1">
-                                            <strong class="d-block">途牛 MCP</strong>
-                                            <small class="text-muted">国内酒店搜索与预订</small>
-                                        </div>
-                                        <span class="badge bg-success ms-auto">支持预订</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="provider-card" id="providerRollinggo" onclick="selectProvider('rollinggo')">
-                                    <div class="card-body d-flex align-items-center p-3">
-                                        <input type="radio" name="provider" value="rollinggo" class="me-3">
-                                        <div class="flex-grow-1">
-                                            <strong class="d-block">RollingGo</strong>
-                                            <small class="text-muted">全球酒店搜索</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="search-main-section">
+                    <!-- Destination - Most Prominent -->
+                    <div class="destination-input-wrapper mb-4">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-primary text-white border-0">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0" id="place"
+                                   placeholder="输入目的地（景点、城市、机场、酒店...）" required>
                         </div>
                     </div>
 
-                    <!-- Tuniu Search Fields -->
-                    <div id="tuniuFields">
-                        <!-- City Name -->
-                        <div class="col-12">
-                            <label class="form-label">城市名称 *</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                                <input type="text" class="form-control form-control-lg" id="cityName"
-                                       placeholder="例如：北京、上海、广州" required>
-                            </div>
-                        </div>
-
-                        <!-- Check-in Date -->
-                        <div class="col-md-6">
-                            <label class="form-label">入住日期 *</label>
-                            <input type="date" class="form-control" id="checkIn" required>
-                        </div>
-
-                        <!-- Check-out Date -->
-                        <div class="col-md-6">
-                            <label class="form-label">离店日期 *</label>
-                            <input type="date" class="form-control" id="checkOut" required>
-                        </div>
-
-                        <!-- Adult Count -->
-                        <div class="col-md-6">
-                            <label class="form-label">成人数</label>
-                            <div class="input-group">
-                                <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('adultCountTuniu', -1)">-</button>
-                                <input type="number" class="form-control text-center" id="adultCountTuniu" value="2" min="1" max="10">
-                                <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('adultCountTuniu', 1)">+</button>
-                            </div>
-                        </div>
-
-                        <!-- Child Count -->
-                        <div class="col-md-6">
-                            <label class="form-label">儿童数</label>
-                            <div class="input-group">
-                                <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('childCountTuniu', -1)">-</button>
-                                <input type="number" class="form-control text-center" id="childCountTuniu" value="0" min="0" max="10">
-                                <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('childCountTuniu', 1)">+</button>
-                            </div>
-                        </div>
-
-                        <!-- Keyword (optional) -->
-                        <div class="col-12">
-                            <label class="form-label">关键词（可选）</label>
-                            <input type="text" class="form-control" id="keyword" placeholder="酒店名称或品牌，如：希尔顿">
-                        </div>
-                    </div>
-
-                    <!-- RollingGo Search Fields (hidden by default) -->
-                    <div id="rollinggoFields" style="display: none;">
-                        <!-- Destination -->
-                        <div class="col-12">
-                            <label class="form-label">目的地 *</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                                <input type="text" class="form-control form-control-lg" id="place"
-                                       placeholder="例如：上海迪士尼、东京塔">
-                            </div>
-                        </div>
-
-                        <!-- Place Type -->
-                        <div class="col-md-6">
-                            <label class="form-label">地点类型 *</label>
-                            <select class="form-select" id="placeType">
+                    <!-- Parameter Row 1 - Compact -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">地点类型</label>
+                            <select class="form-select" id="placeType" required>
                                 <option value="">选择类型...</option>
                                 <option value="景点">景点</option>
                                 <option value="城市">城市</option>
@@ -143,55 +63,51 @@
                                 <option value="详细地址">详细地址</option>
                             </select>
                         </div>
-
-                        <!-- Check-in Date -->
-                        <div class="col-md-6">
-                            <label class="form-label">入住日期</label>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">入住日期</label>
                             <input type="date" class="form-control" id="checkInDate">
                         </div>
-
-                        <!-- Stay Nights -->
                         <div class="col-md-4">
-                            <label class="form-label">住宿晚数</label>
+                            <label class="form-label small text-muted">住宿晚数</label>
                             <div class="input-group">
                                 <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('stayNights', -1)">-</button>
                                 <input type="number" class="form-control text-center" id="stayNights" value="1" min="1" max="30">
                                 <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('stayNights', 1)">+</button>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Adult Count -->
-                        <div class="col-md-4">
-                            <label class="form-label">成人数</label>
+                    <!-- Parameter Row 2 - Guests -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">成人数</label>
                             <div class="input-group">
                                 <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('adultCount', -1)">-</button>
                                 <input type="number" class="form-control text-center" id="adultCount" value="2" min="1" max="10">
                                 <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('adultCount', 1)">+</button>
                             </div>
                         </div>
-
-                        <!-- Child Count -->
-                        <div class="col-md-4">
-                            <label class="form-label">儿童数</label>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">儿童数</label>
                             <div class="input-group">
                                 <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('childCount', -1)">-</button>
                                 <input type="number" class="form-control text-center" id="childCount" value="0" min="0" max="10">
                                 <button type="button" class="btn btn-outline-secondary" onclick="adjustValue('childCount', 1)">+</button>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Child Ages (hidden by default) -->
-                        <div class="col-12" id="childAgesContainer" style="display: none;">
-                            <label class="form-label">儿童年龄</label>
-                            <div id="childAgesInputs" class="d-flex flex-wrap gap-2"></div>
-                        </div>
+                    <!-- Child Ages (hidden by default) -->
+                    <div class="mb-3" id="childAgesContainer" style="display: none;">
+                        <label class="form-label small text-muted">儿童年龄</label>
+                        <div id="childAgesInputs" class="d-flex flex-wrap gap-2"></div>
                     </div>
                 </div>
 
-                <!-- Advanced Filters Toggle (RollingGo only) -->
-                <div class="mt-4" id="advancedFiltersToggle">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
-                        <i class="bi bi-sliders"></i> 高级筛选
+                <!-- Advanced Filters Toggle -->
+                <div class="mt-3">
+                    <button type="button" class="btn btn-link text-muted text-decoration-none p-0" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                        <i class="bi bi-sliders me-1"></i> 高级筛选
                         <i class="bi bi-chevron-down ms-1"></i>
                     </button>
                 </div>
@@ -201,7 +117,7 @@
                     <div class="row g-3">
                         <!-- Star Rating -->
                         <div class="col-md-6">
-                            <label class="form-label">星级范围</label>
+                            <label class="form-label small text-muted">星级范围</label>
                             <select class="form-select" id="starRating">
                                 <option value="">不限</option>
                                 <option value="5.0,5.0">五星</option>
@@ -212,32 +128,34 @@
 
                         <!-- Max Price -->
                         <div class="col-md-6">
-                            <label class="form-label">最高价格（每晚）</label>
+                            <label class="form-label small text-muted">最高价格（每晚）</label>
                             <input type="number" class="form-control" id="maxPrice" placeholder="不限" min="0">
                         </div>
 
                         <!-- Distance -->
                         <div class="col-md-6">
-                            <label class="form-label">最大距离（米）</label>
+                            <label class="form-label small text-muted">最大距离（米）</label>
                             <input type="number" class="form-control" id="distance" placeholder="不限" min="0">
                         </div>
 
                         <!-- Result Size -->
                         <div class="col-md-6">
-                            <label class="form-label">结果数量</label>
+                            <label class="form-label small text-muted">结果数量</label>
                             <select class="form-select" id="resultSize">
                                 <option value="10">10 条</option>
                                 <option value="20" selected>20 条</option>
                                 <option value="30">30 条</option>
                                 <option value="50">50 条</option>
+                                <option value="75">75 条</option>
+                                <option value="100">100 条</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
                 <!-- Search Button -->
-                <div class="mt-5 text-center">
-                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3" id="searchBtn" style="min-width: 200px;">
+                <div class="mt-4 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill">
                         <i class="bi bi-search me-2"></i> 搜索酒店
                     </button>
                 </div>
@@ -268,9 +186,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     <script>
-        // Global variables
-        let currentProvider = 'tuniu';
-
         // Storage key for saved parameters
         const STORAGE_KEY = 'hotel_search_params';
 
@@ -287,39 +202,25 @@
         function getDefaultDates() {
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            const dayAfter = new Date(tomorrow);
-            dayAfter.setDate(dayAfter.getDate() + 1);
             return {
-                tomorrow: tomorrow.toISOString().split('T')[0],
-                dayAfter: dayAfter.toISOString().split('T')[0]
+                tomorrow: tomorrow.toISOString().split('T')[0]
             };
         }
 
         // Save search parameters to localStorage
         function saveSearchParams() {
             const params = {
-                provider: currentProvider,
-                tuniu: {
-                    cityName: document.getElementById('cityName').value,
-                    checkIn: document.getElementById('checkIn').value,
-                    checkOut: document.getElementById('checkOut').value,
-                    adultCount: document.getElementById('adultCountTuniu').value,
-                    childCount: document.getElementById('childCountTuniu').value,
-                    keyword: document.getElementById('keyword').value
-                },
-                rollinggo: {
-                    place: document.getElementById('place').value,
-                    placeType: document.getElementById('placeType').value,
-                    checkInDate: document.getElementById('checkInDate').value,
-                    stayNights: document.getElementById('stayNights').value,
-                    adultCount: document.getElementById('adultCount').value,
-                    childCount: document.getElementById('childCount').value,
-                    childAges: getChildAges(),
-                    starRating: document.getElementById('starRating').value,
-                    maxPrice: document.getElementById('maxPrice').value,
-                    distance: document.getElementById('distance').value,
-                    resultSize: document.getElementById('resultSize').value
-                },
+                place: document.getElementById('place').value,
+                placeType: document.getElementById('placeType').value,
+                checkInDate: document.getElementById('checkInDate').value,
+                stayNights: document.getElementById('stayNights').value,
+                adultCount: document.getElementById('adultCount').value,
+                childCount: document.getElementById('childCount').value,
+                childAges: getChildAges(),
+                starRating: document.getElementById('starRating').value,
+                maxPrice: document.getElementById('maxPrice').value,
+                distance: document.getElementById('distance').value,
+                resultSize: document.getElementById('resultSize').value,
                 savedAt: new Date().toISOString()
             };
 
@@ -335,58 +236,29 @@
                 const params = JSON.parse(saved);
                 const defaultDates = getDefaultDates();
 
-                // Restore provider selection
-                if (params.provider) {
-                    selectProvider(params.provider);
+                if (params.place) document.getElementById('place').value = params.place;
+                if (params.placeType) document.getElementById('placeType').value = params.placeType;
+                // Use saved date if valid, otherwise use default
+                if (params.checkInDate && isValidDate(params.checkInDate)) {
+                    document.getElementById('checkInDate').value = params.checkInDate;
+                } else {
+                    document.getElementById('checkInDate').value = defaultDates.tomorrow;
                 }
-
-                // Restore Tuniu parameters
-                if (params.tuniu) {
-                    const t = params.tuniu;
-                    if (t.cityName) document.getElementById('cityName').value = t.cityName;
-                    // Use saved date if valid, otherwise use default
-                    if (t.checkIn && isValidDate(t.checkIn)) {
-                        document.getElementById('checkIn').value = t.checkIn;
-                    } else {
-                        document.getElementById('checkIn').value = defaultDates.tomorrow;
-                    }
-                    if (t.checkOut && isValidDate(t.checkOut)) {
-                        document.getElementById('checkOut').value = t.checkOut;
-                    } else {
-                        document.getElementById('checkOut').value = defaultDates.dayAfter;
-                    }
-                    if (t.adultCount) document.getElementById('adultCountTuniu').value = t.adultCount;
-                    if (t.childCount) document.getElementById('childCountTuniu').value = t.childCount;
-                    if (t.keyword) document.getElementById('keyword').value = t.keyword;
+                if (params.stayNights) document.getElementById('stayNights').value = params.stayNights;
+                if (params.adultCount) document.getElementById('adultCount').value = params.adultCount;
+                if (params.childCount) document.getElementById('childCount').value = params.childCount;
+                if (params.childAges && params.childAges.length > 0) {
+                    document.getElementById('childCount').value = params.childCount || 0;
+                    updateChildAgesInputs();
+                    params.childAges.forEach((age, i) => {
+                        const input = document.getElementById(`childAge${i}`);
+                        if (input) input.value = age;
+                    });
                 }
-
-                // Restore RollingGo parameters
-                if (params.rollinggo) {
-                    const r = params.rollinggo;
-                    if (r.place) document.getElementById('place').value = r.place;
-                    if (r.placeType) document.getElementById('placeType').value = r.placeType;
-                    // Use saved date if valid, otherwise use default
-                    if (r.checkInDate && isValidDate(r.checkInDate)) {
-                        document.getElementById('checkInDate').value = r.checkInDate;
-                    } else {
-                        document.getElementById('checkInDate').value = defaultDates.tomorrow;
-                    }
-                    if (r.stayNights) document.getElementById('stayNights').value = r.stayNights;
-                    if (r.adultCount) document.getElementById('adultCount').value = r.adultCount;
-                    if (r.childCount) document.getElementById('childCount').value = r.childCount;
-                    if (r.childAges && r.childAges.length > 0) {
-                        document.getElementById('childCount').value = r.childCount || 0;
-                        updateChildAgesInputs();
-                        r.childAges.forEach((age, i) => {
-                            const input = document.getElementById(`childAge${i}`);
-                            if (input) input.value = age;
-                        });
-                    }
-                    if (r.starRating) document.getElementById('starRating').value = r.starRating;
-                    if (r.maxPrice) document.getElementById('maxPrice').value = r.maxPrice;
-                    if (r.distance) document.getElementById('distance').value = r.distance;
-                    if (r.resultSize) document.getElementById('resultSize').value = r.resultSize;
-                }
+                if (params.starRating) document.getElementById('starRating').value = params.starRating;
+                if (params.maxPrice) document.getElementById('maxPrice').value = params.maxPrice;
+                if (params.distance) document.getElementById('distance').value = params.distance;
+                if (params.resultSize) document.getElementById('resultSize').value = params.resultSize;
 
                 return true;
             } catch (e) {
@@ -401,18 +273,12 @@
             const defaultDates = getDefaultDates();
 
             // Set date min values
-            document.getElementById('checkIn').min = defaultDates.tomorrow;
-            document.getElementById('checkOut').min = defaultDates.tomorrow;
             document.getElementById('checkInDate').min = defaultDates.tomorrow;
 
             // Try to load saved parameters first
             const loaded = loadSearchParams();
 
             // If no saved params or dates expired, set default dates
-            if (!loaded || !isValidDate(document.getElementById('checkIn').value)) {
-                document.getElementById('checkIn').value = defaultDates.tomorrow;
-                document.getElementById('checkOut').value = defaultDates.dayAfter;
-            }
             if (!loaded || !isValidDate(document.getElementById('checkInDate').value)) {
                 document.getElementById('checkInDate').value = defaultDates.tomorrow;
             }
@@ -424,37 +290,6 @@
             loadSearchHistory();
         });
 
-        function selectProvider(provider) {
-            currentProvider = provider;
-
-            // Update UI
-            document.getElementById('providerTuniu').classList.toggle('selected', provider === 'tuniu');
-            document.getElementById('providerRollinggo').classList.toggle('selected', provider === 'rollinggo');
-
-            document.querySelector('#providerTuniu input').checked = provider === 'tuniu';
-            document.querySelector('#providerRollinggo input').checked = provider === 'rollinggo';
-
-            // Toggle field visibility
-            document.getElementById('tuniuFields').style.display = provider === 'tuniu' ? 'block' : 'none';
-            document.getElementById('rollinggoFields').style.display = provider === 'rollinggo' ? 'block' : 'none';
-            document.getElementById('advancedFiltersToggle').style.display = provider === 'rollinggo' ? 'block' : 'none';
-
-            // Update required fields
-            if (provider === 'tuniu') {
-                document.getElementById('cityName').required = true;
-                document.getElementById('checkIn').required = true;
-                document.getElementById('checkOut').required = true;
-                document.getElementById('place').required = false;
-                document.getElementById('placeType').required = false;
-            } else {
-                document.getElementById('cityName').required = false;
-                document.getElementById('checkIn').required = false;
-                document.getElementById('checkOut').required = false;
-                document.getElementById('place').required = true;
-                document.getElementById('placeType').required = true;
-            }
-        }
-
         // Search form submission
         document.getElementById('searchForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -462,59 +297,35 @@
         });
 
         function performSearch() {
-            let searchData = {};
+            const place = document.getElementById('place').value.trim();
+            const placeType = document.getElementById('placeType').value;
 
-            if (currentProvider === 'tuniu') {
-                const cityName = document.getElementById('cityName').value.trim();
-
-                if (!cityName) {
-                    alert('请填写城市名称');
-                    return;
-                }
-
-                searchData = {
-                    provider: 'tuniu',
-                    city_name: cityName,
-                    check_in: document.getElementById('checkIn').value,
-                    check_out: document.getElementById('checkOut').value,
-                    adult_count: parseInt(document.getElementById('adultCountTuniu').value),
-                    child_count: parseInt(document.getElementById('childCountTuniu').value),
-                    keyword: document.getElementById('keyword').value.trim() || null,
-                    page_num: 1
-                };
-
-                sessionStorage.setItem('searchPlace', cityName);
-            } else {
-                const place = document.getElementById('place').value.trim();
-                const placeType = document.getElementById('placeType').value;
-
-                if (!place || !placeType) {
-                    alert('请填写目的地并选择地点类型');
-                    return;
-                }
-
-                searchData = {
-                    provider: 'rollinggo',
-                    query: `Find hotels near ${place}`,
-                    place: place,
-                    place_type: placeType,
-                    check_in_date: document.getElementById('checkInDate').value || null,
-                    stay_nights: parseInt(document.getElementById('stayNights').value),
-                    adult_count: parseInt(document.getElementById('adultCount').value),
-                    child_count: parseInt(document.getElementById('childCount').value),
-                    child_ages: getChildAges(),
-                    star_ratings: document.getElementById('starRating').value || null,
-                    max_price: parseFloat(document.getElementById('maxPrice').value) || null,
-                    distance: parseInt(document.getElementById('distance').value) || null,
-                    size: parseInt(document.getElementById('resultSize').value)
-                };
-
-                sessionStorage.setItem('searchPlace', place);
+            if (!place || !placeType) {
+                alert('请填写目的地并选择地点类型');
+                return;
             }
+
+            const searchData = {
+                provider: 'rollinggo',
+                query: `Find hotels near ${place}`,
+                place: place,
+                place_type: placeType,
+                check_in_date: document.getElementById('checkInDate').value || null,
+                stay_nights: parseInt(document.getElementById('stayNights').value),
+                adult_count: parseInt(document.getElementById('adultCount').value),
+                child_count: parseInt(document.getElementById('childCount').value),
+                child_ages: getChildAges(),
+                star_ratings: document.getElementById('starRating').value || null,
+                max_price: parseFloat(document.getElementById('maxPrice').value) || null,
+                distance: parseInt(document.getElementById('distance').value) || null,
+                size: parseInt(document.getElementById('resultSize').value)
+            };
+
+            sessionStorage.setItem('searchPlace', place);
 
             // Store search data in session storage
             sessionStorage.setItem('searchData', JSON.stringify(searchData));
-            sessionStorage.setItem('currentProvider', currentProvider);
+            sessionStorage.setItem('currentProvider', 'rollinggo');
 
             // Save search parameters to localStorage for next session
             saveSearchParams();
@@ -534,7 +345,7 @@
             return ages;
         }
 
-        // Child count change handler (RollingGo only)
+        // Child count change handler
         document.getElementById('childCount').addEventListener('change', updateChildAgesInputs);
         document.getElementById('childCount').addEventListener('input', updateChildAgesInputs);
 
@@ -562,19 +373,6 @@
                 container.style.display = 'none';
             }
         }
-
-        // Sync check-out date with check-in date
-        document.getElementById('checkIn').addEventListener('change', function() {
-            const checkInDate = new Date(this.value);
-            const checkOutDate = new Date(document.getElementById('checkOut').value);
-
-            if (checkOutDate <= checkInDate) {
-                checkInDate.setDate(checkInDate.getDate() + 1);
-                document.getElementById('checkOut').value = checkInDate.toISOString().split('T')[0];
-            }
-
-            document.getElementById('checkOut').min = this.value;
-        });
     </script>
 
 </body>
