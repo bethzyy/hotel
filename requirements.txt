@@ -1,0 +1,12 @@
+# Flask and extensions
+Flask>=2.3.0
+Flask-RESTful>=0.3.10
+
+# Data validation
+pydantic>=2.0.0
+
+# Database
+# SQLite is built-in, no extra dependency needed
+
+# Utilities
+python-dotenv>=1.0.0

@@ -1,0 +1,4 @@
+interface:
+  display_name: "RollingGo-Hotel"
+  short_description: "Find hotels and inspect hotel detail with the RollingGo CLI"
+  default_prompt: "Use the RollingGo CLI to search hotels, narrow candidates with structured filters, inspect hotel tags, and fetch hotel detail. Prefer npm or npx only as the default execution path when runtime choice matters."

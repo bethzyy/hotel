@@ -1,0 +1,4 @@
+interface:
+  display_name: "RollingGo 酒店"
+  short_description: "用 RollingGo CLI 搜酒店并查看酒店详情"
+  default_prompt: "使用 RollingGo CLI 搜索酒店、收窄候选结果、读取酒店标签、查看酒店详情。只有在运行环境选择确实重要时，再默认优先使用 npm 或 npx。"

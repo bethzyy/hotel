@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>确认预订 - 酒店搜索</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-building"></i> 酒店搜索
+            </a>
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-light btn-sm me-2" onclick="goBack()">
+                    <i class="bi bi-arrow-left"></i> 返回
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <!-- Loading Placeholder -->
+        <div id="loadingPlaceholder" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+            <p class="mt-3 text-muted">加载预订信息...</p>
+        </div>
+
+        <!-- Booking Content -->
+        <div id="bookingContent" style="display: none;">
+            <div class="row">
+                <!-- Left Column: Booking Form -->
+                <div class="col-lg-8">
+                    <div class="card border-0 mb-4">
+                        <div class="card-header bg-transparent border-0 pt-4 pb-0 px-4">
+                            <h5 class="mb-0 fw-bold">
+                                <i class="bi bi-person-lines-fill text-primary me-2"></i> 填写预订信息
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="bookingForm">
+                                <!-- Contact Info -->
+                                <div class="form-section">
+                                    <h6 class="form-section-title">
+                                        <i class="bi bi-person text-primary"></i> 联系人信息
+                                    </h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">联系人姓名 *</label>
+                                            <input type="text" class="form-control" id="contactName"
+                                                   placeholder="请输入姓名" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">联系电话 *</label>
+                                            <input type="tel" class="form-control" id="contactPhone"
+                                                   placeholder="请输入手机号码" required
+                                                   pattern="^1[3-9]\d{9}$">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Guest Info -->
+                                <div class="form-section">
+                                    <h6 class="form-section-title">
+                                        <i class="bi bi-people text-primary"></i> 入住人信息
+                                    </h6>
+                                    <div id="guestsContainer">
+                                        <!-- Guest inputs will be dynamically generated -->
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 submit-btn" id="submitBtn">
+                                        <i class="bi bi-check-circle me-2"></i> 提交订单
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Order Summary -->
+                <div class="col-lg-4">
+                    <div class="card border-0 mb-4 order-summary">
+                        <div class="card-header bg-transparent border-0 pt-4 pb-0 px-4">
+                            <h5 class="mb-0 fw-bold">
+                                <i class="bi bi-receipt text-primary me-2"></i> 订单摘要
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <!-- Hotel Info -->
+                            <div class="mb-4">
+                                <div id="hotelImage" class="booking-hotel-image mb-3 rounded-3"></div>
+                                <h6 id="hotelName" class="mb-1 fw-bold"></h6>
+                                <p id="hotelAddress" class="text-muted small mb-0"></p>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Room Info -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">房型</span>
+                                    <span id="roomName" class="fw-bold"></span>
+                                </div>
+                            </div>
+
+                            <!-- Date Info -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">入住</span>
+                                    <span id="checkInDate" class="fw-medium"></span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">离店</span>
+                                    <span id="checkOutDate" class="fw-medium"></span>
+                                </div>
+                            </div>
+
+                            <!-- Nights -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">住宿</span>
+                                    <span id="nightsCount" class="badge bg-light text-dark"></span>
+                                </div>
+                            </div>
+
+                            <!-- Room Count -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">房间数</span>
+                                    <span id="roomCount" class="badge bg-light text-dark">1 间</span>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Price -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted">房价</span>
+                                <span id="pricePerNight" class="fw-bold"></span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background: linear-gradient(135deg, var(--primary-50), white);">
+                                <span class="fs-6 fw-medium">订单总价</span>
+                                <span id="totalPrice" class="fs-4 text-primary fw-bold" style="font-family: var(--font-number);"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notice -->
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-4">
+                            <h6 class="mb-3">
+                                <i class="bi bi-info-circle text-primary me-2"></i> 预订须知
+                            </h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li class="mb-2">订单提交后将跳转至支付页面</li>
+                                <li class="mb-2">请在30分钟内完成支付</li>
+                                <li>入住时请携带有效身份证件</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="alert alert-danger" style="display: none;">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span id="errorText"></span>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">正在提交订单...</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        // Global variables
+        let bookingData = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get booking data from session storage
+            const bookingDataStr = sessionStorage.getItem('bookingData');
+
+            if (!bookingDataStr) {
+                showError('未找到预订信息，请重新选择房型');
+                document.getElementById('loadingPlaceholder').style.display = 'none';
+                return;
+            }
+
+            bookingData = JSON.parse(bookingDataStr);
+            renderBookingPage(bookingData);
+        });
+
+        function renderBookingPage(data) {
+            document.getElementById('loadingPlaceholder').style.display = 'none';
+            document.getElementById('bookingContent').style.display = 'block';
+
+            // Hotel info
+            const hotel = data.hotel;
+            document.getElementById('hotelName').textContent = hotel.name;
+            document.getElementById('hotelAddress').textContent = hotel.address || '';
+            if (hotel.image_url) {
+                document.getElementById('hotelImage').style.backgroundImage = `url('${hotel.image_url}')`;
+            }
+
+            // Room info
+            const room = data.selected_room;
+            document.getElementById('roomName').textContent = room ? room.name : '标准房';
+
+            // Date info
+            document.getElementById('checkInDate').textContent = formatDate(data.check_in);
+            document.getElementById('checkOutDate').textContent = formatDate(data.check_out);
+            document.getElementById('nightsCount').textContent = `${data.nights} 晚`;
+            document.getElementById('roomCount').textContent = `${data.room_count || 1} 间`;
+
+            // Price info
+            const price = room ? room.price : 0;
+            const currency = room ? (room.currency || '¥') : '¥';
+            const totalPrice = price * data.nights * (data.room_count || 1);
+
+            document.getElementById('pricePerNight').textContent = `${currency}${price}/晚`;
+            document.getElementById('totalPrice').textContent = `${currency}${totalPrice}`;
+
+            // Generate guest inputs
+            generateGuestInputs(data);
+        }
+
+        function generateGuestInputs(data) {
+            const container = document.getElementById('guestsContainer');
+            const roomCount = data.room_count || 1;
+            const adultCount = data.adult_count || 2;
+
+            container.innerHTML = '';
+
+            for (let r = 0; r < roomCount; r++) {
+                const roomDiv = document.createElement('div');
+                roomDiv.className = 'room-guest-section mb-4';
+                roomDiv.innerHTML = `
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-primary rounded-pill me-2">${r + 1}</span>
+                        <span class="text-muted">房间 ${r + 1}</span>
+                    </div>
+                    <div class="row g-3" id="room${r}Guests"></div>
+                `;
+                container.appendChild(roomDiv);
+
+                const guestsDiv = document.getElementById(`room${r}Guests`);
+
+                // Generate guest inputs based on adult count
+                const guestsPerRoom = Math.ceil(adultCount / roomCount);
+                for (let g = 0; g < guestsPerRoom; g++) {
+                    const guestDiv = document.createElement('div');
+                    guestDiv.className = 'col-md-6';
+                    guestDiv.innerHTML = `
+                        <div class="card border">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-person text-primary me-2"></i>
+                                    <small class="text-muted">入住人 ${g + 1}</small>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="text" class="form-control form-control-sm"
+                                               id="room${r}Guest${g}LastName"
+                                               placeholder="姓" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="text" class="form-control form-control-sm"
+                                               id="room${r}Guest${g}FirstName"
+                                               placeholder="名" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    guestsDiv.appendChild(guestDiv);
+                }
+            }
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            return `${dateStr} ${weekdays[date.getDay()]}`;
+        }
+
+        // Form submission
+        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const contactName = document.getElementById('contactName').value.trim();
+            const contactPhone = document.getElementById('contactPhone').value.trim();
+
+            if (!contactName || !contactPhone) {
+                alert('请填写联系人和联系电话');
+                return;
+            }
+
+            // Validate phone number
+            if (!/^1[3-9]\d{9}$/.test(contactPhone)) {
+                alert('请输入正确的手机号码');
+                return;
+            }
+
+            // Build room guests
+            const roomGuests = [];
+            const roomCount = bookingData.room_count || 1;
+            const adultCount = bookingData.adult_count || 2;
+            const guestsPerRoom = Math.ceil(adultCount / roomCount);
+
+            for (let r = 0; r < roomCount; r++) {
+                const guests = [];
+                for (let g = 0; g < guestsPerRoom; g++) {
+                    const lastName = document.getElementById(`room${r}Guest${g}LastName`)?.value.trim();
+                    const firstName = document.getElementById(`room${r}Guest${g}FirstName`)?.value.trim();
+
+                    if (lastName && firstName) {
+                        guests.push({
+                            first_name: firstName,
+                            last_name: lastName
+                        });
+                    }
+                }
+                if (guests.length > 0) {
+                    roomGuests.push({ guests });
+                }
+            }
+
+            if (roomGuests.length === 0) {
+                alert('请至少填写一位入住人信息');
+                return;
+            }
+
+            // Build request data
+            const requestData = {
+                provider: bookingData.provider || 'tuniu',
+                hotel_id: bookingData.hotel.hotel_id,
+                room_id: bookingData.selected_room.room_id,
+                pre_book_param: bookingData.selected_room.pre_book_param || bookingData.hotel.pre_book_param,
+                check_in_date: bookingData.check_in,
+                check_out_date: bookingData.check_out,
+                room_count: roomCount,
+                room_guests: roomGuests,
+                contact_name: contactName,
+                contact_phone: contactPhone
+            };
+
+            // Show loading
+            showLoading();
+
+            try {
+                const response = await fetch('/api/book/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const result = await response.json();
+                hideLoading();
+
+                if (result.success) {
+                    // Store order data and redirect
+                    sessionStorage.setItem('orderData', JSON.stringify(result.data));
+                    window.location.href = '/order';
+                } else {
+                    showError(result.error || '预订失败，请稍后重试');
+                }
+            } catch (error) {
+                hideLoading();
+                showError('网络错误，请检查网络连接后重试');
+                console.error('Booking error:', error);
+            }
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = message;
+        }
+    </script>
+
+    <style>
+        /* Booking Page Styles */
+        .booking-hotel-image {
+            width: 100%;
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            background-color: var(--gray-200);
+        }
+
+        .order-summary {
+            position: sticky;
+            top: calc(70px + var(--space-4));
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            border: none;
+            border-radius: var(--radius-xl);
+            padding: var(--space-4) var(--space-6);
+            font-weight: 600;
+            font-size: var(--text-lg);
+            transition: all var(--transition-base);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .room-guest-section {
+            border-left: 3px solid var(--primary-500);
+            padding-left: var(--space-4);
+        }
+
+        @media (max-width: 992px) {
+            .order-summary {
+                position: static;
+                margin-bottom: var(--space-4);
+            }
+        }
+    </style>
+</body>
+</html>
