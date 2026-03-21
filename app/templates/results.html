@@ -276,7 +276,13 @@
             'EUR': '€',
             'GBP': '£',
             'HKD': 'HK$',
-            'TWD': 'NT$'
+            'TWD': 'NT$',
+            'JPY': '¥',
+            'KRW': '₩',
+            'SGD': 'S$',
+            'AUD': 'A$',
+            'THB': '฿',
+            'MYR': 'RM'
         };
 
         function getCurrencySymbol(currency) {
@@ -286,6 +292,23 @@
             }
             // Otherwise look up in mapping
             return CURRENCY_SYMBOLS[currency] || '¥';
+        }
+
+        // Format price with CNY conversion display
+        function formatPriceWithCny(price, currency, priceCny) {
+            if (price === null || price === undefined) {
+                return '暂无报价';
+            }
+
+            const symbol = getCurrencySymbol(currency);
+
+            // If already CNY or no conversion provided, show original
+            if (currency === 'CNY' || priceCny === null || priceCny === undefined) {
+                return `${symbol}${price}`;
+            }
+
+            // Show original price with CNY equivalent
+            return `${symbol}${price} <small class="text-muted">(≈¥${priceCny})</small>`;
         }
 
         function renderComparisonSection(compCard, data, showCollapse = true) {
@@ -323,13 +346,13 @@
                 comparisons.forEach(comp => {
                     const isBest = bestPrice && bestPrice.provider === comp.provider;
                     const providerName = comp.provider === 'rollinggo' ? 'RollingGo' : '途牛';
-                    const currency = getCurrencySymbol(comp.currency);
+                    const priceDisplay = formatPriceWithCny(comp.price, comp.currency, comp.price_cny);
                     const saveAmount = sourcePrice && comp.price && comp.price < sourcePrice ? sourcePrice - comp.price : null;
 
                     html += `
                         <div class="comparison-item ${isBest ? 'best' : ''}">
                             <span class="provider-name">${providerName}</span>
-                            <span class="provider-price">${currency}${comp.price || '暂无'}</span>
+                            <span class="provider-price">${priceDisplay}</span>
                             ${isBest ? '<span class="best-badge">🏆 最低价</span>' : ''}
                             ${saveAmount ? `<span class="save-badge">省${sourceCurrency}${saveAmount}</span>` : ''}
                         </div>
@@ -358,8 +381,7 @@
 
                 externalPrices.forEach(ext => {
                     const iconClass = ext.icon || 'bi-link-45deg';
-                    const currency = getCurrencySymbol(ext.currency);
-                    const priceText = ext.price ? `${currency}${ext.price}` : '查看报价';
+                    const priceText = ext.price ? formatPriceWithCny(ext.price, ext.currency, ext.price_cny) : '查看报价';
 
                     html += `
                         <div class="comparison-item external">

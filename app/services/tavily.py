@@ -252,8 +252,8 @@ class TavilyService:
                 check_out_formatted = self._format_date(check_out)
                 parts.append(f'{check_out_formatted}')
 
-        # Add booking keyword
-        parts.append('booking price')
+        # Add booking keyword with CNY/RMB for better currency targeting
+        parts.append('hotel price CNY RMB')
 
         query = ' '.join(parts)
         logger.debug(f"[Tavily] Built query: {query}")
@@ -284,6 +284,7 @@ class TavilyService:
         }
 
         # Tavily API payload
+        # Empty include_domains means search all domains (filtered by _identify_platform)
         payload = {
             'query': query,
             'search_depth': 'basic',  # 'basic' or 'advanced'
@@ -438,6 +439,63 @@ class TavilyService:
             logger.error(traceback.format_exc())
             return {}
 
+    def _is_price_reasonable(self, price: float, currency: str, text: str) -> bool:
+        """
+        检查价格是否合理。
+
+        不合理的信号：
+        - "save $X" / "off $X" - 这是折扣，不是价格
+        - 五星级酒店价格过低（USD<30, CNY<200）
+
+        Args:
+            price: 提取到的价格
+            currency: 货币代码
+            text: 原始文本
+
+        Returns:
+            True 如果价格合理，False 如果不合理
+        """
+        text_lower = text.lower()
+
+        # 检查是否是折扣/优惠金额
+        discount_patterns = [
+            r'save\s*\$?\s*[\d,]+',
+            r'off\s*\$?\s*[\d,]+',
+            r'discount\s*\$?\s*[\d,]+',
+            r'优惠\s*[¥$]?\s*[\d,]+',
+            r'立减\s*[¥$]?\s*[\d,]+',
+            r'减\s*[¥$]?\s*[\d,]+',
+            r'save\s*[¥￥]?\s*[\d,]+',
+            r'off\s*[¥￥]?\s*[\d,]+',
+        ]
+        for pattern in discount_patterns:
+            if re.search(pattern, text_lower, re.IGNORECASE):
+                logger.debug(f"[Tavily Extract] ✗ Price {price} {currency} appears to be a discount amount (matched: {pattern})")
+                return False
+
+        # 根据货币设置最低合理价格（五星级酒店的合理下限）
+        min_prices = {
+            'USD': 30,   # 五星级酒店低于$30不合理
+            'EUR': 30,
+            'GBP': 25,
+            'CNY': 200,  # 五星级酒店低于¥200不合理
+            'HKD': 250,
+            'TWD': 1000,
+            'JPY': 4000,
+            'KRW': 40000,
+            'SGD': 40,
+            'AUD': 45,
+            'THB': 1000,
+            'MYR': 140,
+        }
+
+        min_price = min_prices.get(currency, 10)
+        if price < min_price:
+            logger.debug(f"[Tavily Extract] ✗ Price {price} {currency} below minimum reasonable price ({min_price})")
+            return False
+
+        return True
+
     def _extract_price(self, text: str) -> Tuple[Optional[float], str]:
         """
         Extract price from text using regex patterns.
@@ -505,9 +563,9 @@ class TavilyService:
             (r'(?:price|rate|nightly)[:\s]*\$\s*([\d,]+(?:\.\d{2})?)', 'USD'),
             (r'\$\s*([\d,]+(?:\.\d{2})?)', 'USD'),
             (r'USD\s*([\d,]+(?:\.\d{2})?)', 'USD'),
-            (r'from\s*\$?\s*([\d,]+(?:\.\d{2})?)', 'USD'),
-            (r'starting\s*at\s*\$?\s*([\d,]+(?:\.\d{2})?)', 'USD'),
-            (r'best\s*price[:\s]*\$?\s*([\d,]+(?:\.\d{2})?)', 'USD'),
+            (r'from\s+\$\s*([\d,]+(?:\.\d{2})?)', 'USD'),  # Fixed: require $ sign (avoid matching "from 14:00")
+            (r'starting\s+at\s+\$\s*([\d,]+(?:\.\d{2})?)', 'USD'),  # Fixed: require $ sign
+            (r'best\s*price[:\s]*\$\s*([\d,]+(?:\.\d{2})?)', 'USD'),
 
             # === EUR (Euro) patterns ===
             (r'€\s*([\d,]+(?:\.\d{2})?)', 'EUR'),
@@ -531,8 +589,13 @@ class TavilyService:
                     # Filter out unreasonable prices (< 10 or > 100000)
                     # Relaxed from 50-50000 to 10-100000 to support more currencies
                     if 10 <= price <= 100000:
-                        logger.info(f"[Tavily Extract] ✓ Price found: {price} {currency} (pattern: {pattern[:40]}...)")
-                        return price, currency
+                        # 新增：价格合理性检查（排除折扣金额、异常低价等）
+                        if self._is_price_reasonable(price, currency, text):
+                            logger.info(f"[Tavily Extract] ✓ Price found: {price} {currency} (pattern: {pattern[:40]}...)")
+                            return price, currency
+                        else:
+                            logger.debug(f"[Tavily Extract] ✗ Price {price} {currency} failed reasonability check, skipping")
+                            continue  # 继续尝试下一个匹配
                     else:
                         logger.debug(f"[Tavily Extract] ✗ Price {price} out of range (10-100000), skipping")
                 except ValueError as e:
@@ -574,15 +637,15 @@ class TavilyService:
         3. Results without prices
         """
         platform_priority = {
-            'booking': 1,
-            'kayak': 2,
-            'ctrip': 3,
-            'agoda': 4,
-            'tripadvisor': 5,
-            'expedia': 6,
-            'hotels': 7,
-            'priceline': 8,
-            'hotwire': 9
+            'ctrip': 1,       # 携程/Trip.com - highest priority (CNY prices)
+            'kayak': 2,       # KAYAK (including cn.kayak.com)
+            'booking': 3,     # Booking.com
+            'agoda': 4,       # Agoda
+            'tripadvisor': 5, # TripAdvisor
+            'expedia': 6,     # Expedia
+            'hotels': 7,      # Hotels.com
+            'priceline': 8,   # Priceline
+            'hotwire': 9      # Hotwire
         }
 
         def sort_key(item):

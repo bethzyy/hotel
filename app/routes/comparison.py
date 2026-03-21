@@ -11,6 +11,7 @@ from app.services.hotel_provider import get_provider, HotelProviderError
 from app.services.hotel_matcher import HotelMatcher
 from app.services.serper import SerperService
 from app.services.tavily import TavilyService
+from app.services.currency import convert_to_cny
 
 logger = logging.getLogger(__name__)
 
@@ -263,6 +264,7 @@ def compare_hotel_prices(provider, hotel_id):
                             'address': match.get('address'),
                             'price': match_price,
                             'currency': match_currency,
+                            'price_cny': convert_to_cny(match_price, match_currency),
                             'url': match_url,
                             'match_confidence': match.get('match_confidence'),
                             'name_similarity': match.get('name_similarity'),
@@ -416,6 +418,10 @@ def compare_hotel_prices(provider, hotel_id):
                     logger.error(traceback.format_exc())
             else:
                 logger.warning("[Comparison] Neither Tavily nor Serper is configured for external price search")
+
+        # Add CNY conversion to external results
+        for ext in external_results:
+            ext['price_cny'] = convert_to_cny(ext.get('price'), ext.get('currency', 'USD'))
 
         # Build response
         response_data = {
@@ -1156,11 +1162,26 @@ def test_tavily():
 
             # Extract price
             tavily = TavilyService(api_key=tavily_api_key)
+
+            # DEBUG: Test if _is_price_reasonable exists and works
+            has_method = hasattr(tavily, '_is_price_reasonable')
+            if has_method:
+                test_result = tavily._is_price_reasonable(14, 'USD', 'test')
+            else:
+                test_result = 'N/A'
+
             price, currency = tavily._extract_price(content + ' ' + title)
+
+            # Debug: log full content length and price extraction
+            full_content = content + ' ' + title
+            logger.debug(f"[Test-Tavily] Platform={platform_key}, content_len={len(content)}, "
+                        f"title={title[:50]}..., extracted_price={price} {currency}, "
+                        f"has_reasonable_method={has_method}, usd14_test={test_result}")
 
             processed_results.append({
                 'title': title,
-                'content': content[:300] if content else '',
+                'content': content[:500] if content else '',  # Increased for debugging
+                'content_full_len': len(content),  # Debug: show full content length
                 'url': url,
                 'platform': platform_key or 'unknown',
                 'platform_name': TavilyService.PLATFORM_CONFIG.get(platform_key, {}).get('name', 'Unknown'),
@@ -1168,9 +1189,20 @@ def test_tavily():
                 'currency': currency
             })
 
-        # Get normalized results
+        # Get normalized results using the full search_hotel_prices flow
         tavily_service = TavilyService(api_key=tavily_api_key)
-        normalized = TavilyService.normalize_for_comparison(data)
+        tavily_data = tavily_service.search_hotel_prices(
+            hotel_name=hotel_name,
+            city=city,
+            check_in=check_in,
+            check_out=check_out
+        )
+        normalized = TavilyService.normalize_for_comparison(tavily_data)
+
+        # Add CNY conversion to normalized results
+        from app.services.currency import convert_to_cny
+        for item in normalized:
+            item['price_cny'] = convert_to_cny(item.get('price'), item.get('currency', 'USD'))
 
         return jsonify({
             'success': True,
@@ -1186,7 +1218,8 @@ def test_tavily():
                 'results': processed_results[:10],  # First 10 results
                 'normalized': normalized,
                 'raw_keys': list(data.keys())
-            }
+            },
+            'prices': normalized  # Add as top-level for easy access
         })
 
     except requests.exceptions.Timeout:
