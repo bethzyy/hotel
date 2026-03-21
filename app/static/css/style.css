@@ -467,13 +467,19 @@ html {
   height: 100%;
   min-height: 180px;
   background-color: var(--gray-100);
-  background-size: cover;
-  background-position: center;
   position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.hotel-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: transform var(--transition-slow);
 }
 
-.hotel-card:hover .hotel-image {
+.hotel-card:hover .hotel-image img {
   transform: scale(1.05);
 }
 
@@ -1214,4 +1220,183 @@ footer {
 
 .room-plan-card .badge.bg-light i {
   font-size: 0.7rem;
+}
+
+/* =====================================================
+   30. Price Comparison Section (search results)
+   ===================================================== */
+.comparison-section {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.comparison-section .section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.comparison-section .section-title i {
+  color: var(--primary-500);
+}
+
+.comparison-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.comparison-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: white;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-100);
+  transition: all var(--transition-fast);
+}
+
+.comparison-item:hover {
+  border-color: var(--primary-200);
+  background: var(--primary-50);
+}
+
+.comparison-item.best {
+  background: linear-gradient(135deg, #ecfdf5, white);
+  border-color: var(--success);
+}
+
+.comparison-item .provider-name {
+  font-size: 0.8rem;
+  color: var(--gray-700);
+  font-weight: 500;
+}
+
+.comparison-item .provider-price {
+  font-family: var(--font-number);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-600);
+}
+
+.comparison-item.best .provider-price {
+  color: var(--success);
+}
+
+.comparison-item .best-badge {
+  font-size: 0.65rem;
+  background: var(--success);
+  color: white;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  margin-left: var(--space-2);
+}
+
+.comparison-item .save-badge {
+  font-size: 0.65rem;
+  background: var(--danger-light);
+  color: var(--danger);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  margin-left: var(--space-2);
+}
+
+/* =====================================================
+   31. External Platform Prices (Serper)
+   ===================================================== */
+.external-price-row {
+  background-color: var(--gray-50);
+  transition: all var(--transition-fast);
+}
+
+.external-price-row:hover {
+  background-color: var(--primary-50);
+}
+
+.external-price-row td {
+  border-top: 1px dashed var(--gray-200);
+}
+
+/* External price section header */
+.external-price-row + .external-price-row td {
+  border-top: 1px solid var(--gray-100);
+}
+
+/* Table secondary header for external prices */
+.table-secondary {
+  background-color: var(--gray-100);
+  font-weight: 500;
+}
+
+/* Comparison loading state */
+.comparison-section .loading-text {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.comparison-section .loading-text .spinner-border {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-width: 2px;
+}
+
+/* =====================================================
+   32. External Platforms Collapsible Panel
+   ===================================================== */
+.external-platforms-panel .btn-outline-secondary {
+  font-size: 0.85rem;
+  border-radius: var(--radius-md);
+}
+
+.external-platforms-panel .collapse .card-body {
+  background-color: var(--gray-50);
+  border-radius: var(--radius-md);
+}
+
+.external-platforms-panel .info-hint {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+}
+
+.external-platforms-panel .comparison-item.external {
+  background: white;
+  border: 1px dashed var(--gray-200);
+}
+
+.external-platforms-panel .comparison-item.external:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-200);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .comparison-section {
+    padding: var(--space-2);
+  }
+
+  .comparison-item {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .comparison-item .provider-name,
+  .comparison-item .provider-price {
+    font-size: 0.75rem;
+  }
+
+  .external-platforms-panel .btn-outline-secondary {
+    font-size: 0.8rem;
+  }
 }

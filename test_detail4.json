@@ -1,0 +1,31 @@
+{
+  "cached": true,
+  "data": {
+    "address": "",
+    "amenities": [],
+    "area_code": null,
+    "area_name": null,
+    "booking_url": "https://rollinggo.cn/pages/hotel/detail/index?id=79632&checkInDate=2026-03-22&checkOutDate=2026-03-23&roomCount=1&adultCount=2&childCount=0&childAgeDetails=&utm_source=model_scope",
+    "brand": null,
+    "check_in": "2026-03-22",
+    "check_out": "2026-03-23",
+    "currency": "CNY",
+    "description": "",
+    "distance": null,
+    "hotel_id": "79632",
+    "image_url": null,
+    "images": [],
+    "is_favorite": false,
+    "latitude": null,
+    "longitude": null,
+    "name": "\u676d\u5dde\u6b66\u6797\u4e07\u6021\u9152\u5e97(Courtyard by Marriott Hangzhou Wulin)",
+    "price_per_night": null,
+    "provider": "rollinggo",
+    "rating": null,
+    "room_plans": [],
+    "star_rating": null,
+    "supports_booking": false,
+    "tags": []
+  },
+  "success": true
+}

@@ -1,12 +1,17 @@
 """
 Tuniu MCP Service
 Provides hotel search, detail, and booking functionality via Tuniu MCP API
+Uses MCP streamable HTTP client (same as RollingGo)
 """
+import asyncio
 import json
 import logging
-import requests
 from typing import Dict, List, Optional, Any
 from flask import current_app
+
+# MCP client imports
+from mcp import ClientSession
+from mcp.client.streamable_http import streamable_http_client
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +24,12 @@ class TuniuError(Exception):
 class TuniuService:
     """Service wrapper for Tuniu MCP API commands."""
 
+    # Tuniu MCP API endpoint
+    MCP_API_BASE = "https://openapi.tuniu.cn/mcp/hotel"
+
     def __init__(self, api_key: Optional[str] = None, mcp_url: Optional[str] = None, timeout: int = 60):
         self.api_key = api_key
-        self.mcp_url = mcp_url
+        self.mcp_url = mcp_url or self.MCP_API_BASE
         self.timeout = timeout
 
     def _get_api_key(self) -> str:
@@ -36,27 +44,24 @@ class TuniuService:
 
     def _get_mcp_url(self) -> str:
         """Get MCP URL from config or environment."""
-        if self.mcp_url:
+        if self.mcp_url and self.mcp_url != self.MCP_API_BASE:
             return self.mcp_url
         try:
-            return current_app.config.get('TUNIU_MCP_URL', 'https://openapi.tuniu.cn/mcp/hotel')
+            return current_app.config.get('TUNIU_MCP_URL', self.MCP_API_BASE)
         except RuntimeError:
             import os
-            return os.environ.get('TUNIU_MCP_URL', 'https://openapi.tuniu.cn/mcp/hotel')
+            return os.environ.get('TUNIU_MCP_URL', self.MCP_API_BASE)
 
-    def _call_tool(self, tool_name: str, arguments: Dict) -> Dict:
+    async def _call_mcp_tool_async(self, tool_name: str, arguments: Dict) -> Optional[Dict]:
         """
-        Call a Tuniu MCP tool via HTTP request.
+        Async: Call Tuniu MCP tool via streamable HTTP client.
 
         Args:
-            tool_name: Name of the MCP tool to call
+            tool_name: MCP tool name (e.g., tuniu_hotel_search)
             arguments: Tool arguments
 
         Returns:
-            Parsed JSON response
-
-        Raises:
-            TuniuError: If the request fails or returns an error
+            Parsed JSON response or None on failure
         """
         api_key = self._get_api_key()
         mcp_url = self._get_mcp_url()
@@ -64,58 +69,102 @@ class TuniuService:
         if not api_key:
             raise TuniuError("Tuniu API key not configured. Please set TUNIU_API_KEY environment variable.")
 
-        # Build JSON-RPC 2.0 request
-        payload = {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "tools/call",
-            "params": {
-                "name": tool_name,
-                "arguments": arguments
-            }
-        }
-
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json, text/event-stream",
-            "apiKey": api_key
-        }
-
-        logger.info(f"Calling Tuniu MCP tool: {tool_name}")
-
         try:
-            response = requests.post(
-                mcp_url,
-                json=payload,
-                headers=headers,
-                timeout=self.timeout
+            logger.info(f"Calling Tuniu MCP tool via streamable_http: {tool_name}")
+            logger.debug(f"MCP URL: {mcp_url}")
+            logger.debug(f"Arguments: {arguments}")
+
+            # Create httpx client with apiKey header
+            import httpx
+            http_client = httpx.AsyncClient(
+                headers={
+                    "apiKey": api_key,
+                },
+                timeout=httpx.Timeout(60.0, read=300.0)
             )
 
-            if response.status_code != 200:
-                raise TuniuError(f"Tuniu API error: HTTP {response.status_code}")
+            async with http_client:
+                async with streamable_http_client(
+                    mcp_url,
+                    http_client=http_client
+                ) as (read_stream, write_stream, _):
+                    async with ClientSession(read_stream, write_stream) as session:
+                        # Initialize session
+                        await session.initialize()
 
-            result = response.json()
+                        # Call tool
+                        result = await session.call_tool(tool_name, arguments)
 
-            # Check for JSON-RPC error
-            if 'error' in result:
-                error_msg = result['error'].get('message', 'Unknown error')
-                raise TuniuError(f"Tuniu API error: {error_msg}")
+                        logger.debug(f"MCP result isError: {result.isError}")
 
-            # Extract content from MCP response
-            content = result.get('result', {}).get('content', [])
-            if content and len(content) > 0:
-                text_content = content[0].get('text', '{}')
-                try:
-                    return json.loads(text_content)
-                except json.JSONDecodeError:
-                    return {"raw": text_content}
+                        if result.isError:
+                            error_text = ""
+                            for content in result.content:
+                                if hasattr(content, 'type') and content.type == "text":
+                                    error_text = content.text
+                            logger.error(f"Tuniu MCP tool error: {error_text}")
+                            raise TuniuError(f"Tuniu API error: {error_text}")
 
-            return result.get('result', {})
+                        # Parse response content
+                        for content in result.content:
+                            if hasattr(content, 'type') and content.type == "text":
+                                try:
+                                    data = json.loads(content.text)
+                                    logger.debug(f"Tuniu MCP response parsed successfully")
+                                    return data
+                                except json.JSONDecodeError as e:
+                                    logger.error(f"Failed to parse Tuniu response: {e}")
+                                    return {"raw": content.text}
 
-        except requests.Timeout:
-            raise TuniuError(f"Tuniu API request timed out after {self.timeout} seconds")
-        except requests.RequestException as e:
+                        logger.warning("No text content in Tuniu MCP response")
+                        return None
+
+        except TuniuError:
+            raise
+        except Exception as e:
+            import traceback
+            logger.error(f"Tuniu MCP call failed: {e}")
+            logger.debug(traceback.format_exc())
             raise TuniuError(f"Tuniu API request failed: {str(e)}")
+
+    def _call_tool(self, tool_name: str, arguments: Dict) -> Dict:
+        """
+        Synchronous wrapper for MCP tool call.
+
+        Args:
+            tool_name: MCP tool name
+            arguments: Tool arguments
+
+        Returns:
+            Parsed JSON response
+
+        Raises:
+            TuniuError: If the request fails
+        """
+        try:
+            # Try to get existing event loop
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # If loop is running, use thread pool
+                    import concurrent.futures
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(
+                            asyncio.run,
+                            self._call_mcp_tool_async(tool_name, arguments)
+                        )
+                        return future.result(timeout=self.timeout)
+            except RuntimeError:
+                pass
+
+            # Create new event loop
+            return asyncio.run(self._call_mcp_tool_async(tool_name, arguments))
+
+        except TuniuError:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to run Tuniu MCP call: {e}")
+            raise TuniuError(f"Tuniu API call failed: {str(e)}")
 
     def search_hotels(
         self,

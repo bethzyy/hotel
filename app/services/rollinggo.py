@@ -680,15 +680,30 @@ class RollingGoService:
         check_in = raw_detail.get('checkIn') or raw_detail.get('check_in')
         check_out = raw_detail.get('checkOut') or raw_detail.get('check_out')
 
+        # 获取图片列表（支持多种字段名）
+        images = raw_detail.get('images') or raw_detail.get('imageList') or raw_detail.get('hotelImages', [])
+
+        # 如果没有主图但有图片列表，使用第一张作为主图
+        image_url = normalized.get('image_url')
+        if not image_url and images and len(images) > 0:
+            first_image = images[0]
+            if isinstance(first_image, str):
+                image_url = first_image
+            elif isinstance(first_image, dict):
+                image_url = first_image.get('url') or first_image.get('imageUrl') or first_image.get('src')
+
         # Add detail-specific fields
         normalized.update({
             'description': raw_detail.get('description', ''),
-            'images': raw_detail.get('images', []),
+            'images': images,
+            'image_url': image_url,  # 更新主图（可能从 images 数组中获取）
             'amenities': amenities,
             'check_in': check_in,  # 入住日期
             'check_out': check_out,  # 退房日期
             'room_plans': RollingGoService._normalize_room_plans(
-                raw_detail.get('roomPlans') or raw_detail.get('room_plans', []),
+                raw_detail.get('roomRatePlans') or  # API 实际返回的字段名
+                raw_detail.get('roomPlans') or
+                raw_detail.get('room_plans', []),
                 check_in,
                 check_out
             )

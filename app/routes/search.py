@@ -208,10 +208,12 @@ def search_hotels():
             'error': str(e)
         }), 400
     except Exception as e:
+        import traceback
         current_app.logger.error(f"Search error: {e}")
+        current_app.logger.error(traceback.format_exc())
         return jsonify({
             'success': False,
-            'error': 'An unexpected error occurred'
+            'error': f'An unexpected error occurred: {str(e)}'
         }), 500
 
 

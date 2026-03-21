@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>酒店详情 - 酒店搜索</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -71,7 +72,7 @@
             </div>
 
             <!-- Image Gallery -->
-            <div class="row mb-4">
+            <div id="imageSection" class="row mb-4" style="display: none;">
                 <div class="col-12">
                     <div id="mainImage" class="hotel-main-image" onclick="openLightbox(currentImageUrl)"></div>
                     <div id="imageGallery" class="image-gallery mt-3"></div>
@@ -155,6 +156,70 @@
                 </div>
             </div>
 
+            <!-- Price Comparison Section -->
+            <div id="priceComparisonSection" class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-graph-up-arrow text-primary me-2"></i> 多平台比价
+                        </h5>
+                        <button id="refreshComparison" class="btn btn-sm btn-outline-secondary" onclick="loadPriceComparison()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> 刷新
+                        </button>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="comparisonLoading" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="text-muted mt-2 mb-0">正在查询其他平台价格...</p>
+                    </div>
+
+                    <!-- Comparison Results -->
+                    <div id="comparisonResults" style="display: none;">
+                        <!-- Best Price Banner -->
+                        <div id="bestPriceBanner" class="alert alert-success d-flex align-items-center mb-3" style="display: none !important;">
+                            <i class="bi bi-trophy-fill me-2"></i>
+                            <span id="bestPriceText"></span>
+                        </div>
+
+                        <!-- Comparison Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 30%;">平台</th>
+                                        <th style="width: 35%;">价格</th>
+                                        <th style="width: 35%;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comparisonTableBody">
+                                </tbody>
+                                <tbody id="externalPricesBody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Match Info -->
+                        <div id="matchInfo" class="mt-3 text-muted small" style="display: none;">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <span id="matchInfoText"></span>
+                        </div>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="comparisonError" class="alert alert-warning mb-0" style="display: none;">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <span id="comparisonErrorText"></span>
+                    </div>
+
+                    <!-- No Results State -->
+                    <div id="comparisonNoResults" class="text-center py-3" style="display: none;">
+                        <i class="bi bi-search display-4 text-muted"></i>
+                        <p class="text-muted mt-2 mb-0">未找到其他平台的价格信息</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Action Buttons -->
             <div class="d-flex gap-3 mb-4 flex-wrap">
                 <!-- 预订链接按钮 (booking_url from RollingGo) -->
@@ -204,6 +269,7 @@
         let allHotelImages = [];
         let displayedImageCount = 6;
         let mapInstance = null;
+        let currentHotelData = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             // Get search data from session storage
@@ -282,6 +348,9 @@
         }
 
         function renderHotelDetail(hotel) {
+            // Store hotel data globally for room plan rendering
+            currentHotelData = hotel;
+
             // Provider badge is already set in HTML
 
             // Basic info
@@ -320,15 +389,21 @@
                 document.getElementById('brandName').textContent = hotel.brand;
             }
 
-            // Main image
-            const mainImageUrl = hotel.image_url || hotel.images?.[0] || '/static/img/placeholder-hotel.png';
-            currentImageUrl = mainImageUrl;
-            document.getElementById('mainImage').style.backgroundImage = `url('${mainImageUrl}')`;
+            // Main image - 只有在有图片时才显示图片区域
+            const hasImages = hotel.image_url || (hotel.images && hotel.images.length > 0);
+            const imageSection = document.getElementById('imageSection');
 
-            // Image gallery - 支持显示更多图片
-            allHotelImages = hotel.images || [];
-            if (allHotelImages.length > 0) {
-                renderImageGallery();
+            if (hasImages) {
+                imageSection.style.display = 'block';
+                const mainImageUrl = hotel.image_url || hotel.images?.[0] || '/static/img/placeholder-hotel.png';
+                currentImageUrl = mainImageUrl;
+                document.getElementById('mainImage').style.backgroundImage = `url('${mainImageUrl}')`;
+
+                // Image gallery - 支持显示更多图片
+                allHotelImages = hotel.images || [];
+                if (allHotelImages.length > 0) {
+                    renderImageGallery();
+                }
             }
 
             // Tags
@@ -388,6 +463,9 @@
 
             // Update favorite button
             updateFavoriteButton(hotel.is_favorite);
+
+            // Load price comparison after hotel detail is rendered
+            loadPriceComparison();
         }
 
         // 渲染图片画廊
@@ -537,11 +615,25 @@
                     </div>
                 ` : '';
 
-                // 总价显示
-                const totalPriceHtml = plan.total_price ? `
+                // 检查是否有有效价格（大于0）
+                const hasPrice = (plan.price_per_night && plan.price_per_night > 0) ||
+                                 (plan.price && plan.price > 0) ||
+                                 (plan.total_price && plan.total_price > 0);
+                const displayPrice = plan.price_per_night > 0 ? plan.price_per_night :
+                                    plan.price > 0 ? plan.price : 0;
+
+                // 总价显示 - 只在有有效价格时显示
+                const totalPriceHtml = (plan.total_price && plan.total_price > 0) ? `
                     <div class="text-muted small">
                         总价: ${plan.currency || '¥'}${plan.total_price}
                     </div>
+                ` : '';
+
+                // 预订链接按钮（无价格时显示）
+                const bookingBtnHtml = (!hasPrice && currentHotelData && currentHotelData.booking_url) ? `
+                    <a href="${currentHotelData.booking_url}" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> 查看实时价格
+                    </a>
                 ` : '';
 
                 return `
@@ -564,11 +656,16 @@
                             <div class="text-md-end ms-md-4">
                                 ${plan.available ? `
                                     <div class="mb-2">
-                                        <span class="fs-4 fw-bold text-primary" style="font-family: var(--font-number);">${plan.currency || '¥'}${plan.price_per_night || plan.price || '询价'}</span>
-                                        <span class="text-muted small">/晚</span>
+                                        ${hasPrice ? `
+                                            <span class="fs-4 fw-bold text-primary" style="font-family: var(--font-number);">${plan.currency || '¥'}${displayPrice}</span>
+                                            <span class="text-muted small">/晚</span>
+                                        ` : `
+                                            <span class="text-muted small">暂无报价</span>
+                                        `}
                                     </div>
                                     ${totalPriceHtml}
-                                    <span class="badge bg-light text-muted">请使用上方预订按钮</span>
+                                    ${bookingBtnHtml}
+                                    ${hasPrice ? `<span class="badge bg-light text-muted">请使用上方预订按钮</span>` : ''}
                                 ` : `
                                     <div class="text-center">
                                         <span class="badge bg-danger bg-opacity-10 text-danger">
@@ -678,6 +775,272 @@
             document.getElementById('errorMessage').style.display = 'block';
             document.getElementById('errorText').textContent = message;
         }
+
+        // ==================== Price Comparison Functions ====================
+
+        // Currency symbol mapping for proper display
+        const CURRENCY_SYMBOLS = {
+            'CNY': '¥',
+            'USD': '$',
+            'EUR': '€',
+            'GBP': '£',
+            'HKD': 'HK$',
+            'TWD': 'NT$'
+        };
+
+        function getCurrencySymbol(currency) {
+            // If currency is already a symbol, return it
+            if (!currency || currency.length <= 3) {
+                return currency || '¥';
+            }
+            // Otherwise look up in mapping
+            return CURRENCY_SYMBOLS[currency] || '¥';
+        }
+
+        async function loadPriceComparison() {
+            if (!currentHotel || !searchParams) {
+                console.log('Skipping comparison: no hotel or search params');
+                return;
+            }
+
+            const loading = document.getElementById('comparisonLoading');
+            const results = document.getElementById('comparisonResults');
+            const errorDiv = document.getElementById('comparisonError');
+            const noResults = document.getElementById('comparisonNoResults');
+
+            // Reset states
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            errorDiv.style.display = 'none';
+            noResults.style.display = 'none';
+
+            try {
+                // Build comparison params
+                const params = new URLSearchParams();
+                params.append('provider', currentHotel.provider || 'rollinggo');
+                params.append('hotel_id', currentHotel.hotel_id);
+
+                // Date params
+                const checkIn = currentHotel.check_in || searchParams.check_in || searchParams.check_in_date;
+                const checkOut = currentHotel.check_out || searchParams.check_out || searchParams.check_out_date;
+                params.append('check_in', checkIn);
+                params.append('check_out', checkOut);
+
+                // Hotel info for matching
+                if (currentHotel.name) params.append('hotel_name', currentHotel.name);
+                if (currentHotel.address) params.append('hotel_address', currentHotel.address);
+                if (currentHotel.latitude) params.append('hotel_lat', currentHotel.latitude);
+                if (currentHotel.longitude) params.append('hotel_lng', currentHotel.longitude);
+                params.append('adult_count', searchParams.adult_count || 2);
+                params.append('child_count', searchParams.child_count || 0);
+
+                const response = await fetch(`/api/compare/${currentHotel.provider || 'rollinggo'}/${currentHotel.hotel_id}?${params.toString()}`);
+                const result = await response.json();
+
+                loading.style.display = 'none';
+
+                if (result.success) {
+                    renderComparisonResults(result.data);
+                } else {
+                    showComparisonError(result.error || '比价查询失败');
+                }
+
+            } catch (error) {
+                loading.style.display = 'none';
+                showComparisonError('网络错误，无法获取比价信息');
+                console.error('Load price comparison error:', error);
+            }
+        }
+
+        function renderComparisonResults(data) {
+            const results = document.getElementById('comparisonResults');
+            const noResults = document.getElementById('comparisonNoResults');
+            const tableBody = document.getElementById('comparisonTableBody');
+            const bestPriceBanner = document.getElementById('bestPriceBanner');
+            const matchInfo = document.getElementById('matchInfo');
+
+            // Check if we have any comparison data (including external prices)
+            const hasComparisons = data.comparisons && data.comparisons.length > 0;
+            const hasSourcePrice = data.source && data.source.price;
+            const hasExternalPrices = data.external_prices && data.external_prices.length > 0;
+
+            if (!hasComparisons && !hasSourcePrice && !hasExternalPrices) {
+                noResults.style.display = 'block';
+                return;
+            }
+
+            // Clear table
+            tableBody.innerHTML = '';
+
+            // Build rows for all providers
+            const allProviders = [data.source, ...(data.comparisons || [])];
+            const providerNames = {
+                'rollinggo': 'RollingGo',
+                'tuniu': '途牛'
+            };
+
+            allProviders.forEach((item, index) => {
+                const isSource = index === 0;
+                const isBest = data.best_price && data.best_price.provider === item.provider;
+                const row = document.createElement('tr');
+
+                // Highlight best price
+                if (isBest) {
+                    row.className = 'table-success';
+                }
+
+                // Platform name
+                const platformCell = document.createElement('td');
+                platformCell.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <span class="badge ${isSource ? 'bg-info' : 'bg-secondary'} me-2">
+                            ${providerNames[item.provider] || item.provider}
+                        </span>
+                        ${isSource ? '<span class="badge bg-light text-dark border">当前</span>' : ''}
+                        ${isBest ? '<i class="bi bi-trophy-fill text-warning ms-2" title="最低价"></i>' : ''}
+                    </div>
+                `;
+                row.appendChild(platformCell);
+
+                // Price
+                const priceCell = document.createElement('td');
+                if (item.price) {
+                    priceCell.innerHTML = `
+                        <div>
+                            <span class="fs-5 fw-bold ${isBest ? 'text-success' : 'text-primary'}">${item.currency || '¥'}${item.price}</span>
+                            <span class="text-muted small">/晚</span>
+                        </div>
+                    `;
+                } else {
+                    priceCell.innerHTML = '<span class="text-muted">暂无报价</span>';
+                }
+                row.appendChild(priceCell);
+
+                // Action
+                const actionCell = document.createElement('td');
+                if (item.url) {
+                    actionCell.innerHTML = `
+                        <a href="${item.url}" target="_blank" class="btn btn-sm ${isBest ? 'btn-success' : 'btn-outline-primary'}">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> 前往预订
+                        </a>
+                    `;
+                } else if (item.provider === 'tuniu' && item.supports_booking) {
+                    actionCell.innerHTML = `
+                        <span class="text-muted small">支持站内预订</span>
+                    `;
+                } else {
+                    actionCell.innerHTML = '<span class="text-muted small">-</span>';
+                }
+                row.appendChild(actionCell);
+
+                tableBody.appendChild(row);
+            });
+
+            // Show best price banner
+            if (data.best_price && data.best_price.save && data.best_price.save > 0) {
+                bestPriceBanner.style.display = 'flex';
+                document.getElementById('bestPriceText').textContent =
+                    `在 ${providerNames[data.best_price.provider]} 找到最低价，可节省 ¥${data.best_price.save}`;
+            } else {
+                bestPriceBanner.style.display = 'none';
+            }
+
+            // Show match info for cross-platform matches
+            if (hasComparisons) {
+                const comparison = data.comparisons[0];
+                if (comparison.match_confidence) {
+                    matchInfo.style.display = 'block';
+                    const confidencePercent = Math.round(comparison.match_confidence * 100);
+                    let matchType = '名称匹配';
+                    if (comparison.location_match) {
+                        matchType = '名称+位置匹配';
+                    }
+                    document.getElementById('matchInfoText').textContent =
+                        `${matchType}，置信度 ${confidencePercent}%`;
+                }
+            }
+
+            // Render external platform prices (Serper)
+            renderExternalPrices(data.external_prices);
+
+            results.style.display = 'block';
+        }
+
+        function renderExternalPrices(externalPrices) {
+            const tbody = document.getElementById('externalPricesBody');
+            if (!tbody) return;
+
+            // Clear previous content
+            tbody.innerHTML = '';
+
+            if (!externalPrices || externalPrices.length === 0) {
+                return;
+            }
+
+            // Add section header
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `
+                <td colspan="3" class="table-secondary">
+                    <small class="text-muted">
+                        <i class="bi bi-globe me-1"></i>外部平台参考价格 (需跳转确认实时价格)
+                    </small>
+                </td>
+            `;
+            tbody.appendChild(headerRow);
+
+            // Add external price rows
+            externalPrices.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = 'external-price-row';
+
+                // Platform name with icon
+                const platformCell = document.createElement('td');
+                const iconClass = item.icon || 'bi-link';
+                platformCell.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi ${iconClass} me-2 text-info"></i>
+                        <span class="badge bg-info bg-opacity-10 text-info">${item.platform_name}</span>
+                    </div>
+                `;
+                row.appendChild(platformCell);
+
+                // Price - use proper currency symbol
+                const priceCell = document.createElement('td');
+                const currencySymbol = getCurrencySymbol(item.currency);
+                if (item.price) {
+                    priceCell.innerHTML = `
+                        <div>
+                            <span class="fs-6 fw-bold text-primary">${currencySymbol}${item.price}</span>
+                            <span class="text-muted small">/晚</span>
+                            <span class="badge bg-light text-muted ms-1">参考</span>
+                        </div>
+                    `;
+                } else {
+                    priceCell.innerHTML = '<span class="text-muted small">查看详情</span>';
+                }
+                row.appendChild(priceCell);
+
+                // Action button
+                const actionCell = document.createElement('td');
+                if (item.url) {
+                    actionCell.innerHTML = `
+                        <a href="${item.url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> 前往查看
+                        </a>
+                    `;
+                } else {
+                    actionCell.innerHTML = '<span class="text-muted small">-</span>';
+                }
+                row.appendChild(actionCell);
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function showComparisonError(message) {
+            document.getElementById('comparisonErrorText').textContent = message;
+            document.getElementById('comparisonError').style.display = 'block';
+        }
     </script>
 
     <style>
@@ -762,6 +1125,47 @@
         #moreImagesBtn button:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
+        }
+
+        /* Price Comparison Section */
+        #priceComparisonSection .table th {
+            font-weight: 500;
+            border-bottom-width: 1px;
+        }
+
+        #priceComparisonSection .table td {
+            vertical-align: middle;
+        }
+
+        #bestPriceBanner {
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .table-success {
+            background-color: rgba(25, 135, 84, 0.1) !important;
+        }
+
+        #refreshComparison {
+            transition: all var(--transition-fast);
+        }
+
+        #refreshComparison:hover {
+            transform: rotate(180deg);
+        }
+
+        #refreshComparison:active {
+            transform: rotate(360deg);
         }
     </style>
 </body>

@@ -14,6 +14,18 @@ python run.py                    # http://localhost:5000
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Install MCP runtime dependencies (required for RollingGo)
+pip install mcp httpx httpx-sse
+```
+
+## Environment Setup
+
+Copy `.env.example` to `.env` and configure:
+
+```
+AIGOHOTEL_API_KEY=your-key-here    # Required for RollingGo
+DEFAULT_PROVIDER=rollinggo          # or 'tuniu'
 ```
 
 ## Architecture
@@ -69,3 +81,8 @@ Each provider has `normalize_hotel()` and `normalize_hotel_detail()` methods tha
 ## RollingGo Skill
 
 The `rollinggo-hotel/` and `rollinggo-hotel-cn/` directories contain Claude Code skills for CLI usage. Read `references/rollinggo-npx.md` for command details.
+
+## Notes
+
+- **Windows paths**: Use forward slashes (`C:/path`) or quoted backslashes in bash commands
+- **API Key**: Get RollingGo API key from https://mcp.agentichotel.cn/apply

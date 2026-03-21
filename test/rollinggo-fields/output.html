@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RollingGo 酒店字段测试 - 杭州武林万怡酒店</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-left: 4px solid #4CAF50;
+        }
+        .meta {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .field {
+            padding: 5px 0;
+            border-bottom: 1px dotted #eee;
+        }
+        .key {
+            color: #0066cc;
+            font-weight: 600;
+        }
+        .string {
+            color: #28a745;
+        }
+        .number {
+            color: #d63384;
+        }
+        .bool.true {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .bool.false {
+            color: #dc3545;
+        }
+        .null {
+            color: #888;
+            font-style: italic;
+        }
+        .url {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .url:hover {
+            text-decoration: underline;
+        }
+        .array, .object {
+            color: #888;
+        }
+        .empty-list, .empty-object {
+            color: #aaa;
+            font-style: italic;
+        }
+        .unknown {
+            color: #666;
+            font-style: italic;
+        }
+        img {
+            border-radius: 4px;
+            display: block;
+        }
+        .raw-json {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: "Fira Code", Consolas, monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .toggle-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .toggle-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏨 RollingGo 酒店字段测试</h1>
+        <p class="meta">查询酒店: <strong>杭州武林万怡酒店</strong> | 生成时间: 2026-03-20 22:53:35</p>
+
+        <h2>📋 搜索结果字段</h2>
+        <div class="section">
+            <div class="field" style="margin-left: 0px;"><span class="key">message:</span> <span class="string">"酒店搜索成功"</span></div>
+<div class="field" style="margin-left: 0px;"><span class="key">hotels:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelId:</span> <span class="number">79632</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bookingUrl:</span> <a href="https://rollinggo.cn/pages/hotel/detail/index?id=79632&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope" target="_blank" class="url">https://rollinggo.cn/pages/hotel/detail/index?id=79632&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope</a></div>
+<div class="field" style="margin-left: 40px;"><span class="key">name:</span> <span class="string">"杭州武林万怡酒店(Courtyard by Marriott Hangzhou Wulin)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">brand:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">address:</span> <span class="string">"湖墅南路28号"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">destinationId:</span> <span class="string">"6084457"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">latitude:</span> <span class="number">30.274223</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">longitude:</span> <span class="number">120.157154</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">distanceInMeters:</span> <span class="number">2030</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">starRating:</span> <span class="number">4.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">price:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">message:</span> <span class="string">"查价成功,最低价:609.0, 币种:CNY "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">hasPrice:</span> <span class="bool true">True</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">lowestPrice:</span> <span class="number">609.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">areaCode:</span> <span class="string">"CN"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">description:</span> <span class="string">"杭州武林万怡酒店地处杭州市中心，紧邻武林广场商圈及西湖文化广场，信步可至杭州大厦，距西湖之美也仅咫尺之遥，交通十分便利。&lt;br&gt;&lt;br&gt;酒店拥有各式精美客房，配备各类时尚家具及床上用品。酒店公共区域均有WIFI覆盖，豪华客房及套房还配备先进的上网及现代化设施。&lt;br&gt;&lt;br&gt;餐厅——MoMo Café空间明亮时尚，每天供应品种齐全的自助早餐。全年营业的游泳池、涡流池，让您在住店期间可以尽情舒缓身心，24小时健身中心可助您时刻保持强健体魄。"</span></div>
+<div class="field" style="margin-left: 40px;">
+                <span class="key">imageUrl:</span>
+                <a href="https://image-cdn.aigohotel.com/Image/CN/79632/Featured Image/4043919_86_b.jpg" target="_blank" class="url">https://image-cdn.aigohotel.com/Image/CN/79632/Featured Image/4043919_86_b.jpg</a>
+                <br><img src="https://image-cdn.aigohotel.com/Image/CN/79632/Featured Image/4043919_86_b.jpg" style="max-width: 300px; max-height: 200px; border: 1px solid #ccc; margin-top: 5px;">
+            </div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelAmenities:</span> <span class="array">["叫醒服务", "专职行李员", "行李寄存", "外币兑换服务", "快速入住退房", "24小时前台", "公共音响系统", "桑拿浴室", "健身室", "电梯", "前台贵重物品保险柜", "会议厅设施收费:400CNY/小时.", "大堂吧", "公共区域监控", "无障碍客房", "无烟楼层", "行政酒廊", "快递服务", "叫车服务", "婚宴服务", "接机服务设施收费:650CNY/次数.开放时间(24小时制): 00:00~23:59开放时间(星期): 周一到周日;需要预约使用.", "多功能厅", "行政楼层", "礼品廊", "干洗服务", "熨衣服务", "传真/复印设施需要收费.", "翻译服务", "公共区域禁烟", "餐厅", "儿童拖鞋", "儿童牙刷", "VIP通道入住", "公用区wifi", "灭火器", "熨斗/挂烫机", "自动售货机", "送机服务设施收费:650CNY/次数.开放时间(24小时制): 00:00~23:59开放时间(星期): 周一到周日;需要预约使用.", "洗衣房", "机器人服务", "烟雾报警器", "安全报警器", "安保人员", "游泳池开放时间(24小时制): 06:00~23:00开放时间(星期): 周一到周日", "停车场", "WIFI"]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">score:</span> <span class="number">0.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">tags:</span> <span class="array">["当地热门品牌", "客房点餐", "客房备有吹风机", "自行车租赁", "客房备有热水壶", "客房备有拖鞋", "可提供婴儿床或围栏", "儿童玩乐设施", "性价比酒店", "提供SPA服务", "健身房", "户外泳池", "运动友好酒店", "室内恒温泳池", "儿童泳池", "宴会厅", "提供双床房", "商务中心", "提供大床房"]</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[1]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelId:</span> <span class="number">79644</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bookingUrl:</span> <a href="https://rollinggo.cn/pages/hotel/detail/index?id=79644&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope" target="_blank" class="url">https://rollinggo.cn/pages/hotel/detail/index?id=79644&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope</a></div>
+<div class="field" style="margin-left: 40px;"><span class="key">name:</span> <span class="string">"杭州西溪喜来登度假大酒店(西湖区店)(Sheraton Grand Hangzhou Wetland Park Resort)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">brand:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">address:</span> <span class="string">"紫金港路西溪天堂国际旅游综合体1号"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">destinationId:</span> <span class="string">"6084457"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">latitude:</span> <span class="number">30.267639</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">longitude:</span> <span class="number">120.088753</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">distanceInMeters:</span> <span class="number">4586</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">starRating:</span> <span class="number">5.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">price:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">message:</span> <span class="string">"查价成功,最低价:927.0, 币种:CNY "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">hasPrice:</span> <span class="bool true">True</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">lowestPrice:</span> <span class="number">927.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">areaCode:</span> <span class="string">"CN"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">description:</span> <span class="string">"杭州西溪喜来登度假大酒店坐落于杭州西溪国家湿地公园一角，距西湖、灵隐寺约5公里；距阿里巴巴西溪园区约9公里，距未来科技城约14公里；通过紧邻酒店的文一路隧道可快速到达市中心，并可直达城北及城东核心区域；通过紫之隧道则可便捷到达之江云栖小镇、钱江新城、滨江区奥林匹克中心以及国际博览中心。&lt;br&gt;三百余间宽敞的客房和套房，在阳台上西溪国家湿地公园的美景尽收眼底，所有客房均配备有口皆碑的喜来登特色睡眠体验。&lt;br&gt;4家餐厅和酒吧，包括盛宴（互动式全日制餐厅，提供包含亚洲美食在内的国际美食）、萨婷（现代时尚法餐厅）、采悦轩（新派中餐厅，提供特色杭帮菜）或在大堂吧中啜饮美味饮品。&lt;br&gt;喜来登水疗提供各式疗程，帮助您除去身心疲惫。同时您可以在喜来登健身中心和室内恒温游泳池中锻炼体魄。&lt;br&gt;14个多功能会议厅和1个大宴会厅独立建于花园中心，其中包括一个1080平米的宴会厅，最多可容纳1600名客人同时开会，以及一应俱全的商务中心，均配备前沿科技设备满足客人的商务需要。"</span></div>
+<div class="field" style="margin-left: 40px;">
+                <span class="key">imageUrl:</span>
+                <a href="https://image-cdn.aigohotel.com/Image/CN/79644/bbf7eb12_b.jpg" target="_blank" class="url">https://image-cdn.aigohotel.com/Image/CN/79644/bbf7eb12_b.jpg</a>
+                <br><img src="https://image-cdn.aigohotel.com/Image/CN/79644/bbf7eb12_b.jpg" style="max-width: 300px; max-height: 200px; border: 1px solid #ccc; margin-top: 5px;">
+            </div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelAmenities:</span> <span class="array">["叫醒服务", "租车服务", "行李寄存", "外币兑换服务", "24小时前台", "公共音响系统", "健身室", "SPA设施需要收费.开放时间(24小时制): 11:00~23:00开放时间(星期): 周一到周日", "儿童乐园设施收费:88CNY/天.开放时间(24小时制): 09:00~20:00开放时间(星期): 周一到周日", "电梯", "前台贵重物品保险柜", "商务中心", "会议厅设施需要收费.", "自动取款机", "大堂吧", "公共区域监控", "无障碍客房", "无烟楼层", "无障碍通道", "行政酒廊", "前台服务语言", "自行车租赁服务设施收费:20CNY/小时.", "婚宴服务", "接站服务设施需要收费.;需要预约使用.", "接机服务设施需要收费.", "商务服务", "多功能厅", "多媒体演示系统", "行政楼层", "干洗服务设施需要收费.", "熨衣服务设施需要收费.", "公共区域禁烟", "餐厅开放时间(24小时制): 06:30~23:00开放时间(星期): 周一到周日", "儿童拖鞋", "儿童玩具", "儿童牙刷", "徒步旅行", "公用区wifi", "门禁系统", "新风系统", "灭火器", "熨斗/挂烫机", "自动售货机", "送机服务设施需要收费.", "儿童桌面游戏/拼图", "烟雾报警器", "安保人员", "花园", "送站服务设施需要收费.;需要预约使用.", "儿童泳池", "电子身份证入住", "提供轮椅", "游泳池", "停车场", "WIFI"]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">score:</span> <span class="number">0.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">tags:</span> <span class="array">["临近商场", "单体酒店", "当地热门品牌", "客房点餐", "无障碍停车位", "客房备有吹风机", "自行车租赁", "客房备有热水壶", "客房备有拖鞋", "可提供婴儿床或围栏", "儿童玩乐设施", "性价比酒店", "提供SPA服务", "健身房", "户外泳池", "运动友好酒店", "室内恒温泳池", "部分客房带有花园景", "儿童泳池", "宴会厅", "提供双床房", "商务中心", "提供大床房"]</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[2]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelId:</span> <span class="number">216100</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bookingUrl:</span> <a href="https://rollinggo.cn/pages/hotel/detail/index?id=216100&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope" target="_blank" class="url">https://rollinggo.cn/pages/hotel/detail/index?id=216100&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope</a></div>
+<div class="field" style="margin-left: 40px;"><span class="key">name:</span> <span class="string">"杭州城中香格里拉大酒店(Midtown Shangri-La, Hangzhou)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">brand:</span> <span class="string">"香格里拉"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">address:</span> <span class="string">"长寿路6号延安路嘉里中心"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">destinationId:</span> <span class="string">"6084457"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">latitude:</span> <span class="number">30.25995</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">longitude:</span> <span class="number">120.161759</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">distanceInMeters:</span> <span class="number">2821</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">starRating:</span> <span class="number">5.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">price:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">message:</span> <span class="string">"查价成功,最低价:1542.0, 币种:CNY "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">hasPrice:</span> <span class="bool true">True</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">lowestPrice:</span> <span class="number">1542.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">areaCode:</span> <span class="string">"CN"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">description:</span> <span class="string">"杭州城中香格里拉大酒店位于西湖湖滨商圈，步行约5-10分钟可以到达西湖以及地铁凤起路站；紧邻杭州交通枢纽，可便捷前往灵隐寺、河坊街、断桥、苏堤等景点；酒店所在的嘉里中心，可提供电影院、超市、美食、休闲等多种选择。&lt;br&gt;酒店提供多种房型选择，湖景房皆可坐拥西湖景致，豪华阁楼层及以上房型更可享受多种豪华阁尊享礼遇。&lt;br&gt;酒店共有4个餐厅，美食汇提供丰富的自助选择，城中啤酒餐吧适合夜晚的放松小酌，非凡酒廊适宜商务洽淡以及享用下午茶，城中中餐厅可以使您足不出户品尝地道杭帮菜以及粤式点心。&lt;br&gt;酒店拥有综合会议与宴会设施，面积约28-1583平方米不等。多功能支持中心/宴会预订中心为您提供计算机服务和办公设施。酒店更有专业的宴会及会议统筹团队为您提供个性化服务。&lt;br&gt;酒店5楼有恒温游泳池以及设备先进的健身房，同时【氣】水疗可以帮您在都市生活中舒缓身心。"</span></div>
+<div class="field" style="margin-left: 40px;">
+                <span class="key">imageUrl:</span>
+                <a href="https://image-cdn.aigohotel.com/Image/CN/216100/Featured Image/b622722b_b.jpg" target="_blank" class="url">https://image-cdn.aigohotel.com/Image/CN/216100/Featured Image/b622722b_b.jpg</a>
+                <br><img src="https://image-cdn.aigohotel.com/Image/CN/216100/Featured Image/b622722b_b.jpg" style="max-width: 300px; max-height: 200px; border: 1px solid #ccc; margin-top: 5px;">
+            </div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelAmenities:</span> <span class="array">["叫醒服务", "租车服务", "专职行李员", "行李寄存", "外币兑换服务", "快速入住退房", "24小时前台", "公共音响系统", "桑拿浴室", "健身室", "SPA", "按摩室", "电梯", "前台贵重物品保险柜", "商场", "大堂吧", "公共区域监控", "无障碍客房", "咖啡厅", "酒吧", "无烟楼层", "无障碍通道", "行政酒廊", "快递服务", "叫车服务", "前台服务语言", "婚宴服务", "儿童书籍/影音", "接站服务设施收费:400CNY/次数.开放时间(24小时制): 00:00~23:30开放时间(星期): 周一到周日;需要预约使用.", "接机服务设施收费:600CNY/次数.开放时间(24小时制): 00:00~23:30开放时间(星期): 周一到周日;需要预约使用.", "旅游票务服务", "多功能厅", "多媒体演示系统", "行政楼层", "干洗服务", "熨衣服务", "翻译服务", "吸烟区", "公共区域禁烟", "餐厅开放时间(24小时制): 10:00~22:00开放时间(星期): 周一到周日", "儿童拖鞋", "儿童玩具", "儿童牙刷", "VIP通道入住", "公用区wifi", "儿童餐", "急救包", "门禁系统", "新风系统", "灭火器", "送机服务设施收费:600CNY/次数.开放时间(24小时制): 00:00~23:30开放时间(星期): 周一到周日;需要预约使用.", "儿童桌面游戏/拼图", "烟雾报警器", "安全报警器", "安保人员", "送站服务设施收费:400CNY/次数.开放时间(24小时制): 00:00~23:30开放时间(星期): 周一到周日;需要预约使用.", "户外家具", "一氧化碳报警器", "提供轮椅", "游泳池开放时间(24小时制): 06:00~23:00开放时间(星期): 周一到周日", "停车场", "充电车位", "WIFI"]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">score:</span> <span class="number">0.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">tags:</span> <span class="array">["当地热门品牌", "国际连锁品牌", "提供家庭房", "客房点餐", "客房备有吹风机", "客房备有热水壶", "客房备有拖鞋", "可提供婴儿床或围栏", "儿童玩乐设施", "性价比酒店", "提供SPA服务", "健身房", "户外泳池", "运动友好酒店", "室内恒温泳池", "度假酒店", "宴会厅", "提供双床房", "商务中心", "提供大床房"]</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[3]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelId:</span> <span class="number">478250</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bookingUrl:</span> <a href="https://rollinggo.cn/pages/hotel/detail/index?id=478250&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope" target="_blank" class="url">https://rollinggo.cn/pages/hotel/detail/index?id=478250&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope</a></div>
+<div class="field" style="margin-left: 40px;"><span class="key">name:</span> <span class="string">"忆泊酒店(杭州西湖店)(EBO Hotel (Hangzhou West Lake))"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">brand:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">address:</span> <span class="string">"凤起路435号 (地铁1、2号线凤起路站D3出口旁)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">destinationId:</span> <span class="string">"6084457"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">latitude:</span> <span class="number">30.263669</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">longitude:</span> <span class="number">120.164306</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">distanceInMeters:</span> <span class="number">2873</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">starRating:</span> <span class="number">4.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">price:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">message:</span> <span class="string">"查价成功,最低价:871.0, 币种:CNY "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">hasPrice:</span> <span class="bool true">True</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">lowestPrice:</span> <span class="number">871.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">areaCode:</span> <span class="string">"CN"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">description:</span> <span class="string">"忆泊酒店（杭州西湖店）位于杭州市中心---凤起路繁华商圈，与地铁出入口（1/2号线交汇），出门即达，乘地铁1站瞬抵西湖龙翔桥，5站到达杭州东站，步行7分钟至武林夜市，骑行8分钟至西湖音乐喷泉，武林商圈、杭州大厦.武林银泰、嘉里中心近在咫尺，独享“离尘不离城”的黄金区位。 酒店拥有智能客房，以科技赋能旅居体验，配备精梳棉的床品和鸭绒被芯+三层隔音玻璃，筑就深睡堡垒  5F天际社交层 24h自助洗衣房（洗衣、烘干） 全景台球室·竞技乒乓球室（免费使用）  元气早餐 早餐种类丰富，中西式餐点开启活力清晨   居停场景 商务客：地铁2号线15分钟直达钱江新城，高效会议后回房一键入睡； 度假客：白天漫游西湖，下午台球、乒乓球激战，洗衣房随时焕新行装； “住凤起路C位，智能生活+西湖诗意双核驱动” 以一站地铁的距离，兑换湖光山色与都市繁华的自由切换"</span></div>
+<div class="field" style="margin-left: 40px;">
+                <span class="key">imageUrl:</span>
+                <a href="https://image2-cdn.aigohotel.com/3/Image/478250/20080k000000btrl46042_R_550_412.jpg-agh" target="_blank" class="url">https://image2-cdn.aigohotel.com/3/Image/478250/20080k000000btrl46042_R_550_412.jpg-agh</a>
+                <br><img src="https://image2-cdn.aigohotel.com/3/Image/478250/20080k000000btrl46042_R_550_412.jpg-agh" style="max-width: 300px; max-height: 200px; border: 1px solid #ccc; margin-top: 5px;">
+            </div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelAmenities:</span> <span class="array">["行李寄存", "快速入住退房", "24小时前台", "电梯", "会议厅设施收费:5000CNY/天.", "公共区域监控", "无烟楼层", "叫车服务", "商务服务", "多功能厅", "传真/复印", "翻译服务", "吸烟区", "公共区域禁烟", "餐厅", "儿童拖鞋", "公用区wifi", "干衣机", "急救包", "门禁系统", "新风系统", "灭火器", "熨斗/挂烫机", "洗衣房", "机器人服务", "烟雾报警器", "安全报警器", "安保人员", "花园", "停车场", "WIFI"]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">score:</span> <span class="number">0.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">tags:</span> <span class="array">["临近商场", "支持银联卡", "支持支付宝/微信", "快速办理入住/退房", "客房点餐", "免费停车场", "客房备有吹风机", "24小时前台", "客房备有热水壶", "客房备有拖鞋", "免费WiFi", "性价比酒店", "提供双床房", "提供会议设施", "提供大床房"]</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[4]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelId:</span> <span class="number">79627</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bookingUrl:</span> <a href="https://rollinggo.cn/pages/hotel/detail/index?id=79627&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope" target="_blank" class="url">https://rollinggo.cn/pages/hotel/detail/index?id=79627&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope</a></div>
+<div class="field" style="margin-left: 40px;"><span class="key">name:</span> <span class="string">"杭州君悦酒店(Grand Hyatt Hangzhou)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">brand:</span> <span class="string">"凯悦"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">address:</span> <span class="string">"湖滨路28号"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">destinationId:</span> <span class="string">"6084457"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">latitude:</span> <span class="number">30.254835</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">longitude:</span> <span class="number">120.161509</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">distanceInMeters:</span> <span class="number">3119</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">starRating:</span> <span class="number">5.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">price:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">message:</span> <span class="string">"查价成功,最低价:2419.0, 币种:CNY "</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">hasPrice:</span> <span class="bool true">True</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">lowestPrice:</span> <span class="number">2419.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">areaCode:</span> <span class="string">"CN"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">description:</span> <span class="string">"杭州君悦酒店坐落于西湖东岸，近西湖音乐喷泉，地理位置优越，毗邻步行街区，距离杭州湖滨商圈等主要商业、购物和娱乐中心咫尺之遥。&lt;br&gt;酒店拥有三百余间豪华客房与套房，从充满质感的墙饰和细节精美的装饰艺术，从饱含传统工艺精髓的家具到显现时尚气息的艺术品，巧妙地将中国元素和杭州特色融入现代舒适的氛围中。&lt;br&gt;嘉宾轩酒廊为贵宾们提供欧陆式早餐、晚间鸡尾酒和小食及软饮。400平方米的屋顶花园，以优越的视角为宾客们奉上西湖音乐喷泉美景。 汇聚全球特色美食的七个餐厅及酒吧将为客人提供优质、创新和多样性的餐饮体验，为宾客呈现地道的美味佳肴，创造令人难忘的餐饮体验。 &lt;br&gt;焕水疗健身中心于2019年重新开业，25米的室内温控泳池，拥有玻璃顶窗及泳池酒吧，客人可在游泳或休憩的同时欣享西湖美景。健身中心则配备专业的有氧及力量训练设备，并由经验丰富的教练团队提供悉心指导，为宾客们提供深度的舒缓与释放。"</span></div>
+<div class="field" style="margin-left: 40px;">
+                <span class="key">imageUrl:</span>
+                <a href="https://image-cdn.aigohotel.com/Image/CN/79627/Featured Image/1172294_122_b.jpg" target="_blank" class="url">https://image-cdn.aigohotel.com/Image/CN/79627/Featured Image/1172294_122_b.jpg</a>
+                <br><img src="https://image-cdn.aigohotel.com/Image/CN/79627/Featured Image/1172294_122_b.jpg" style="max-width: 300px; max-height: 200px; border: 1px solid #ccc; margin-top: 5px;">
+            </div>
+<div class="field" style="margin-left: 40px;"><span class="key">hotelAmenities:</span> <span class="array">["叫醒服务", "专职行李员", "行李寄存", "外币兑换服务", "快速入住退房", "24小时前台", "公共音响系统", "健身室开放时间(24小时制): 00:00~23:59开放时间(星期): 周一到周日", "SPA", "足浴", "电梯", "前台贵重物品保险柜", "会议厅", "自动取款机", "大堂吧", "公共区域监控", "无障碍客房", "酒吧", "无烟楼层", "行政酒廊", "快递服务", "叫车服务", "前台服务语言", "婚宴服务", "旅游票务服务", "商务服务", "多功能厅", "多媒体演示系统", "行政楼层", "礼品廊", "干洗服务", "熨衣服务", "传真/复印", "翻译服务", "公共区域禁烟", "餐厅开放时间(24小时制): 19:00~02:00开放时间(星期): 星期五 星期六开放时间(24小时制): 19:00~00:00开放时间(星期): 星期二 星期三 星期四 星期日", "儿童拖鞋", "儿童牙刷", "VIP通道入住", "公用区wifi", "新风系统", "游泳池开放时间(24小时制): 06:00~22:00开放时间(星期): 周一到周日", "停车场", "WIFI"]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">score:</span> <span class="number">0.0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">tags:</span> <span class="array">["当地热门品牌", "国际连锁品牌", "客房点餐", "客房备有吹风机", "自行车租赁", "客房备有拖鞋", "可提供婴儿床或围栏", "儿童玩乐设施", "性价比酒店", "提供SPA服务", "健身房", "运动友好酒店", "室内恒温泳池", "度假酒店", "部分客房带有花园景", "宴会厅", "提供双床房", "商务中心", "提供大床房"]</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 0px;"><span class="array">]</span></div>
+        </div>
+
+        <h2>📄 详情结果字段</h2>
+        <div class="section">
+            <div class="field" style="margin-left: 0px;"><span class="key">success:</span> <span class="bool true">True</span></div>
+<div class="field" style="margin-left: 0px;"><span class="key">errorMessage:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 0px;"><span class="key">hotelId:</span> <span class="number">79632</span></div>
+<div class="field" style="margin-left: 0px;"><span class="key">bookingUrl:</span> <a href="https://rollinggo.cn/pages/hotel/detail/index?id=79632&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=2&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope" target="_blank" class="url">https://rollinggo.cn/pages/hotel/detail/index?id=79632&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=2&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope</a></div>
+<div class="field" style="margin-left: 0px;"><span class="key">name:</span> <span class="string">"杭州武林万怡酒店(Courtyard by Marriott Hangzhou Wulin)"</span></div>
+<div class="field" style="margin-left: 0px;"><span class="key">checkIn:</span> <span class="string">"2026-03-21"</span></div>
+<div class="field" style="margin-left: 0px;"><span class="key">checkOut:</span> <span class="string">"2026-03-22"</span></div>
+<div class="field" style="margin-left: 0px;"><span class="key">roomRatePlans:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959336</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Double Bed Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"尊贵双床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"gPCGPbN9Tz-eQ2wvrzr2AS"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"PREMIER 2-BED ROOM(尊贵双床房)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">52</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">609</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[1]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959335</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier King Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"尊贵大床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"egWbikTmGfW-iwxmCxJzJW5"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"DELUXE KING ROOM(尊贵大床房)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">74</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">609</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[2]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14036916</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"h5JOA2gbp7X-7xqYTTgmPjC"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">6</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"四床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">616</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[3]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14023646</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"9IAd1TMyZ1S-gLohQTD32q7"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">2</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"双床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">616</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[4]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14023646</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"ku036Mfy4LJ-dp4Qgk34MFU"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Room, 1 King Bed, City View(尊贵客房, 1 张特大床, 城市景观)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">73</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">620</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[5]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14023646</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"bk6Hki5xkDU-10e40LQ4siW"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">9</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">624</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[6]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14036916</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"clptnFc5fBE-c85YQo52tJt"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">9</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">624</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[7]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">23805228</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Deluxe Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Deluxe Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"lf0hxNFaSva-5LAJH9BHWYH"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"DELUXE, 2 DOUBLE BEDS, CITY VIEW"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">6</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"四床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">627</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[8]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">27247553</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier King Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier King Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"ffho8z3Gd9g-5jVceZRv4Uu"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"DOUBLE PREMIER KING BED"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">73</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">664</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[9]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959336</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Double Bed Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"尊贵双床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"dYZjYqKP1Jc-6eFQnKc2ufc"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"PREMIER 2-BED ROOM(尊贵双床房)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">52</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">675</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[10]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959335</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier King Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"尊贵大床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"GnGkGIRZaz-6eHH0fWROhI"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"DELUXE KING ROOM(尊贵大床房)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">74</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">675</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[11]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959336</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Double Bed Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"尊贵双床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"hfwIvJdj9L0-5ySZTNf6vWD"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"PREMIER 2-BED ROOM(尊贵双床房)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">52</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">740</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[12]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959335</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier King Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"尊贵大床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"9rqkeLz4Qz1-58yaj73nBRW"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"DELUXE KING ROOM(尊贵大床房)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">74</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">740</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[13]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14036916</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"38A3gAkJd8l-lMbGR37Nm35"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">6</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"四床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">751</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[14]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14023646</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"cAJxqZ1XV8A-9200e71r89a"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">2</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"双床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">751</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[15]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14023646</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"3cEKP9QJiz6-9vOKhjgYhfK"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Room, 1 King Bed, City View(尊贵客房, 1 张特大床, 城市景观)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">73</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">753</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[16]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14023646</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"8hDD3na6i0i-3AICD5OeyUN"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Room, 1 King Bed, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">9</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">758</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[17]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">14036916</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"9iC3oC5KThw-f2szIWZ2XJm"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Premier Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">9</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">758</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[18]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">23805228</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Deluxe Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Deluxe Twin Room, 2 Double Beds, City View"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"1NwaPMXuucc-9zEN0PfsLi2"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"DELUXE, 2 DOUBLE BEDS, CITY VIEW"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">6</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"四床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">761</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[19]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">27247553</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Premier King Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"Premier King Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"av5pQ7AowSp-2Ih6035Mbt7"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"DOUBLE PREMIER KING BED"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">73</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">807</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[20]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959334</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Executive Room (2 Beds)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"行政双床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"CFrjR7BPir-eJJtEku0veo"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"EXECUTIVE TWIN ROOM(行政双床房)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">52</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">842</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[21]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959333</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Executive Double Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"行政大床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"bfRJtuOmT8Z-f8L7XWLvwgc"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"COZY DOUBLE ROOM(行政大床房)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">2</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"双床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">842</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[22]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">24995065</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Executive Room, 1 King Bed"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"行政客房, 1 张特大床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"ezNG3xL5p6u-2JL9KQvzDGG"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Executive Room, 1 King Bed(行政客房, 1 张特大床)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">73</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">856</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[23]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959334</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Executive Room (2 Beds)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"行政双床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"4EW1jmv8VJs-9is1Z6x1bzv"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Executive Twin Room, 2 Double Beds"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">6</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"四床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">857</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[24]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">24995065</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Executive Room, 1 King Bed"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"行政客房, 1 张特大床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"gfMBp7YC0RC-lmBGBGnmgJY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Executive Room, 1 King Bed"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">2</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"双床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">857</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[25]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959334</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Executive Room (2 Beds)"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"行政双床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"aRUrsyyxH77-3SQdWr6yYYR"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Executive Twin Room, 2 Double Beds"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">9</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">862</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[26]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">24995065</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Executive Room, 1 King Bed"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"行政客房, 1 张特大床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"6Pcux5YYufY-2KdDZcgZJp3"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Executive Room, 1 King Bed"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">9</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">862</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[27]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959333</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Executive Double Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"行政大床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"dMWVVXPxqas-220CfJ7jBmd"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"Executive Room, 1 King Bed"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">73</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"未知"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">866</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 20px;"><span class="key">[28]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomTypeId:</span> <span class="number">4959333</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomName:</span> <span class="string">"Executive Double Room"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">roomNameCn:</span> <span class="string">"行政大床房"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanId:</span> <span class="string">"8hILkWXjGAp-3sNqXUaprIw"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">ratePlanName:</span> <span class="string">"DOUBLE EXECUTIVE"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedType:</span> <span class="number">2</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">bedTypeDescription:</span> <span class="string">"双床"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">currency:</span> <span class="string">"CNY"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalPrice:</span> <span class="number">0</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">totalSalesRate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">inventoryCount:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">isOnRequest:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">recommendIndex:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">cancellationPolicies:</span> <span class="array">[</span></div>
+<div class="field" style="margin-left: 60px;"><span class="key">[0]:</span> <span class="object">{" "</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">fromDate:</span> <span class="string">"2026-03-18T00:00:00+08:00"</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">toDate:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">amount:</span> <span class="number">912</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">percent:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">type:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 80px;"><span class="key">description:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 60px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 40px;"><span class="array">]</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">includedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">excludedFees:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 40px;"><span class="key">metadata:</span> <span class="null">null</span></div>
+<div class="field" style="margin-left: 20px;"><span class="object">"}"</span></div>
+<div class="field" style="margin-left: 0px;"><span class="array">]</span></div>
+        </div>
+
+        <h2>📝 原始 JSON 数据</h2>
+        <button class="toggle-btn" onclick="toggleJson()">显示/隐藏原始 JSON</button>
+        <div id="raw-json" class="raw-json" style="display: none;">
+<strong>// 搜索结果:</strong>
+{
+  &quot;message&quot;: &quot;酒店搜索成功&quot;,
+  &quot;hotels&quot;: [
+    {
+      &quot;hotelId&quot;: 79632,
+      &quot;bookingUrl&quot;: &quot;https://rollinggo.cn/pages/hotel/detail/index?id=79632&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope&quot;,
+      &quot;name&quot;: &quot;杭州武林万怡酒店(Courtyard by Marriott Hangzhou Wulin)&quot;,
+      &quot;brand&quot;: null,
+      &quot;address&quot;: &quot;湖墅南路28号&quot;,
+      &quot;destinationId&quot;: &quot;6084457&quot;,
+      &quot;latitude&quot;: 30.274223,
+      &quot;longitude&quot;: 120.157154,
+      &quot;distanceInMeters&quot;: 2030,
+      &quot;starRating&quot;: 4.0,
+      &quot;price&quot;: {
+        &quot;message&quot;: &quot;查价成功,最低价:609.0, 币种:CNY &quot;,
+        &quot;hasPrice&quot;: true,
+        &quot;currency&quot;: &quot;CNY&quot;,
+        &quot;lowestPrice&quot;: 609.0
+      },
+      &quot;areaCode&quot;: &quot;CN&quot;,
+      &quot;description&quot;: &quot;杭州武林万怡酒店地处杭州市中心，紧邻武林广场商圈及西湖文化广场，信步可至杭州大厦，距西湖之美也仅咫尺之遥，交通十分便利。&lt;br&gt;&lt;br&gt;酒店拥有各式精美客房，配备各类时尚家具及床上用品。酒店公共区域均有WIFI覆盖，豪华客房及套房还配备先进的上网及现代化设施。&lt;br&gt;&lt;br&gt;餐厅——MoMo Café空间明亮时尚，每天供应品种齐全的自助早餐。全年营业的游泳池、涡流池，让您在住店期间可以尽情舒缓身心，24小时健身中心可助您时刻保持强健体魄。&quot;,
+      &quot;imageUrl&quot;: &quot;https://image-cdn.aigohotel.com/Image/CN/79632/Featured Image/4043919_86_b.jpg&quot;,
+      &quot;hotelAmenities&quot;: [
+        &quot;叫醒服务&quot;,
+        &quot;专职行李员&quot;,
+        &quot;行李寄存&quot;,
+        &quot;外币兑换服务&quot;,
+        &quot;快速入住退房&quot;,
+        &quot;24小时前台&quot;,
+        &quot;公共音响系统&quot;,
+        &quot;桑拿浴室&quot;,
+        &quot;健身室&quot;,
+        &quot;电梯&quot;,
+        &quot;前台贵重物品保险柜&quot;,
+        &quot;会议厅设施收费:400CNY/小时.&quot;,
+        &quot;大堂吧&quot;,
+        &quot;公共区域监控&quot;,
+        &quot;无障碍客房&quot;,
+        &quot;无烟楼层&quot;,
+        &quot;行政酒廊&quot;,
+        &quot;快递服务&quot;,
+        &quot;叫车服务&quot;,
+        &quot;婚宴服务&quot;,
+        &quot;接机服务设施收费:650CNY/次数.开放时间(24小时制): 00:00~23:59开放时间(星期): 周一到周日;需要预约使用.&quot;,
+        &quot;多功能厅&quot;,
+        &quot;行政楼层&quot;,
+        &quot;礼品廊&quot;,
+        &quot;干洗服务&quot;,
+        &quot;熨衣服务&quot;,
+        &quot;传真/复印设施需要收费.&quot;,
+        &quot;翻译服务&quot;,
+        &quot;公共区域禁烟&quot;,
+        &quot;餐厅&quot;,
+        &quot;儿童拖鞋&quot;,
+        &quot;儿童牙刷&quot;,
+        &quot;VIP通道入住&quot;,
+        &quot;公用区wifi&quot;,
+        &quot;灭火器&quot;,
+        &quot;熨斗/挂烫机&quot;,
+        &quot;自动售货机&quot;,
+        &quot;送机服务设施收费:650CNY/次数.开放时间(24小时制): 00:00~23:59开放时间(星期): 周一到周日;需要预约使用.&quot;,
+        &quot;洗衣房&quot;,
+        &quot;机器人服务&quot;,
+        &quot;烟雾报警器&quot;,
+        &quot;安全报警器&quot;,
+        &quot;安保人员&quot;,
+        &quot;游泳池开放时间(24小时制): 06:00~23:00开放时间(星期): 周一到周日&quot;,
+        &quot;停车场&quot;,
+        &quot;WIFI&quot;
+      ],
+      &quot;score&quot;: 0.0,
+      &quot;tags&quot;: [
+        &quot;当地热门品牌&quot;,
+        &quot;客房点餐&quot;,
+        &quot;客房备有吹风机&quot;,
+        &quot;自行车租赁&quot;,
+        &quot;客房备有热水壶&quot;,
+        &quot;客房备有拖鞋&quot;,
+        &quot;可提供婴儿床或围栏&quot;,
+        &quot;儿童玩乐设施&quot;,
+        &quot;性价比酒店&quot;,
+        &quot;提供SPA服务&quot;,
+        &quot;健身房&quot;,
+        &quot;户外泳池&quot;,
+        &quot;运动友好酒店&quot;,
+        &quot;室内恒温泳池&quot;,
+        &quot;儿童泳池&quot;,
+        &quot;宴会厅&quot;,
+        &quot;提供双床房&quot;,
+        &quot;商务中心&quot;,
+        &quot;提供大床房&quot;
+      ]
+    },
+    {
+      &quot;hotelId&quot;: 79644,
+      &quot;bookingUrl&quot;: &quot;https://rollinggo.cn/pages/hotel/detail/index?id=79644&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope&quot;,
+      &quot;name&quot;: &quot;杭州西溪喜来登度假大酒店(西湖区店)(Sheraton Grand Hangzhou Wetland Park Resort)&quot;,
+      &quot;brand&quot;: null,
+      &quot;address&quot;: &quot;紫金港路西溪天堂国际旅游综合体1号&quot;,
+      &quot;destinationId&quot;: &quot;6084457&quot;,
+      &quot;latitude&quot;: 30.267639,
+      &quot;longitude&quot;: 120.088753,
+      &quot;distanceInMeters&quot;: 4586,
+      &quot;starRating&quot;: 5.0,
+      &quot;price&quot;: {
+        &quot;message&quot;: &quot;查价成功,最低价:927.0, 币种:CNY &quot;,
+        &quot;hasPrice&quot;: true,
+        &quot;currency&quot;: &quot;CNY&quot;,
+        &quot;lowestPrice&quot;: 927.0
+      },
+      &quot;areaCode&quot;: &quot;CN&quot;,
+      &quot;description&quot;: &quot;杭州西溪喜来登度假大酒店坐落于杭州西溪国家湿地公园一角，距西湖、灵隐寺约5公里；距阿里巴巴西溪园区约9公里，距未来科技城约14公里；通过紧邻酒店的文一路隧道可快速到达市中心，并可直达城北及城东核心区域；通过紫之隧道则可便捷到达之江云栖小镇、钱江新城、滨江区奥林匹克中心以及国际博览中心。&lt;br&gt;三百余间宽敞的客房和套房，在阳台上西溪国家湿地公园的美景尽收眼底，所有客房均配备有口皆碑的喜来登特色睡眠体验。&lt;br&gt;4家餐厅和酒吧，包括盛宴（互动式全日制餐厅，提供包含亚洲美食在内的国际美食）、萨婷（现代时尚法餐厅）、采悦轩（新派中餐厅，提供特色杭帮菜）或在大堂吧中啜饮美味饮品。&lt;br&gt;喜来登水疗提供各式疗程，帮助您除去身心疲惫。同时您可以在喜来登健身中心和室内恒温游泳池中锻炼体魄。&lt;br&gt;14个多功能会议厅和1个大宴会厅独立建于花园中心，其中包括一个1080平米的宴会厅，最多可容纳1600名客人同时开会，以及一应俱全的商务中心，均配备前沿科技设备满足客人的商务需要。&quot;,
+      &quot;imageUrl&quot;: &quot;https://image-cdn.aigohotel.com/Image/CN/79644/bbf7eb12_b.jpg&quot;,
+      &quot;hotelAmenities&quot;: [
+        &quot;叫醒服务&quot;,
+        &quot;租车服务&quot;,
+        &quot;行李寄存&quot;,
+        &quot;外币兑换服务&quot;,
+        &quot;24小时前台&quot;,
+        &quot;公共音响系统&quot;,
+        &quot;健身室&quot;,
+        &quot;SPA设施需要收费.开放时间(24小时制): 11:00~23:00开放时间(星期): 周一到周日&quot;,
+        &quot;儿童乐园设施收费:88CNY/天.开放时间(24小时制): 09:00~20:00开放时间(星期): 周一到周日&quot;,
+        &quot;电梯&quot;,
+        &quot;前台贵重物品保险柜&quot;,
+        &quot;商务中心&quot;,
+        &quot;会议厅设施需要收费.&quot;,
+        &quot;自动取款机&quot;,
+        &quot;大堂吧&quot;,
+        &quot;公共区域监控&quot;,
+        &quot;无障碍客房&quot;,
+        &quot;无烟楼层&quot;,
+        &quot;无障碍通道&quot;,
+        &quot;行政酒廊&quot;,
+        &quot;前台服务语言&quot;,
+        &quot;自行车租赁服务设施收费:20CNY/小时.&quot;,
+        &quot;婚宴服务&quot;,
+        &quot;接站服务设施需要收费.;需要预约使用.&quot;,
+        &quot;接机服务设施需要收费.&quot;,
+        &quot;商务服务&quot;,
+        &quot;多功能厅&quot;,
+        &quot;多媒体演示系统&quot;,
+        &quot;行政楼层&quot;,
+        &quot;干洗服务设施需要收费.&quot;,
+        &quot;熨衣服务设施需要收费.&quot;,
+        &quot;公共区域禁烟&quot;,
+        &quot;餐厅开放时间(24小时制): 06:30~23:00开放时间(星期): 周一到周日&quot;,
+        &quot;儿童拖鞋&quot;,
+        &quot;儿童玩具&quot;,
+        &quot;儿童牙刷&quot;,
+        &quot;徒步旅行&quot;,
+        &quot;公用区wifi&quot;,
+        &quot;门禁系统&quot;,
+        &quot;新风系统&quot;,
+        &quot;灭火器&quot;,
+        &quot;熨斗/挂烫机&quot;,
+        &quot;自动售货机&quot;,
+        &quot;送机服务设施需要收费.&quot;,
+        &quot;儿童桌面游戏/拼图&quot;,
+        &quot;烟雾报警器&quot;,
+        &quot;安保人员&quot;,
+        &quot;花园&quot;,
+        &quot;送站服务设施需要收费.;需要预约使用.&quot;,
+        &quot;儿童泳池&quot;,
+        &quot;电子身份证入住&quot;,
+        &quot;提供轮椅&quot;,
+        &quot;游泳池&quot;,
+        &quot;停车场&quot;,
+        &quot;WIFI&quot;
+      ],
+      &quot;score&quot;: 0.0,
+      &quot;tags&quot;: [
+        &quot;临近商场&quot;,
+        &quot;单体酒店&quot;,
+        &quot;当地热门品牌&quot;,
+        &quot;客房点餐&quot;,
+        &quot;无障碍停车位&quot;,
+        &quot;客房备有吹风机&quot;,
+        &quot;自行车租赁&quot;,
+        &quot;客房备有热水壶&quot;,
+        &quot;客房备有拖鞋&quot;,
+        &quot;可提供婴儿床或围栏&quot;,
+        &quot;儿童玩乐设施&quot;,
+        &quot;性价比酒店&quot;,
+        &quot;提供SPA服务&quot;,
+        &quot;健身房&quot;,
+        &quot;户外泳池&quot;,
+        &quot;运动友好酒店&quot;,
+        &quot;室内恒温泳池&quot;,
+        &quot;部分客房带有花园景&quot;,
+        &quot;儿童泳池&quot;,
+        &quot;宴会厅&quot;,
+        &quot;提供双床房&quot;,
+        &quot;商务中心&quot;,
+        &quot;提供大床房&quot;
+      ]
+    },
+    {
+      &quot;hotelId&quot;: 216100,
+      &quot;bookingUrl&quot;: &quot;https://rollinggo.cn/pages/hotel/detail/index?id=216100&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope&quot;,
+      &quot;name&quot;: &quot;杭州城中香格里拉大酒店(Midtown Shangri-La, Hangzhou)&quot;,
+      &quot;brand&quot;: &quot;香格里拉&quot;,
+      &quot;address&quot;: &quot;长寿路6号延安路嘉里中心&quot;,
+      &quot;destinationId&quot;: &quot;6084457&quot;,
+      &quot;latitude&quot;: 30.25995,
+      &quot;longitude&quot;: 120.161759,
+      &quot;distanceInMeters&quot;: 2821,
+      &quot;starRating&quot;: 5.0,
+      &quot;price&quot;: {
+        &quot;message&quot;: &quot;查价成功,最低价:1542.0, 币种:CNY &quot;,
+        &quot;hasPrice&quot;: true,
+        &quot;currency&quot;: &quot;CNY&quot;,
+        &quot;lowestPrice&quot;: 1542.0
+      },
+      &quot;areaCode&quot;: &quot;CN&quot;,
+      &quot;description&quot;: &quot;杭州城中香格里拉大酒店位于西湖湖滨商圈，步行约5-10分钟可以到达西湖以及地铁凤起路站；紧邻杭州交通枢纽，可便捷前往灵隐寺、河坊街、断桥、苏堤等景点；酒店所在的嘉里中心，可提供电影院、超市、美食、休闲等多种选择。&lt;br&gt;酒店提供多种房型选择，湖景房皆可坐拥西湖景致，豪华阁楼层及以上房型更可享受多种豪华阁尊享礼遇。&lt;br&gt;酒店共有4个餐厅，美食汇提供丰富的自助选择，城中啤酒餐吧适合夜晚的放松小酌，非凡酒廊适宜商务洽淡以及享用下午茶，城中中餐厅可以使您足不出户品尝地道杭帮菜以及粤式点心。&lt;br&gt;酒店拥有综合会议与宴会设施，面积约28-1583平方米不等。多功能支持中心/宴会预订中心为您提供计算机服务和办公设施。酒店更有专业的宴会及会议统筹团队为您提供个性化服务。&lt;br&gt;酒店5楼有恒温游泳池以及设备先进的健身房，同时【氣】水疗可以帮您在都市生活中舒缓身心。&quot;,
+      &quot;imageUrl&quot;: &quot;https://image-cdn.aigohotel.com/Image/CN/216100/Featured Image/b622722b_b.jpg&quot;,
+      &quot;hotelAmenities&quot;: [
+        &quot;叫醒服务&quot;,
+        &quot;租车服务&quot;,
+        &quot;专职行李员&quot;,
+        &quot;行李寄存&quot;,
+        &quot;外币兑换服务&quot;,
+        &quot;快速入住退房&quot;,
+        &quot;24小时前台&quot;,
+        &quot;公共音响系统&quot;,
+        &quot;桑拿浴室&quot;,
+        &quot;健身室&quot;,
+        &quot;SPA&quot;,
+        &quot;按摩室&quot;,
+        &quot;电梯&quot;,
+        &quot;前台贵重物品保险柜&quot;,
+        &quot;商场&quot;,
+        &quot;大堂吧&quot;,
+        &quot;公共区域监控&quot;,
+        &quot;无障碍客房&quot;,
+        &quot;咖啡厅&quot;,
+        &quot;酒吧&quot;,
+        &quot;无烟楼层&quot;,
+        &quot;无障碍通道&quot;,
+        &quot;行政酒廊&quot;,
+        &quot;快递服务&quot;,
+        &quot;叫车服务&quot;,
+        &quot;前台服务语言&quot;,
+        &quot;婚宴服务&quot;,
+        &quot;儿童书籍/影音&quot;,
+        &quot;接站服务设施收费:400CNY/次数.开放时间(24小时制): 00:00~23:30开放时间(星期): 周一到周日;需要预约使用.&quot;,
+        &quot;接机服务设施收费:600CNY/次数.开放时间(24小时制): 00:00~23:30开放时间(星期): 周一到周日;需要预约使用.&quot;,
+        &quot;旅游票务服务&quot;,
+        &quot;多功能厅&quot;,
+        &quot;多媒体演示系统&quot;,
+        &quot;行政楼层&quot;,
+        &quot;干洗服务&quot;,
+        &quot;熨衣服务&quot;,
+        &quot;翻译服务&quot;,
+        &quot;吸烟区&quot;,
+        &quot;公共区域禁烟&quot;,
+        &quot;餐厅开放时间(24小时制): 10:00~22:00开放时间(星期): 周一到周日&quot;,
+        &quot;儿童拖鞋&quot;,
+        &quot;儿童玩具&quot;,
+        &quot;儿童牙刷&quot;,
+        &quot;VIP通道入住&quot;,
+        &quot;公用区wifi&quot;,
+        &quot;儿童餐&quot;,
+        &quot;急救包&quot;,
+        &quot;门禁系统&quot;,
+        &quot;新风系统&quot;,
+        &quot;灭火器&quot;,
+        &quot;送机服务设施收费:600CNY/次数.开放时间(24小时制): 00:00~23:30开放时间(星期): 周一到周日;需要预约使用.&quot;,
+        &quot;儿童桌面游戏/拼图&quot;,
+        &quot;烟雾报警器&quot;,
+        &quot;安全报警器&quot;,
+        &quot;安保人员&quot;,
+        &quot;送站服务设施收费:400CNY/次数.开放时间(24小时制): 00:00~23:30开放时间(星期): 周一到周日;需要预约使用.&quot;,
+        &quot;户外家具&quot;,
+        &quot;一氧化碳报警器&quot;,
+        &quot;提供轮椅&quot;,
+        &quot;游泳池开放时间(24小时制): 06:00~23:00开放时间(星期): 周一到周日&quot;,
+        &quot;停车场&quot;,
+        &quot;充电车位&quot;,
+        &quot;WIFI&quot;
+      ],
+      &quot;score&quot;: 0.0,
+      &quot;tags&quot;: [
+        &quot;当地热门品牌&quot;,
+        &quot;国际连锁品牌&quot;,
+        &quot;提供家庭房&quot;,
+        &quot;客房点餐&quot;,
+        &quot;客房备有吹风机&quot;,
+        &quot;客房备有热水壶&quot;,
+        &quot;客房备有拖鞋&quot;,
+        &quot;可提供婴儿床或围栏&quot;,
+        &quot;儿童玩乐设施&quot;,
+        &quot;性价比酒店&quot;,
+        &quot;提供SPA服务&quot;,
+        &quot;健身房&quot;,
+        &quot;户外泳池&quot;,
+        &quot;运动友好酒店&quot;,
+        &quot;室内恒温泳池&quot;,
+        &quot;度假酒店&quot;,
+        &quot;宴会厅&quot;,
+        &quot;提供双床房&quot;,
+        &quot;商务中心&quot;,
+        &quot;提供大床房&quot;
+      ]
+    },
+    {
+      &quot;hotelId&quot;: 478250,
+      &quot;bookingUrl&quot;: &quot;https://rollinggo.cn/pages/hotel/detail/index?id=478250&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope&quot;,
+      &quot;name&quot;: &quot;忆泊酒店(杭州西湖店)(EBO Hotel (Hangzhou West Lake))&quot;,
+      &quot;brand&quot;: null,
+      &quot;address&quot;: &quot;凤起路435号 (地铁1、2号线凤起路站D3出口旁)&quot;,
+      &quot;destinationId&quot;: &quot;6084457&quot;,
+      &quot;latitude&quot;: 30.263669,
+      &quot;longitude&quot;: 120.164306,
+      &quot;distanceInMeters&quot;: 2873,
+      &quot;starRating&quot;: 4.0,
+      &quot;price&quot;: {
+        &quot;message&quot;: &quot;查价成功,最低价:871.0, 币种:CNY &quot;,
+        &quot;hasPrice&quot;: true,
+        &quot;currency&quot;: &quot;CNY&quot;,
+        &quot;lowestPrice&quot;: 871.0
+      },
+      &quot;areaCode&quot;: &quot;CN&quot;,
+      &quot;description&quot;: &quot;忆泊酒店（杭州西湖店）位于杭州市中心---凤起路繁华商圈，与地铁出入口（1/2号线交汇），出门即达，乘地铁1站瞬抵西湖龙翔桥，5站到达杭州东站，步行7分钟至武林夜市，骑行8分钟至西湖音乐喷泉，武林商圈、杭州大厦.武林银泰、嘉里中心近在咫尺，独享“离尘不离城”的黄金区位。 酒店拥有智能客房，以科技赋能旅居体验，配备精梳棉的床品和鸭绒被芯+三层隔音玻璃，筑就深睡堡垒  5F天际社交层 24h自助洗衣房（洗衣、烘干） 全景台球室·竞技乒乓球室（免费使用）  元气早餐 早餐种类丰富，中西式餐点开启活力清晨   居停场景 商务客：地铁2号线15分钟直达钱江新城，高效会议后回房一键入睡； 度假客：白天漫游西湖，下午台球、乒乓球激战，洗衣房随时焕新行装； “住凤起路C位，智能生活+西湖诗意双核驱动” 以一站地铁的距离，兑换湖光山色与都市繁华的自由切换&quot;,
+      &quot;imageUrl&quot;: &quot;https://image2-cdn.aigohotel.com/3/Image/478250/20080k000000btrl46042_R_550_412.jpg-agh&quot;,
+      &quot;hotelAmenities&quot;: [
+        &quot;行李寄存&quot;,
+        &quot;快速入住退房&quot;,
+        &quot;24小时前台&quot;,
+        &quot;电梯&quot;,
+        &quot;会议厅设施收费:5000CNY/天.&quot;,
+        &quot;公共区域监控&quot;,
+        &quot;无烟楼层&quot;,
+        &quot;叫车服务&quot;,
+        &quot;商务服务&quot;,
+        &quot;多功能厅&quot;,
+        &quot;传真/复印&quot;,
+        &quot;翻译服务&quot;,
+        &quot;吸烟区&quot;,
+        &quot;公共区域禁烟&quot;,
+        &quot;餐厅&quot;,
+        &quot;儿童拖鞋&quot;,
+        &quot;公用区wifi&quot;,
+        &quot;干衣机&quot;,
+        &quot;急救包&quot;,
+        &quot;门禁系统&quot;,
+        &quot;新风系统&quot;,
+        &quot;灭火器&quot;,
+        &quot;熨斗/挂烫机&quot;,
+        &quot;洗衣房&quot;,
+        &quot;机器人服务&quot;,
+        &quot;烟雾报警器&quot;,
+        &quot;安全报警器&quot;,
+        &quot;安保人员&quot;,
+        &quot;花园&quot;,
+        &quot;停车场&quot;,
+        &quot;WIFI&quot;
+      ],
+      &quot;score&quot;: 0.0,
+      &quot;tags&quot;: [
+        &quot;临近商场&quot;,
+        &quot;支持银联卡&quot;,
+        &quot;支持支付宝/微信&quot;,
+        &quot;快速办理入住/退房&quot;,
+        &quot;客房点餐&quot;,
+        &quot;免费停车场&quot;,
+        &quot;客房备有吹风机&quot;,
+        &quot;24小时前台&quot;,
+        &quot;客房备有热水壶&quot;,
+        &quot;客房备有拖鞋&quot;,
+        &quot;免费WiFi&quot;,
+        &quot;性价比酒店&quot;,
+        &quot;提供双床房&quot;,
+        &quot;提供会议设施&quot;,
+        &quot;提供大床房&quot;
+      ]
+    },
+    {
+      &quot;hotelId&quot;: 79627,
+      &quot;bookingUrl&quot;: &quot;https://rollinggo.cn/pages/hotel/detail/index?id=79627&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=1&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope&quot;,
+      &quot;name&quot;: &quot;杭州君悦酒店(Grand Hyatt Hangzhou)&quot;,
+      &quot;brand&quot;: &quot;凯悦&quot;,
+      &quot;address&quot;: &quot;湖滨路28号&quot;,
+      &quot;destinationId&quot;: &quot;6084457&quot;,
+      &quot;latitude&quot;: 30.254835,
+      &quot;longitude&quot;: 120.161509,
+      &quot;distanceInMeters&quot;: 3119,
+      &quot;starRating&quot;: 5.0,
+      &quot;price&quot;: {
+        &quot;message&quot;: &quot;查价成功,最低价:2419.0, 币种:CNY &quot;,
+        &quot;hasPrice&quot;: true,
+        &quot;currency&quot;: &quot;CNY&quot;,
+        &quot;lowestPrice&quot;: 2419.0
+      },
+      &quot;areaCode&quot;: &quot;CN&quot;,
+      &quot;description&quot;: &quot;杭州君悦酒店坐落于西湖东岸，近西湖音乐喷泉，地理位置优越，毗邻步行街区，距离杭州湖滨商圈等主要商业、购物和娱乐中心咫尺之遥。&lt;br&gt;酒店拥有三百余间豪华客房与套房，从充满质感的墙饰和细节精美的装饰艺术，从饱含传统工艺精髓的家具到显现时尚气息的艺术品，巧妙地将中国元素和杭州特色融入现代舒适的氛围中。&lt;br&gt;嘉宾轩酒廊为贵宾们提供欧陆式早餐、晚间鸡尾酒和小食及软饮。400平方米的屋顶花园，以优越的视角为宾客们奉上西湖音乐喷泉美景。 汇聚全球特色美食的七个餐厅及酒吧将为客人提供优质、创新和多样性的餐饮体验，为宾客呈现地道的美味佳肴，创造令人难忘的餐饮体验。 &lt;br&gt;焕水疗健身中心于2019年重新开业，25米的室内温控泳池，拥有玻璃顶窗及泳池酒吧，客人可在游泳或休憩的同时欣享西湖美景。健身中心则配备专业的有氧及力量训练设备，并由经验丰富的教练团队提供悉心指导，为宾客们提供深度的舒缓与释放。&quot;,
+      &quot;imageUrl&quot;: &quot;https://image-cdn.aigohotel.com/Image/CN/79627/Featured Image/1172294_122_b.jpg&quot;,
+      &quot;hotelAmenities&quot;: [
+        &quot;叫醒服务&quot;,
+        &quot;专职行李员&quot;,
+        &quot;行李寄存&quot;,
+        &quot;外币兑换服务&quot;,
+        &quot;快速入住退房&quot;,
+        &quot;24小时前台&quot;,
+        &quot;公共音响系统&quot;,
+        &quot;健身室开放时间(24小时制): 00:00~23:59开放时间(星期): 周一到周日&quot;,
+        &quot;SPA&quot;,
+        &quot;足浴&quot;,
+        &quot;电梯&quot;,
+        &quot;前台贵重物品保险柜&quot;,
+        &quot;会议厅&quot;,
+        &quot;自动取款机&quot;,
+        &quot;大堂吧&quot;,
+        &quot;公共区域监控&quot;,
+        &quot;无障碍客房&quot;,
+        &quot;酒吧&quot;,
+        &quot;无烟楼层&quot;,
+        &quot;行政酒廊&quot;,
+        &quot;快递服务&quot;,
+        &quot;叫车服务&quot;,
+        &quot;前台服务语言&quot;,
+        &quot;婚宴服务&quot;,
+        &quot;旅游票务服务&quot;,
+        &quot;商务服务&quot;,
+        &quot;多功能厅&quot;,
+        &quot;多媒体演示系统&quot;,
+        &quot;行政楼层&quot;,
+        &quot;礼品廊&quot;,
+        &quot;干洗服务&quot;,
+        &quot;熨衣服务&quot;,
+        &quot;传真/复印&quot;,
+        &quot;翻译服务&quot;,
+        &quot;公共区域禁烟&quot;,
+        &quot;餐厅开放时间(24小时制): 19:00~02:00开放时间(星期): 星期五 星期六开放时间(24小时制): 19:00~00:00开放时间(星期): 星期二 星期三 星期四 星期日&quot;,
+        &quot;儿童拖鞋&quot;,
+        &quot;儿童牙刷&quot;,
+        &quot;VIP通道入住&quot;,
+        &quot;公用区wifi&quot;,
+        &quot;新风系统&quot;,
+        &quot;游泳池开放时间(24小时制): 06:00~22:00开放时间(星期): 周一到周日&quot;,
+        &quot;停车场&quot;,
+        &quot;WIFI&quot;
+      ],
+      &quot;score&quot;: 0.0,
+      &quot;tags&quot;: [
+        &quot;当地热门品牌&quot;,
+        &quot;国际连锁品牌&quot;,
+        &quot;客房点餐&quot;,
+        &quot;客房备有吹风机&quot;,
+        &quot;自行车租赁&quot;,
+        &quot;客房备有拖鞋&quot;,
+        &quot;可提供婴儿床或围栏&quot;,
+        &quot;儿童玩乐设施&quot;,
+        &quot;性价比酒店&quot;,
+        &quot;提供SPA服务&quot;,
+        &quot;健身房&quot;,
+        &quot;运动友好酒店&quot;,
+        &quot;室内恒温泳池&quot;,
+        &quot;度假酒店&quot;,
+        &quot;部分客房带有花园景&quot;,
+        &quot;宴会厅&quot;,
+        &quot;提供双床房&quot;,
+        &quot;商务中心&quot;,
+        &quot;提供大床房&quot;
+      ]
+    }
+  ]
+}
+
+<strong>// 详情结果:</strong>
+{
+  &quot;success&quot;: true,
+  &quot;errorMessage&quot;: null,
+  &quot;hotelId&quot;: 79632,
+  &quot;bookingUrl&quot;: &quot;https://rollinggo.cn/pages/hotel/detail/index?id=79632&amp;checkInDate=2026-03-21&amp;checkOutDate=2026-03-22&amp;roomCount=1&amp;adultCount=2&amp;childCount=0&amp;childAgeDetails=&amp;utm_source=model_scope&quot;,
+  &quot;name&quot;: &quot;杭州武林万怡酒店(Courtyard by Marriott Hangzhou Wulin)&quot;,
+  &quot;checkIn&quot;: &quot;2026-03-21&quot;,
+  &quot;checkOut&quot;: &quot;2026-03-22&quot;,
+  &quot;roomRatePlans&quot;: [
+    {
+      &quot;roomTypeId&quot;: 4959336,
+      &quot;roomName&quot;: &quot;Premier Double Bed Room&quot;,
+      &quot;roomNameCn&quot;: &quot;尊贵双床房&quot;,
+      &quot;ratePlanId&quot;: &quot;gPCGPbN9Tz-eQ2wvrzr2AS&quot;,
+      &quot;ratePlanName&quot;: &quot;PREMIER 2-BED ROOM(尊贵双床房)&quot;,
+      &quot;bedType&quot;: 52,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 609,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959335,
+      &quot;roomName&quot;: &quot;Premier King Room&quot;,
+      &quot;roomNameCn&quot;: &quot;尊贵大床房&quot;,
+      &quot;ratePlanId&quot;: &quot;egWbikTmGfW-iwxmCxJzJW5&quot;,
+      &quot;ratePlanName&quot;: &quot;DELUXE KING ROOM(尊贵大床房)&quot;,
+      &quot;bedType&quot;: 74,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 609,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14036916,
+      &quot;roomName&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;h5JOA2gbp7X-7xqYTTgmPjC&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;bedType&quot;: 6,
+      &quot;bedTypeDescription&quot;: &quot;四床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 616,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14023646,
+      &quot;roomName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;9IAd1TMyZ1S-gLohQTD32q7&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;bedType&quot;: 2,
+      &quot;bedTypeDescription&quot;: &quot;双床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 616,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14023646,
+      &quot;roomName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;ku036Mfy4LJ-dp4Qgk34MFU&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Room, 1 King Bed, City View(尊贵客房, 1 张特大床, 城市景观)&quot;,
+      &quot;bedType&quot;: 73,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 620,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14023646,
+      &quot;roomName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;bk6Hki5xkDU-10e40LQ4siW&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;bedType&quot;: 9,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 624,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14036916,
+      &quot;roomName&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;clptnFc5fBE-c85YQo52tJt&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;bedType&quot;: 9,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 624,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 23805228,
+      &quot;roomName&quot;: &quot;Deluxe Twin Room, 2 Double Beds, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Deluxe Twin Room, 2 Double Beds, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;lf0hxNFaSva-5LAJH9BHWYH&quot;,
+      &quot;ratePlanName&quot;: &quot;DELUXE, 2 DOUBLE BEDS, CITY VIEW&quot;,
+      &quot;bedType&quot;: 6,
+      &quot;bedTypeDescription&quot;: &quot;四床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 627,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 27247553,
+      &quot;roomName&quot;: &quot;Premier King Room&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier King Room&quot;,
+      &quot;ratePlanId&quot;: &quot;ffho8z3Gd9g-5jVceZRv4Uu&quot;,
+      &quot;ratePlanName&quot;: &quot;DOUBLE PREMIER KING BED&quot;,
+      &quot;bedType&quot;: 73,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 664,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959336,
+      &quot;roomName&quot;: &quot;Premier Double Bed Room&quot;,
+      &quot;roomNameCn&quot;: &quot;尊贵双床房&quot;,
+      &quot;ratePlanId&quot;: &quot;dYZjYqKP1Jc-6eFQnKc2ufc&quot;,
+      &quot;ratePlanName&quot;: &quot;PREMIER 2-BED ROOM(尊贵双床房)&quot;,
+      &quot;bedType&quot;: 52,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 675,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959335,
+      &quot;roomName&quot;: &quot;Premier King Room&quot;,
+      &quot;roomNameCn&quot;: &quot;尊贵大床房&quot;,
+      &quot;ratePlanId&quot;: &quot;GnGkGIRZaz-6eHH0fWROhI&quot;,
+      &quot;ratePlanName&quot;: &quot;DELUXE KING ROOM(尊贵大床房)&quot;,
+      &quot;bedType&quot;: 74,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 675,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959336,
+      &quot;roomName&quot;: &quot;Premier Double Bed Room&quot;,
+      &quot;roomNameCn&quot;: &quot;尊贵双床房&quot;,
+      &quot;ratePlanId&quot;: &quot;hfwIvJdj9L0-5ySZTNf6vWD&quot;,
+      &quot;ratePlanName&quot;: &quot;PREMIER 2-BED ROOM(尊贵双床房)&quot;,
+      &quot;bedType&quot;: 52,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 740,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959335,
+      &quot;roomName&quot;: &quot;Premier King Room&quot;,
+      &quot;roomNameCn&quot;: &quot;尊贵大床房&quot;,
+      &quot;ratePlanId&quot;: &quot;9rqkeLz4Qz1-58yaj73nBRW&quot;,
+      &quot;ratePlanName&quot;: &quot;DELUXE KING ROOM(尊贵大床房)&quot;,
+      &quot;bedType&quot;: 74,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 740,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14036916,
+      &quot;roomName&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;38A3gAkJd8l-lMbGR37Nm35&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;bedType&quot;: 6,
+      &quot;bedTypeDescription&quot;: &quot;四床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 751,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14023646,
+      &quot;roomName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;cAJxqZ1XV8A-9200e71r89a&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;bedType&quot;: 2,
+      &quot;bedTypeDescription&quot;: &quot;双床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 751,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14023646,
+      &quot;roomName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;3cEKP9QJiz6-9vOKhjgYhfK&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Room, 1 King Bed, City View(尊贵客房, 1 张特大床, 城市景观)&quot;,
+      &quot;bedType&quot;: 73,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 753,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14023646,
+      &quot;roomName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;8hDD3na6i0i-3AICD5OeyUN&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Room, 1 King Bed, City View&quot;,
+      &quot;bedType&quot;: 9,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 758,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 14036916,
+      &quot;roomName&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;9iC3oC5KThw-f2szIWZ2XJm&quot;,
+      &quot;ratePlanName&quot;: &quot;Premier Twin Room, 2 Double Beds, City View&quot;,
+      &quot;bedType&quot;: 9,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 758,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 23805228,
+      &quot;roomName&quot;: &quot;Deluxe Twin Room, 2 Double Beds, City View&quot;,
+      &quot;roomNameCn&quot;: &quot;Deluxe Twin Room, 2 Double Beds, City View&quot;,
+      &quot;ratePlanId&quot;: &quot;1NwaPMXuucc-9zEN0PfsLi2&quot;,
+      &quot;ratePlanName&quot;: &quot;DELUXE, 2 DOUBLE BEDS, CITY VIEW&quot;,
+      &quot;bedType&quot;: 6,
+      &quot;bedTypeDescription&quot;: &quot;四床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 761,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 27247553,
+      &quot;roomName&quot;: &quot;Premier King Room&quot;,
+      &quot;roomNameCn&quot;: &quot;Premier King Room&quot;,
+      &quot;ratePlanId&quot;: &quot;av5pQ7AowSp-2Ih6035Mbt7&quot;,
+      &quot;ratePlanName&quot;: &quot;DOUBLE PREMIER KING BED&quot;,
+      &quot;bedType&quot;: 73,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 807,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959334,
+      &quot;roomName&quot;: &quot;Executive Room (2 Beds)&quot;,
+      &quot;roomNameCn&quot;: &quot;行政双床房&quot;,
+      &quot;ratePlanId&quot;: &quot;CFrjR7BPir-eJJtEku0veo&quot;,
+      &quot;ratePlanName&quot;: &quot;EXECUTIVE TWIN ROOM(行政双床房)&quot;,
+      &quot;bedType&quot;: 52,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 842,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959333,
+      &quot;roomName&quot;: &quot;Executive Double Room&quot;,
+      &quot;roomNameCn&quot;: &quot;行政大床房&quot;,
+      &quot;ratePlanId&quot;: &quot;bfRJtuOmT8Z-f8L7XWLvwgc&quot;,
+      &quot;ratePlanName&quot;: &quot;COZY DOUBLE ROOM(行政大床房)&quot;,
+      &quot;bedType&quot;: 2,
+      &quot;bedTypeDescription&quot;: &quot;双床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 842,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 24995065,
+      &quot;roomName&quot;: &quot;Executive Room, 1 King Bed&quot;,
+      &quot;roomNameCn&quot;: &quot;行政客房, 1 张特大床&quot;,
+      &quot;ratePlanId&quot;: &quot;ezNG3xL5p6u-2JL9KQvzDGG&quot;,
+      &quot;ratePlanName&quot;: &quot;Executive Room, 1 King Bed(行政客房, 1 张特大床)&quot;,
+      &quot;bedType&quot;: 73,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 856,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959334,
+      &quot;roomName&quot;: &quot;Executive Room (2 Beds)&quot;,
+      &quot;roomNameCn&quot;: &quot;行政双床房&quot;,
+      &quot;ratePlanId&quot;: &quot;4EW1jmv8VJs-9is1Z6x1bzv&quot;,
+      &quot;ratePlanName&quot;: &quot;Executive Twin Room, 2 Double Beds&quot;,
+      &quot;bedType&quot;: 6,
+      &quot;bedTypeDescription&quot;: &quot;四床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 857,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 24995065,
+      &quot;roomName&quot;: &quot;Executive Room, 1 King Bed&quot;,
+      &quot;roomNameCn&quot;: &quot;行政客房, 1 张特大床&quot;,
+      &quot;ratePlanId&quot;: &quot;gfMBp7YC0RC-lmBGBGnmgJY&quot;,
+      &quot;ratePlanName&quot;: &quot;Executive Room, 1 King Bed&quot;,
+      &quot;bedType&quot;: 2,
+      &quot;bedTypeDescription&quot;: &quot;双床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 857,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959334,
+      &quot;roomName&quot;: &quot;Executive Room (2 Beds)&quot;,
+      &quot;roomNameCn&quot;: &quot;行政双床房&quot;,
+      &quot;ratePlanId&quot;: &quot;aRUrsyyxH77-3SQdWr6yYYR&quot;,
+      &quot;ratePlanName&quot;: &quot;Executive Twin Room, 2 Double Beds&quot;,
+      &quot;bedType&quot;: 9,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 862,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 24995065,
+      &quot;roomName&quot;: &quot;Executive Room, 1 King Bed&quot;,
+      &quot;roomNameCn&quot;: &quot;行政客房, 1 张特大床&quot;,
+      &quot;ratePlanId&quot;: &quot;6Pcux5YYufY-2KdDZcgZJp3&quot;,
+      &quot;ratePlanName&quot;: &quot;Executive Room, 1 King Bed&quot;,
+      &quot;bedType&quot;: 9,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 862,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959333,
+      &quot;roomName&quot;: &quot;Executive Double Room&quot;,
+      &quot;roomNameCn&quot;: &quot;行政大床房&quot;,
+      &quot;ratePlanId&quot;: &quot;dMWVVXPxqas-220CfJ7jBmd&quot;,
+      &quot;ratePlanName&quot;: &quot;Executive Room, 1 King Bed&quot;,
+      &quot;bedType&quot;: 73,
+      &quot;bedTypeDescription&quot;: &quot;未知&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 866,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    },
+    {
+      &quot;roomTypeId&quot;: 4959333,
+      &quot;roomName&quot;: &quot;Executive Double Room&quot;,
+      &quot;roomNameCn&quot;: &quot;行政大床房&quot;,
+      &quot;ratePlanId&quot;: &quot;8hILkWXjGAp-3sNqXUaprIw&quot;,
+      &quot;ratePlanName&quot;: &quot;DOUBLE EXECUTIVE&quot;,
+      &quot;bedType&quot;: 2,
+      &quot;bedTypeDescription&quot;: &quot;双床&quot;,
+      &quot;currency&quot;: &quot;CNY&quot;,
+      &quot;totalPrice&quot;: 0,
+      &quot;totalSalesRate&quot;: null,
+      &quot;inventoryCount&quot;: null,
+      &quot;isOnRequest&quot;: null,
+      &quot;recommendIndex&quot;: null,
+      &quot;cancellationPolicies&quot;: [
+        {
+          &quot;fromDate&quot;: &quot;2026-03-18T00:00:00+08:00&quot;,
+          &quot;toDate&quot;: null,
+          &quot;amount&quot;: 912,
+          &quot;percent&quot;: null,
+          &quot;type&quot;: null,
+          &quot;description&quot;: null
+        }
+      ],
+      &quot;includedFees&quot;: null,
+      &quot;excludedFees&quot;: null,
+      &quot;metadata&quot;: null
+    }
+  ]
+}
+        </div>
+    </div>
+
+    <script>
+        function toggleJson() {
+            const el = document.getElementById('raw-json');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

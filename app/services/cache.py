@@ -77,8 +77,12 @@ class CacheService:
 
         # Check expiration
         if row['expires_at']:
-            expires_at = datetime.fromisoformat(row['expires_at'])
-            if datetime.now() > expires_at:
+            from datetime import timezone
+            expires_at = datetime.fromisoformat(row['expires_at'].replace('Z', '+00:00'))
+            if expires_at.tzinfo is None:
+                expires_at = expires_at.replace(tzinfo=timezone.utc)
+            now_utc = datetime.now(timezone.utc)
+            if now_utc > expires_at:
                 # Cache expired, delete and return None
                 self.delete_cache(cache_key)
                 return None
@@ -90,8 +94,12 @@ class CacheService:
 
     def set_cache(self, cache_key: str, response: Dict, ttl_seconds: int = 3600):
         """Store response in cache with TTL."""
-        expires_at = datetime.now().timestamp() + ttl_seconds
-        expires_at_str = datetime.fromtimestamp(expires_at).isoformat()
+        from datetime import timezone as tz
+        # Use UTC to match SQLite's CURRENT_TIMESTAMP
+        now_utc = datetime.now(tz.utc)
+        expires_ts = now_utc.timestamp() + ttl_seconds
+        expires_dt = datetime.fromtimestamp(expires_ts, tz=tz.utc)
+        expires_at_str = expires_dt.isoformat()
 
         cursor = self.conn.cursor()
         cursor.execute('''

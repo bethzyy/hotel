@@ -3,6 +3,10 @@ Configuration for Hotel Search Application
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent
@@ -26,6 +30,16 @@ TUNIU_TIMEOUT = int(os.environ.get('TUNIU_TIMEOUT', '60'))
 # Cache Configuration
 CACHE_ENABLED = os.environ.get('CACHE_ENABLED', 'True').lower() == 'true'
 CACHE_TTL = int(os.environ.get('CACHE_TTL', '3600'))  # 1 hour default
+
+# Serper.dev API Configuration (for external platform price comparison)
+SERPER_API_KEY = os.environ.get('SERPER_API_KEY', '')
+SERPER_TIMEOUT = int(os.environ.get('SERPER_TIMEOUT', '10'))
+SERPER_ENABLED = os.environ.get('SERPER_ENABLED', 'True').lower() == 'true'
+
+# Tavily API Configuration (for external platform price comparison)
+TAVILY_API_KEY = os.environ.get('TAVILY_API_KEY', '')
+TAVILY_TIMEOUT = int(os.environ.get('TAVILY_TIMEOUT', '15'))
+TAVILY_ENABLED = os.environ.get('TAVILY_ENABLED', 'True').lower() == 'true'
 
 # Application Settings
 RESULTS_PER_PAGE = int(os.environ.get('RESULTS_PER_PAGE', '10'))
