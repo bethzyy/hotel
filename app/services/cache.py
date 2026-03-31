@@ -59,6 +59,21 @@ class CacheService:
             )
         ''')
 
+        # Click tracking table (for CPS affiliate)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS clicks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                hotel_id TEXT NOT NULL,
+                hotel_name TEXT,
+                provider TEXT NOT NULL,
+                target_url TEXT NOT NULL,
+                source_page TEXT,
+                user_ip TEXT,
+                user_agent TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+
         self.conn.commit()
 
     # ==================== Cache Methods ====================
@@ -233,6 +248,75 @@ class CacheService:
             return False
 
     # ==================== Utility Methods ====================
+
+    # ==================== Click Tracking Methods ====================
+
+    def record_click(self, hotel_id: str, hotel_name: str, provider: str,
+                     target_url: str, source_page: str, user_ip: str = '',
+                     user_agent: str = '') -> int:
+        """Record a click-through event for affiliate tracking."""
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            INSERT INTO clicks (hotel_id, hotel_name, provider, target_url,
+                               source_page, user_ip, user_agent)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (hotel_id, hotel_name, provider, target_url,
+              source_page, user_ip, user_agent))
+        self.conn.commit()
+        return cursor.lastrowid
+
+    def get_click_stats(self, days: int = 30) -> Dict:
+        """Get click statistics for the admin dashboard."""
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            SELECT
+                COUNT(*) as total_clicks,
+                COUNT(DISTINCT hotel_id) as unique_hotels,
+                COUNT(DISTINCT DATE(created_at)) as active_days,
+                provider,
+                MIN(created_at) as first_click,
+                MAX(created_at) as last_click
+            FROM clicks
+            WHERE created_at >= datetime('now', ?)
+            GROUP BY provider
+        ''', (f'-{days} days',))
+
+        stats = {
+            'total_clicks': 0,
+            'unique_hotels': 0,
+            'active_days': 0,
+            'by_provider': []
+        }
+        seen_hotels = set()
+        seen_days = set()
+
+        for row in cursor.fetchall():
+            stats['total_clicks'] += row['total_clicks']
+            seen_hotels.add(row['hotel_id'])
+            seen_days.add(row['active_days'])
+            stats['by_provider'].append({
+                'provider': row['provider'],
+                'clicks': row['total_clicks'],
+                'unique_hotels': row['unique_hotels'],
+                'first_click': row['first_click'],
+                'last_click': row['last_click']
+            })
+
+        stats['unique_hotels'] = len(seen_hotels)
+        stats['active_days'] = len(seen_days)
+        return stats
+
+    def get_recent_clicks(self, limit: int = 50) -> List[Dict]:
+        """Get recent click records for the admin dashboard."""
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            SELECT id, hotel_id, hotel_name, provider, target_url,
+                   source_page, user_ip, created_at
+            FROM clicks
+            ORDER BY created_at DESC
+            LIMIT ?
+        ''', (limit,))
+        return [dict(row) for row in cursor.fetchall()]
 
     def close(self):
         """Close database connection."""

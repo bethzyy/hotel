@@ -4,30 +4,45 @@ Multi-MCP hotel search and booking application
 """
 import os
 import logging
+import logging.handlers
 from pathlib import Path
-from flask import Flask
+from flask import Flask, jsonify
 
 
 def create_app(config=None):
     """Create and configure the Flask application."""
     app = Flask(__name__)
 
-    # Configure logging for Tavily debugging
-    # Set log level based on DEBUG mode
-    from config import DEBUG
+    # Configure logging
+    from config import DEBUG, BASE_DIR
     log_level = logging.DEBUG if DEBUG else logging.INFO
+    log_format = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
+    date_format = '%Y-%m-%d %H:%M:%S'
 
-    # Configure root logger with force=True to override any existing config
     logging.basicConfig(
         level=log_level,
-        format='%(asctime)s [%(name)s] %(levelname)s: %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        force=True  # Force reconfiguration
+        format=log_format,
+        datefmt=date_format,
+        force=True
     )
 
-    # Set specific loggers to DEBUG for Tavily debugging
-    logging.getLogger('app.routes.comparison').setLevel(logging.DEBUG)
-    logging.getLogger('app.services.tavily').setLevel(logging.DEBUG)
+    # File logging in production
+    if not DEBUG:
+        logs_dir = Path(BASE_DIR / 'logs')
+        logs_dir.mkdir(parents=True, exist_ok=True)
+        file_handler = logging.handlers.RotatingFileHandler(
+            logs_dir / 'app.log',
+            maxBytes=10 * 1024 * 1024,  # 10MB
+            backupCount=10
+        )
+        file_handler.setFormatter(logging.Formatter(log_format, date_format))
+        file_handler.setLevel(logging.INFO)
+        logging.getLogger().addHandler(file_handler)
+
+    # Debug-only loggers
+    if DEBUG:
+        logging.getLogger('app.routes.comparison').setLevel(logging.DEBUG)
+        logging.getLogger('app.services.tavily').setLevel(logging.DEBUG)
 
     # Suppress verbose third-party loggers
     logging.getLogger('urllib3').setLevel(logging.WARNING)
@@ -90,12 +105,36 @@ def create_app(config=None):
     from app.routes.user import user_bp
     from app.routes.booking import booking_bp
     from app.routes.comparison import comparison_bp
+    from app.routes.click import click_bp
+    from app.routes.admin import admin_bp
 
     app.register_blueprint(search_bp, url_prefix='/api')
     app.register_blueprint(hotel_bp, url_prefix='/api')
     app.register_blueprint(user_bp, url_prefix='/api')
     app.register_blueprint(booking_bp, url_prefix='/api')
     app.register_blueprint(comparison_bp, url_prefix='/api')
+    app.register_blueprint(click_bp, url_prefix='/api')
+    app.register_blueprint(admin_bp, url_prefix='/api')
+
+    # Health check endpoint (for monitoring and load balancer)
+    @app.route('/health')
+    def health():
+        from datetime import datetime, timezone
+        checks = {'status': 'ok', 'timestamp': datetime.now(timezone.utc).isoformat()}
+        # Check database connectivity
+        try:
+            cache_service.conn.execute('SELECT 1')
+            checks['database'] = 'ok'
+        except Exception as e:
+            checks['database'] = f'error: {str(e)}'
+            checks['status'] = 'degraded'
+        return jsonify(checks)
+
+    # Robots.txt
+    @app.route('/robots.txt')
+    def robots_txt():
+        from flask import send_from_directory
+        return send_from_directory(app.static_folder, 'robots.txt', mimetype='text/plain')
 
     # Main page routes
     @app.route('/')

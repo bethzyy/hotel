@@ -2,7 +2,6 @@
 Price Comparison API routes
 Compare hotel prices across multiple providers
 """
-import hashlib
 import json
 import logging
 from flask import Blueprint, request, jsonify, current_app
@@ -12,6 +11,7 @@ from app.services.hotel_matcher import HotelMatcher
 from app.services.serper import SerperService
 from app.services.tavily import TavilyService
 from app.services.currency import convert_to_cny
+from app.utils import get_cache_service, generate_cache_key
 
 logger = logging.getLogger(__name__)
 
@@ -19,17 +19,6 @@ comparison_bp = Blueprint('comparison', __name__)
 
 # Create matcher instance
 hotel_matcher = HotelMatcher()
-
-
-def get_cache_service():
-    """Get cache service from app context."""
-    return current_app.cache_service
-
-
-def generate_cache_key(prefix: str, data: dict) -> str:
-    """Generate cache key from data."""
-    data_str = json.dumps(data, sort_keys=True)
-    return f"{prefix}:{hashlib.md5(data_str.encode()).hexdigest()}"
 
 
 @comparison_bp.route('/compare/<provider>/<hotel_id>', methods=['GET'])

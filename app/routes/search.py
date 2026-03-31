@@ -2,23 +2,11 @@
 Search API routes
 Supports multiple MCP providers (RollingGo, Tuniu)
 """
-import hashlib
-import json
 from flask import Blueprint, request, jsonify, current_app
 from app.services.hotel_provider import get_provider, get_available_providers, HotelProviderError
+from app.utils import get_cache_service, generate_cache_key
 
 search_bp = Blueprint('search', __name__)
-
-
-def get_cache_service():
-    """Get cache service from app context."""
-    return current_app.cache_service
-
-
-def generate_cache_key(prefix: str, data: dict) -> str:
-    """Generate cache key from data."""
-    data_str = json.dumps(data, sort_keys=True)
-    return f"{prefix}:{hashlib.md5(data_str.encode()).hexdigest()}"
 
 
 @search_bp.route('/search', methods=['POST'])

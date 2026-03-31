@@ -2,13 +2,9 @@
 User-related API routes (favorites and history)
 """
 from flask import Blueprint, request, jsonify, current_app
+from app.utils import get_cache_service
 
 user_bp = Blueprint('user', __name__)
-
-
-def get_cache_service():
-    """Get cache service from app context."""
-    return current_app.cache_service
 
 
 # ==================== Favorites API ====================
