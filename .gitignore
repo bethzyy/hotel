@@ -33,3 +33,6 @@ build/
 
 # 数据库
 data/*.db
+
+# Claude Code 本地配置
+.claude/settings.local.json
