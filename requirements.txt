@@ -5,8 +5,12 @@ Flask-RESTful>=0.3.10
 # Data validation
 pydantic>=2.0.0
 
-# Database
-# SQLite is built-in, no extra dependency needed
+# HTTP clients
+requests>=2.31.0
+httpx>=0.25.0
+
+# MCP runtime (required for RollingGo)
+mcp>=1.0.0
 
 # Utilities
 python-dotenv>=1.0.0

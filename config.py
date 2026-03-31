@@ -12,7 +12,13 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent
 
 # Flask Configuration
-SECRET_KEY = os.environ.get('SECRET_KEY', 'hotel-search-secret-key-2024')
+SECRET_KEY = os.environ.get('SECRET_KEY', '')
+if not SECRET_KEY and DEBUG:
+    # Dev mode: generate a random key so sessions work locally
+    import secrets
+    SECRET_KEY = secrets.token_hex(32)
+elif not SECRET_KEY:
+    raise RuntimeError('SECRET_KEY environment variable is required in production')
 DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
 
 # Database Configuration

@@ -861,16 +861,11 @@ def get_comparison_status():
 def test_serper():
     """
     Test Serper API connectivity and functionality.
-
-    Query Parameters:
-        - hotel_name: Hotel name to search (default: "北京王府井希尔顿酒店")
-        - city: City name (default: "北京")
-        - check_in: Check-in date YYYY-MM-DD (default: tomorrow)
-        - check_out: Check-out date YYYY-MM-DD (default: day after tomorrow)
-
-    Returns:
-        JSON response with test results including raw API response
+    Only available in DEBUG mode.
     """
+    if not current_app.config.get('DEBUG', False):
+        return jsonify({'error': 'Not found'}), 404
+
     import requests
     from datetime import datetime, timedelta
 
@@ -1034,16 +1029,11 @@ def test_serper():
 def test_tavily():
     """
     Test Tavily API connectivity and functionality.
-
-    Query Parameters:
-        - hotel_name: Hotel name to search (default: "杭州武林万怡酒店")
-        - city: City name (default: "杭州")
-        - check_in: Check-in date YYYY-MM-DD (default: tomorrow)
-        - check_out: Check-out date YYYY-MM-DD (default: day after tomorrow)
-
-    Returns:
-        JSON response with test results including raw API response and price extraction
+    Only available in DEBUG mode.
     """
+    if not current_app.config.get('DEBUG', False):
+        return jsonify({'error': 'Not found'}), 404
+
     import requests
     from datetime import datetime, timedelta
 
