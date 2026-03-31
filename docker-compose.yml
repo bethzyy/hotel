@@ -1,6 +1,8 @@
 services:
-  web:
-    build: .
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "127.0.0.1:5000:5000"
     env_file:
@@ -15,3 +17,16 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - NUXT_PUBLIC_API_BASE=http://api:5000/api
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
