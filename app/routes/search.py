@@ -3,6 +3,7 @@ Search API routes
 Supports multiple MCP providers (RollingGo, Tuniu)
 """
 from flask import Blueprint, request, jsonify, current_app
+from app.extensions import limiter
 from app.services.hotel_provider import get_provider, get_available_providers, HotelProviderError
 from app.utils import get_cache_service, generate_cache_key
 
@@ -10,6 +11,7 @@ search_bp = Blueprint('search', __name__)
 
 
 @search_bp.route('/search', methods=['POST'])
+@limiter.limit("10 per minute")
 def search_hotels():
     """
     Search for hotels.
@@ -199,9 +201,10 @@ def search_hotels():
         import traceback
         current_app.logger.error(f"Search error: {e}")
         current_app.logger.error(traceback.format_exc())
+        error_detail = str(e) if current_app.config.get('DEBUG') else 'Internal server error'
         return jsonify({
             'success': False,
-            'error': f'An unexpected error occurred: {str(e)}'
+            'error': f'An unexpected error occurred: {error_detail}'
         }), 500
 
 

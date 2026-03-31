@@ -5,6 +5,7 @@ Compare hotel prices across multiple providers
 import json
 import logging
 from flask import Blueprint, request, jsonify, current_app
+from app.extensions import limiter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from app.services.hotel_provider import get_provider, HotelProviderError
 from app.services.hotel_matcher import HotelMatcher
@@ -22,6 +23,7 @@ hotel_matcher = HotelMatcher()
 
 
 @comparison_bp.route('/compare/<provider>/<hotel_id>', methods=['GET'])
+@limiter.limit("5 per minute")
 def compare_hotel_prices(provider, hotel_id):
     """
     Compare hotel prices across all available providers.
@@ -586,6 +588,7 @@ def search_provider_for_comparison(
 
 
 @comparison_bp.route('/compare/batch', methods=['POST'])
+@limiter.limit("3 per minute")
 def batch_compare_hotels():
     """
     Batch compare hotel prices across all available providers.
@@ -812,9 +815,10 @@ def batch_compare_hotels():
         import traceback
         logger.error(f"Batch price comparison error: {e}")
         logger.error(traceback.format_exc())
+        error_detail = str(e) if current_app.config.get('DEBUG') else 'Internal server error'
         return jsonify({
             'success': False,
-            'error': f'An unexpected error occurred during batch price comparison: {str(e)}'
+            'error': f'An unexpected error occurred during batch price comparison: {error_detail}'
         }), 500
 
 

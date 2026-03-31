@@ -4,7 +4,7 @@ Records user click-through events for CPS affiliate tracking
 """
 import logging
 from flask import Blueprint, request, jsonify, redirect, current_app
-from app.utils import get_cache_service
+from app.models.database import db, Click
 
 logger = logging.getLogger(__name__)
 
@@ -40,18 +40,20 @@ def track_click():
 
     # Record the click
     try:
-        cache = get_cache_service()
-        cache.record_click(
+        click = Click(
             hotel_id=hotel_id,
             hotel_name=hotel_name,
             provider=provider,
-            target_url=target_url,
-            source_page=source,
+            target_url=target_url[:2000],
+            source_page=source[:500] if source else None,
             user_ip=request.remote_addr,
             user_agent=request.headers.get('User-Agent', '')[:500]
         )
-        logger.info(f"Click tracked: hotel={hotel_name} provider={provider} url={target_url[:100]}")
+        db.session.add(click)
+        db.session.commit()
+        logger.info(f"Click tracked: hotel={hotel_name} provider={provider}")
     except Exception as e:
+        db.session.rollback()
         logger.error(f"Failed to record click: {e}")
         # Don't block the redirect even if tracking fails
 

@@ -28,6 +28,14 @@ if not SECRET_KEY:
 
 # Database Configuration
 DATABASE_PATH = os.environ.get('DATABASE_PATH', str(BASE_DIR / 'data' / 'hotel.db'))
+# SQLAlchemy URI: SQLite for dev, PostgreSQL for production
+# e.g. postgresql://user:pass@localhost:5432/hotel_db
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', f'sqlite:///{DATABASE_PATH}')
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# JWT Configuration
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', SECRET_KEY)
+JWT_ACCESS_TOKEN_EXPIRES = int(os.environ.get('JWT_ACCESS_TOKEN_EXPIRES', '86400'))  # 24h
 
 # RollingGo CLI Configuration
 ROLLINGGO_API_KEY = os.environ.get('AIGOHOTEL_API_KEY', '')

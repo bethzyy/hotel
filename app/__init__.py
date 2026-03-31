@@ -53,6 +53,8 @@ def create_app(config=None):
     # Load default configuration
     from config import (
         SECRET_KEY, DEBUG, DATABASE_PATH,
+        SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS,
+        JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES,
         CACHE_ENABLED, CACHE_TTL, RESULTS_PER_PAGE,
         MAX_FAVORITES, MAX_HISTORY, PLACE_TYPES,
         ROLLINGGO_API_KEY, ROLLINGGO_TIMEOUT,
@@ -65,6 +67,10 @@ def create_app(config=None):
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['DEBUG'] = DEBUG
     app.config['DATABASE_PATH'] = DATABASE_PATH
+    app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
+    app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = JWT_ACCESS_TOKEN_EXPIRES
     app.config['CACHE_ENABLED'] = CACHE_ENABLED
     app.config['CACHE_TTL'] = CACHE_TTL
     app.config['RESULTS_PER_PAGE'] = RESULTS_PER_PAGE
@@ -93,11 +99,53 @@ def create_app(config=None):
     data_dir = Path(app.config['DATABASE_PATH']).parent
     data_dir.mkdir(parents=True, exist_ok=True)
 
-    # Initialize database
+    # Initialize SQLAlchemy + Flask-Migrate
+    from app.models.database import db
+    db.init_app(app)
+
+    from flask_migrate import Migrate
+    Migrate(app, db)
+
+    # Initialize JWT
+    from flask_jwt_extended import JWTManager
+    jwt = JWTManager(app)
+
+    # Initialize API Limiter
+    from app.extensions import limiter
+    limiter.init_app(app)
+    app.limiter = limiter
+
+    # Initialize CORS
+    from flask_cors import CORS
+    CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+
+    # Initialize cache service (legacy, still used for API response caching)
     from app.services.cache import CacheService
     cache_service = CacheService(app.config['DATABASE_PATH'])
     cache_service.init_db()
     app.cache_service = cache_service
+
+    # Create all database tables (SQLAlchemy models)
+    with app.app_context():
+        # Auto-migrate: drop old tables that conflict with new SQLAlchemy models
+        if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
+            inspector = db.inspect(db.engine)
+            existing = inspector.get_table_names()
+            for table in ['favorites', 'search_history', 'clicks']:
+                if table in existing:
+                    columns = [c['name'] for c in inspector.get_columns(table)]
+                    needs_recreate = False
+                    if table == 'favorites' and 'user_id' not in columns:
+                        needs_recreate = True
+                    elif table == 'search_history' and 'device_fingerprint' not in columns:
+                        needs_recreate = True
+                    elif table == 'clicks' and 'hotel_name' not in columns:
+                        needs_recreate = True
+                    if needs_recreate:
+                        db.session.execute(db.text(f'DROP TABLE IF EXISTS {table}'))
+                        app.logger.info(f"[Migrate] Dropped old table: {table}")
+                        db.session.commit()
+        db.create_all()
 
     # Register blueprints
     from app.routes.search import search_bp
@@ -107,6 +155,7 @@ def create_app(config=None):
     from app.routes.comparison import comparison_bp
     from app.routes.click import click_bp
     from app.routes.admin import admin_bp
+    from app.routes.auth import auth_bp
 
     app.register_blueprint(search_bp, url_prefix='/api')
     app.register_blueprint(hotel_bp, url_prefix='/api')
@@ -115,15 +164,16 @@ def create_app(config=None):
     app.register_blueprint(comparison_bp, url_prefix='/api')
     app.register_blueprint(click_bp, url_prefix='/api')
     app.register_blueprint(admin_bp, url_prefix='/api')
+    app.register_blueprint(auth_bp, url_prefix='/api')
 
     # Health check endpoint (for monitoring and load balancer)
     @app.route('/health')
     def health():
         from datetime import datetime, timezone
         checks = {'status': 'ok', 'timestamp': datetime.now(timezone.utc).isoformat()}
-        # Check database connectivity
         try:
-            cache_service.conn.execute('SELECT 1')
+            from sqlalchemy import text
+            db.session.execute(text('SELECT 1'))
             checks['database'] = 'ok'
         except Exception as e:
             checks['database'] = f'error: {str(e)}'
@@ -144,7 +194,7 @@ def create_app(config=None):
 
     @app.route('/results')
     def results():
-        from flask import render_template, request
+        from flask import render_template
         return render_template('results.html')
 
     @app.route('/detail/<hotel_id>')

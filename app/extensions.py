@@ -1,0 +1,13 @@
+"""
+Shared Flask extension instances.
+Import these in route modules to use decorators that must be applied at registration time.
+"""
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://",
+    headers_enabled=True
+)

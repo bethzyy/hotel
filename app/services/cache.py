@@ -24,10 +24,11 @@ class CacheService:
         return self._conn
 
     def init_db(self):
-        """Initialize database tables."""
+        """Initialize database tables. Only manages api_cache table now.
+        Favorites, SearchHistory, and Clicks are managed by SQLAlchemy models."""
         cursor = self.conn.cursor()
 
-        # API response cache table
+        # API response cache table (only table managed by CacheService)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS api_cache (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,42 +36,6 @@ class CacheService:
                 response TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 expires_at TIMESTAMP
-            )
-        ''')
-
-        # Favorites table
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS favorites (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                hotel_id TEXT UNIQUE NOT NULL,
-                hotel_data TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
-
-        # Search history table
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS search_history (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                query TEXT NOT NULL,
-                place TEXT NOT NULL,
-                place_type TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
-
-        # Click tracking table (for CPS affiliate)
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS clicks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                hotel_id TEXT NOT NULL,
-                hotel_name TEXT,
-                provider TEXT NOT NULL,
-                target_url TEXT NOT NULL,
-                source_page TEXT,
-                user_ip TEXT,
-                user_agent TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
 
@@ -139,184 +104,46 @@ class CacheService:
         ''', (datetime.now().isoformat(),))
         self.conn.commit()
 
-    # ==================== Favorites Methods ====================
-
-    def add_favorite(self, hotel_id: str, hotel_data: Dict) -> bool:
-        """Add hotel to favorites."""
-        try:
-            cursor = self.conn.cursor()
-            cursor.execute('''
-                INSERT OR REPLACE INTO favorites (hotel_id, hotel_data)
-                VALUES (?, ?)
-            ''', (hotel_id, json.dumps(hotel_data, ensure_ascii=False)))
-            self.conn.commit()
-            return True
-        except sqlite3.Error:
-            return False
-
-    def remove_favorite(self, hotel_id: str) -> bool:
-        """Remove hotel from favorites."""
-        try:
-            cursor = self.conn.cursor()
-            cursor.execute('DELETE FROM favorites WHERE hotel_id = ?', (hotel_id,))
-            self.conn.commit()
-            return cursor.rowcount > 0
-        except sqlite3.Error:
-            return False
+    # ==================== Compatibility Methods (delegate to SQLAlchemy) ====================
+    # These methods are kept for backward compatibility with search.py and hotel.py.
+    # They query the new SQLAlchemy-managed favorites/search_history tables.
 
     def is_favorite(self, hotel_id: str) -> bool:
-        """Check if hotel is in favorites."""
-        cursor = self.conn.cursor()
-        cursor.execute('SELECT 1 FROM favorites WHERE hotel_id = ?', (hotel_id,))
-        return cursor.fetchone() is not None
-
-    def get_favorites(self) -> List[Dict]:
-        """Get all favorite hotels."""
-        cursor = self.conn.cursor()
-        cursor.execute('''
-            SELECT hotel_id, hotel_data, created_at
-            FROM favorites
-            ORDER BY created_at DESC
-        ''')
-
-        favorites = []
-        for row in cursor.fetchall():
-            try:
-                hotel_data = json.loads(row['hotel_data'])
-                hotel_data['is_favorite'] = True
-                hotel_data['favorited_at'] = row['created_at']
-                favorites.append(hotel_data)
-            except json.JSONDecodeError:
-                continue
-
-        return favorites
-
-    def get_favorites_count(self) -> int:
-        """Get total number of favorites."""
-        cursor = self.conn.cursor()
-        cursor.execute('SELECT COUNT(*) as count FROM favorites')
-        row = cursor.fetchone()
-        return row['count'] if row else 0
-
-    # ==================== Search History Methods ====================
-
-    def add_search_history(self, query: str, place: str, place_type: Optional[str] = None):
-        """Add search to history."""
-        cursor = self.conn.cursor()
-        cursor.execute('''
-            INSERT INTO search_history (query, place, place_type)
-            VALUES (?, ?, ?)
-        ''', (query, place, place_type))
-        self.conn.commit()
-
-    def get_search_history(self, limit: int = 10) -> List[Dict]:
-        """Get recent search history."""
-        cursor = self.conn.cursor()
-        cursor.execute('''
-            SELECT id, query, place, place_type, created_at
-            FROM search_history
-            ORDER BY created_at DESC
-            LIMIT ?
-        ''', (limit,))
-
-        history = []
-        for row in cursor.fetchall():
-            history.append({
-                'id': row['id'],
-                'query': row['query'],
-                'place': row['place'],
-                'place_type': row['place_type'],
-                'created_at': row['created_at']
-            })
-
-        return history
-
-    def clear_search_history(self):
-        """Clear all search history."""
-        cursor = self.conn.cursor()
-        cursor.execute('DELETE FROM search_history')
-        self.conn.commit()
-
-    def delete_search_history(self, history_id: int) -> bool:
-        """Delete specific search history entry."""
+        """Check if hotel is in favorites (any user or anonymous)."""
         try:
-            cursor = self.conn.cursor()
-            cursor.execute('DELETE FROM search_history WHERE id = ?', (history_id,))
-            self.conn.commit()
-            return cursor.rowcount > 0
-        except sqlite3.Error:
+            from app.models.database import Favorite
+            return Favorite.query.filter_by(hotel_id=hotel_id).first() is not None
+        except Exception:
             return False
 
+    def add_search_history(self, query: str, place: str, place_type: Optional[str] = None,
+                          provider: Optional[str] = None):
+        """Add search to history (anonymous, no user context)."""
+        try:
+            from app.models.database import SearchHistory
+            import hashlib
+            ua = ''
+            ip = ''
+            # Lazy import flask request context
+            try:
+                from flask import request
+                ua = request.headers.get('User-Agent', '')
+                ip = request.remote_addr or ''
+            except Exception:
+                pass
+            fp = hashlib.sha256(f"{ua}{ip}".encode()).hexdigest()[:32]
+            history = SearchHistory(
+                device_fingerprint=fp,
+                query=query, place=place,
+                place_type=place_type, provider=provider
+            )
+            from app.models.database import db
+            db.session.add(history)
+            db.session.commit()
+        except Exception:
+            pass
+
     # ==================== Utility Methods ====================
-
-    # ==================== Click Tracking Methods ====================
-
-    def record_click(self, hotel_id: str, hotel_name: str, provider: str,
-                     target_url: str, source_page: str, user_ip: str = '',
-                     user_agent: str = '') -> int:
-        """Record a click-through event for affiliate tracking."""
-        cursor = self.conn.cursor()
-        cursor.execute('''
-            INSERT INTO clicks (hotel_id, hotel_name, provider, target_url,
-                               source_page, user_ip, user_agent)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (hotel_id, hotel_name, provider, target_url,
-              source_page, user_ip, user_agent))
-        self.conn.commit()
-        return cursor.lastrowid
-
-    def get_click_stats(self, days: int = 30) -> Dict:
-        """Get click statistics for the admin dashboard."""
-        cursor = self.conn.cursor()
-        cursor.execute('''
-            SELECT
-                COUNT(*) as total_clicks,
-                COUNT(DISTINCT hotel_id) as unique_hotels,
-                COUNT(DISTINCT DATE(created_at)) as active_days,
-                provider,
-                MIN(created_at) as first_click,
-                MAX(created_at) as last_click
-            FROM clicks
-            WHERE created_at >= datetime('now', ?)
-            GROUP BY provider
-        ''', (f'-{days} days',))
-
-        stats = {
-            'total_clicks': 0,
-            'unique_hotels': 0,
-            'active_days': 0,
-            'by_provider': []
-        }
-        seen_hotels = set()
-        seen_days = set()
-
-        for row in cursor.fetchall():
-            stats['total_clicks'] += row['total_clicks']
-            seen_hotels.add(row['hotel_id'])
-            seen_days.add(row['active_days'])
-            stats['by_provider'].append({
-                'provider': row['provider'],
-                'clicks': row['total_clicks'],
-                'unique_hotels': row['unique_hotels'],
-                'first_click': row['first_click'],
-                'last_click': row['last_click']
-            })
-
-        stats['unique_hotels'] = len(seen_hotels)
-        stats['active_days'] = len(seen_days)
-        return stats
-
-    def get_recent_clicks(self, limit: int = 50) -> List[Dict]:
-        """Get recent click records for the admin dashboard."""
-        cursor = self.conn.cursor()
-        cursor.execute('''
-            SELECT id, hotel_id, hotel_name, provider, target_url,
-                   source_page, user_ip, created_at
-            FROM clicks
-            ORDER BY created_at DESC
-            LIMIT ?
-        ''', (limit,))
-        return [dict(row) for row in cursor.fetchall()]
 
     def close(self):
         """Close database connection."""
