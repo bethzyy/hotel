@@ -3,6 +3,7 @@ Authentication API routes
 Phone number + verification code login, JWT tokens
 """
 import hashlib
+import os
 import time
 import logging
 from flask import Blueprint, request, jsonify, current_app
@@ -16,20 +17,92 @@ logger = logging.getLogger(__name__)
 
 auth_bp = Blueprint('auth', __name__)
 
-# In-memory verification code store (replace with Redis in production)
-_verification_codes = {}
 
+# ==================== Verification Code Storage ====================
+
+class InMemoryVerificationStore:
+    """Fallback in-memory store (development mode)."""
+    def __init__(self):
+        self._store = {}
+
+    def set_code(self, phone, code, ttl_seconds):
+        self._store[f'code:{phone}'] = {
+            'code': code, 'expires': ttl_seconds, 'created_at': time.time()
+        }
+
+    def get_code(self, phone):
+        return self._store.get(f'code:{phone}')
+
+    def delete_code(self, phone):
+        self._store.pop(f'code:{phone}', None)
+
+    def increment_send_count(self, phone):
+        key = f'codes_sent:{phone}'
+        self._store[key] = self._store.get(key, 0) + 1
+        return self._store[key]
+
+    def get_send_count(self, phone):
+        return self._store.get(f'codes_sent:{phone}', 0)
+
+
+class RedisVerificationStore:
+    """Redis-backed verification code store (production mode)."""
+    def __init__(self, redis_url):
+        import redis
+        self._redis = redis.from_url(redis_url, decode_responses=True)
+
+    def set_code(self, phone, code, ttl_seconds):
+        self._redis.setex(f'verification:code:{phone}', ttl_seconds, code)
+
+    def get_code(self, phone):
+        stored = self._redis.get(f'verification:code:{phone}')
+        if stored is None:
+            return None
+        # Redis handles TTL, return compatible format
+        return {'code': stored, 'expires': 300, 'created_at': 0}
+
+    def delete_code(self, phone):
+        self._redis.delete(f'verification:code:{phone}')
+
+    def increment_send_count(self, phone):
+        key = f'verification:codes_sent:{phone}'
+        count = self._redis.incr(key)
+        if count == 1:
+            self._redis.expire(key, 86400)  # Reset after 24 hours
+        return count
+
+    def get_send_count(self, phone):
+        return int(self._redis.get(f'verification:codes_sent:{phone}') or 0)
+
+
+# Module-level store (initialized lazily)
+_store = None
+
+
+def _get_store():
+    global _store
+    if _store is None:
+        redis_url = os.environ.get('REDIS_URL', '')
+        if redis_url:
+            _store = RedisVerificationStore(redis_url)
+        else:
+            _store = InMemoryVerificationStore()
+    return _store
+
+
+# ==================== Helper Functions ====================
 
 def _get_device_fingerprint():
     """Get or create a device fingerprint from request headers."""
     fp = request.headers.get('X-Device-Fingerprint', '')
     if not fp:
-        # Generate from user agent + IP
         ua = request.headers.get('User-Agent', '')
         ip = request.remote_addr or ''
         fp = hashlib.sha256(f"{ua}{ip}".encode()).hexdigest()[:32]
     return fp
 
+
+# ==================== Routes ====================
 
 @auth_bp.route('/auth/send-code', methods=['POST'])
 @limiter.limit("5 per minute")
@@ -45,29 +118,25 @@ def send_verification_code():
         return jsonify({'success': False, 'error': '手机号不能为空'}), 400
 
     phone = data['phone']
-    # Basic phone format validation
     import re
     if not re.match(r'^1[3-9]\d{9}$', phone):
         return jsonify({'success': False, 'error': '手机号格式不正确'}), 400
 
     # Rate limiting: max 5 codes per phone per day
-    # (In production, use Redis for this)
-    key = f'codes_sent:{phone}'
-    count = _verification_codes.get(key, 0)
+    store = _get_store()
+    count = store.get_send_count(phone)
     if count >= 5:
         return jsonify({'success': False, 'error': '今日发送次数已达上限'}), 429
 
     # Generate 6-digit code
     import random
-    import time
     code = str(random.randint(100000, 999999))
 
-    # Store code (in production, send via SMS API)
-    _verification_codes[f'code:{phone}'] = {'code': code, 'expires': 300, 'created_at': time.time()}
-    _verification_codes[key] = count + 1
+    # Store code (Redis handles TTL automatically in production)
+    store.set_code(phone, code, 300)
+    store.increment_send_count(phone)
 
     if current_app.config.get('DEBUG'):
-        # Dev mode: return code in response for testing
         logger.info(f"[Auth] Verification code for {phone}: {code}")
         return jsonify({
             'success': True,
@@ -76,7 +145,6 @@ def send_verification_code():
         })
     else:
         # TODO: Integrate SMS service (e.g., Alibaba Cloud SMS)
-        # send_sms(phone, f"您的验证码是{code}，5分钟内有效")
         logger.info(f"[Auth] Verification code sent to {phone}")
         return jsonify({'success': True, 'message': '验证码已发送'})
 
@@ -104,17 +172,19 @@ def login():
         return jsonify({'success': False, 'error': '手机号和验证码不能为空'}), 400
 
     # Verify code
-    stored = _verification_codes.get(f'code:{phone}')
-    if not stored or stored['code'] != code:
+    store = _get_store()
+    stored = store.get_code(phone)
+    if not stored or stored['code'] != str(code):
         return jsonify({'success': False, 'error': '验证码错误'}), 401
 
-    # Check expiration
-    if time.time() - stored.get('created_at', 0) > stored['expires']:
-        del _verification_codes[f'code:{phone}']
-        return jsonify({'success': False, 'error': '验证码已过期'}), 401
+    # Check expiration (Redis handles TTL automatically; in-memory needs manual check)
+    if stored.get('created_at', 0) > 0:
+        if time.time() - stored['created_at'] > stored['expires']:
+            store.delete_code(phone)
+            return jsonify({'success': False, 'error': '验证码已过期'}), 401
 
     # Clear used code
-    del _verification_codes[f'code:{phone}']
+    store.delete_code(phone)
 
     # Find or create user
     user = User.query.filter_by(phone=phone).first()
@@ -153,7 +223,6 @@ def get_current_user():
     if user_id:
         user = db.session.get(User, int(user_id))
         if user:
-            # Check and refresh membership status
             from app.routes.membership import _check_membership, _get_search_remaining
             _check_membership(user.id)
             db.session.refresh(user)
@@ -192,7 +261,6 @@ def anonymous_login():
     """
     device_fp = _get_device_fingerprint()
 
-    # Return the fingerprint so frontend can store it
     return jsonify({
         'success': True,
         'data': {

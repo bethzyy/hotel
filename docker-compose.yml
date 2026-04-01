@@ -9,6 +9,7 @@ services:
       - .env.production
     environment:
       - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql://hotel_user:${POSTGRES_PASSWORD:-hotel_secret}@postgres:5432/hotel_db
     restart: unless-stopped
     volumes:
       - ./data:/app/data
@@ -22,6 +23,8 @@ services:
     depends_on:
       redis:
         condition: service_started
+      postgres:
+        condition: service_healthy
 
   web:
     build:
@@ -36,6 +39,24 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: hotel_db
+      POSTGRES_USER: hotel_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hotel_secret}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hotel_user -d hotel_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   redis:
     image: redis:7-alpine
     ports:
@@ -46,3 +67,4 @@ services:
 
 volumes:
   redis_data:
+  postgres_data:

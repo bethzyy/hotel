@@ -61,7 +61,8 @@ def create_app(config=None):
         TUNIU_API_KEY, TUNIU_MCP_URL, TUNIU_TIMEOUT,
         DEFAULT_PROVIDER, PROVIDERS,
         SERPER_API_KEY, SERPER_TIMEOUT, SERPER_ENABLED,
-        TAVILY_API_KEY, TAVILY_TIMEOUT, TAVILY_ENABLED
+        TAVILY_API_KEY, TAVILY_TIMEOUT, TAVILY_ENABLED,
+        REDIS_URL
     )
 
     app.config['SECRET_KEY'] = SECRET_KEY
@@ -90,6 +91,7 @@ def create_app(config=None):
     app.config['TAVILY_API_KEY'] = TAVILY_API_KEY
     app.config['TAVILY_TIMEOUT'] = TAVILY_TIMEOUT
     app.config['TAVILY_ENABLED'] = TAVILY_ENABLED
+    app.config['REDIS_URL'] = REDIS_URL
 
     # Override with custom config if provided
     if config:
@@ -119,9 +121,12 @@ def create_app(config=None):
     from flask_cors import CORS
     CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
-    # Initialize cache service (legacy, still used for API response caching)
+    # Initialize cache service (Redis when available, SQLite fallback)
     from app.services.cache import CacheService
-    cache_service = CacheService(app.config['DATABASE_PATH'])
+    cache_service = CacheService(
+        app.config['DATABASE_PATH'],
+        redis_url=app.config.get('REDIS_URL', '')
+    )
     cache_service.init_db()
     app.cache_service = cache_service
 

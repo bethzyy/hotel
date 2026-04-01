@@ -130,4 +130,7 @@ ALIPAY_PUBLIC_KEY = os.environ.get('ALIPAY_PUBLIC_KEY', '')
 ALIPAY_NOTIFY_URL = os.environ.get('ALIPAY_NOTIFY_URL', '')
 
 # Redis Configuration
-REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+# Production: set REDIS_URL=redis://redis:6379/0 via docker-compose
+# Development: empty string → Flask-Limiter falls back to memory://
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0' if FLASK_ENV == 'production' else '')
+REDIS_AVAILABLE = bool(REDIS_URL)
