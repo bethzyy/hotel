@@ -112,3 +112,22 @@ PROVIDERS = {
         'supports_pagination': True
     }
 }
+
+# Membership Configuration
+FREE_SEARCH_LIMIT = int(os.environ.get('FREE_SEARCH_LIMIT', '10'))
+ANONYMOUS_SEARCH_LIMIT = int(os.environ.get('ANONYMOUS_SEARCH_LIMIT', '5'))
+
+# WeChat Pay Configuration
+WECHAT_PAY_APP_ID = os.environ.get('WECHAT_PAY_APP_ID', '')
+WECHAT_PAY_MCH_ID = os.environ.get('WECHAT_PAY_MCH_ID', '')
+WECHAT_PAY_API_KEY = os.environ.get('WECHAT_PAY_API_KEY', '')
+WECHAT_PAY_NOTIFY_URL = os.environ.get('WECHAT_PAY_NOTIFY_URL', '')
+
+# Alipay Configuration
+ALIPAY_APP_ID = os.environ.get('ALIPAY_APP_ID', '')
+ALIPAY_PRIVATE_KEY = os.environ.get('ALIPAY_PRIVATE_KEY', '')
+ALIPAY_PUBLIC_KEY = os.environ.get('ALIPAY_PUBLIC_KEY', '')
+ALIPAY_NOTIFY_URL = os.environ.get('ALIPAY_NOTIFY_URL', '')
+
+# Redis Configuration
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')

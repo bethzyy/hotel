@@ -2,12 +2,39 @@
 Search API routes
 Supports multiple MCP providers (RollingGo, Tuniu)
 """
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, make_response
+from flask_jwt_extended import get_jwt_identity
 from app.extensions import limiter
 from app.services.hotel_provider import get_provider, get_available_providers, HotelProviderError
 from app.utils import get_cache_service, generate_cache_key
 
 search_bp = Blueprint('search', __name__)
+
+
+def _check_search_quota():
+    """
+    Check search quota for current user.
+    Returns (user, remaining_count) or None for anonymous users.
+    Raises quota exceeded error if limit reached.
+    """
+    try:
+        user_id = get_jwt_identity()
+        if not user_id:
+            return None
+    except Exception:
+        return None
+
+    from app.models.database import db, User
+    from app.routes.membership import _check_membership, _get_search_remaining
+
+    user = _check_membership(int(user_id))
+    if not user:
+        return None
+
+    remaining = _get_search_remaining(user)
+    if remaining == 0:
+        return None  # Will be handled after response is built
+    return user
 
 
 @search_bp.route('/search', methods=['POST'])
@@ -186,11 +213,21 @@ def search_hotels():
             place_type=data.get('place_type', '城市')
         )
 
-        return jsonify({
+        # Increment search count and add remaining header
+        search_user = _check_search_quota()
+        response = jsonify({
             'success': True,
             'data': response_data,
             'cached': False
         })
+
+        if search_user and not search_user.is_member:
+            from app.routes.membership import _increment_search_count, _get_search_remaining
+            _increment_search_count(search_user)
+            remaining = _get_search_remaining(search_user)
+            response.headers['X-Search-Remaining'] = str(remaining)
+
+        return response
 
     except HotelProviderError as e:
         return jsonify({

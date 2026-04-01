@@ -7,6 +7,8 @@ services:
       - "127.0.0.1:5000:5000"
     env_file:
       - .env.production
+    environment:
+      - REDIS_URL=redis://redis:6379/0
     restart: unless-stopped
     volumes:
       - ./data:/app/data
@@ -17,6 +19,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    depends_on:
+      redis:
+        condition: service_started
 
   web:
     build:
@@ -25,8 +30,19 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
     environment:
-      - NUXT_PUBLIC_API_BASE=http://api:5000/api
+      - NUXT_PUBLIC_API_BASE=/api
     depends_on:
       api:
         condition: service_healthy
     restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:

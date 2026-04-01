@@ -126,6 +126,13 @@ def create_app(config=None):
     app.cache_service = cache_service
 
     # Create all database tables (SQLAlchemy models)
+    # Import all models before create_all to ensure all tables are created
+    # Note: use 'from ... import' to avoid shadowing the local 'app' variable
+    from app.models import tracking as _m_tracking  # noqa: F401
+    from app.models import referral as _m_referral  # noqa: F401
+    from app.models import coupon as _m_coupon  # noqa: F401
+    from app.models import audit_log as _m_audit_log  # noqa: F401
+
     with app.app_context():
         # Auto-migrate: drop old tables that conflict with new SQLAlchemy models
         if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
@@ -156,6 +163,12 @@ def create_app(config=None):
     from app.routes.click import click_bp
     from app.routes.admin import admin_bp
     from app.routes.auth import auth_bp
+    from app.routes.tracking import tracking_bp
+    from app.routes.payment import payment_bp
+    from app.routes.membership import membership_bp
+    from app.routes.referral import referral_bp
+    from app.routes.coupon import coupon_bp
+    from app.routes.recommendation import recommendation_bp
 
     app.register_blueprint(search_bp, url_prefix='/api')
     app.register_blueprint(hotel_bp, url_prefix='/api')
@@ -165,6 +178,12 @@ def create_app(config=None):
     app.register_blueprint(click_bp, url_prefix='/api')
     app.register_blueprint(admin_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/api')
+    app.register_blueprint(tracking_bp, url_prefix='/api')
+    app.register_blueprint(payment_bp, url_prefix='/api')
+    app.register_blueprint(membership_bp, url_prefix='/api')
+    app.register_blueprint(referral_bp, url_prefix='/api')
+    app.register_blueprint(coupon_bp, url_prefix='/api')
+    app.register_blueprint(recommendation_bp, url_prefix='/api')
 
     # Health check endpoint (for monitoring and load balancer)
     @app.route('/health')

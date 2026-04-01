@@ -6,6 +6,9 @@
         {{ config.public.siteName }}
       </NuxtLink>
       <div class="d-flex align-items-center gap-3">
+        <NuxtLink v-if="membership.isMember" to="/membership" class="nav-link text-white" title="会员中心">
+          <i class="bi bi-gem text-warning"></i>
+        </NuxtLink>
         <NuxtLink to="/favorites" class="nav-link text-white position-relative">
           <i class="bi bi-heart"></i>
           <span v-if="favorites.count > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem">
@@ -27,8 +30,10 @@
 const config = useRuntimeConfig()
 const auth = useAuthStore()
 const favorites = useFavoritesStore()
+const membership = useMembershipStore()
 
 onMounted(() => {
   favorites.loadCount()
+  membership.fetchInfo()
 })
 </script>

@@ -4,6 +4,7 @@ Records user click-through events for CPS affiliate tracking
 """
 import logging
 from flask import Blueprint, request, jsonify, redirect, current_app
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.database import db, Click
 
 logger = logging.getLogger(__name__)
@@ -11,7 +12,19 @@ logger = logging.getLogger(__name__)
 click_bp = Blueprint('click', __name__)
 
 
+def _get_user_id():
+    """Extract user_id from JWT token if available."""
+    try:
+        uid = get_jwt_identity()
+        if uid:
+            return int(uid)
+    except Exception:
+        pass
+    return None
+
+
 @click_bp.route('/click/track', methods=['GET'])
+@jwt_required(optional=True)
 def track_click():
     """
     Track a click-through event and redirect to the target URL.
@@ -37,10 +50,12 @@ def track_click():
     hotel_name = request.args.get('hotel_name', '')
     provider = request.args.get('provider', 'unknown')
     source = request.args.get('source', request.referrer or 'direct')
+    user_id = _get_user_id()
 
     # Record the click
     try:
         click = Click(
+            user_id=user_id,
             hotel_id=hotel_id,
             hotel_name=hotel_name,
             provider=provider,
@@ -51,7 +66,7 @@ def track_click():
         )
         db.session.add(click)
         db.session.commit()
-        logger.info(f"Click tracked: hotel={hotel_name} provider={provider}")
+        logger.info(f"Click tracked: hotel={hotel_name} provider={provider} user_id={user_id}")
     except Exception as e:
         db.session.rollback()
         logger.error(f"Failed to record click: {e}")

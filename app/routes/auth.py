@@ -153,11 +153,22 @@ def get_current_user():
     if user_id:
         user = db.session.get(User, int(user_id))
         if user:
+            # Check and refresh membership status
+            from app.routes.membership import _check_membership, _get_search_remaining
+            _check_membership(user.id)
+            db.session.refresh(user)
+
             return jsonify({
                 'success': True,
                 'data': {
                     'authenticated': True,
-                    'user': user.to_dict()
+                    'user': user.to_dict(),
+                    'membership': {
+                        'tier': user.membership_tier,
+                        'expires_at': user.membership_expires_at.isoformat() if user.membership_expires_at else None,
+                        'is_member': user.is_member,
+                        'search_remaining': _get_search_remaining(user),
+                    }
                 }
             })
 

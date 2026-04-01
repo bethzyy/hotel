@@ -7,8 +7,9 @@ import logging
 from datetime import datetime, timedelta
 from functools import wraps
 from flask import Blueprint, request, jsonify, render_template_string
-from sqlalchemy import func
-from app.models.database import db, Click
+from sqlalchemy import func, distinct
+from app.models.database import db, Click, User, SearchHistory, Favorite
+from app.models.tracking import TrackingEvent
 
 logger = logging.getLogger(__name__)
 
@@ -130,3 +131,168 @@ loadStats(30);
 </script>
 </body></html>'''
     return render_template_string(html)
+
+
+# ==================== Analytics API ====================
+
+@admin_bp.route('/admin/analytics/overview')
+@requires_auth
+def analytics_overview():
+    """Get analytics overview: DAU, search volume, clicks, favorites."""
+    days = request.args.get('days', 30, type=int)
+    since = datetime.utcnow() - timedelta(days=days)
+
+    # Total users
+    total_users = db.session.query(func.count(User.id)).scalar() or 0
+    new_users = db.session.query(func.count(User.id)).filter(User.created_at >= since).scalar() or 0
+
+    # Search events (from tracking)
+    search_count = db.session.query(func.count(TrackingEvent.id)).filter(
+        TrackingEvent.event_type == 'search',
+        TrackingEvent.created_at >= since
+    ).scalar() or 0
+
+    # Pageview events
+    pageview_count = db.session.query(func.count(TrackingEvent.id)).filter(
+        TrackingEvent.event_type == 'pageview',
+        TrackingEvent.created_at >= since
+    ).scalar() or 0
+
+    # Click throughs
+    click_count = db.session.query(func.count(Click.id)).filter(Click.created_at >= since).scalar() or 0
+
+    # Favorites
+    fav_count = db.session.query(func.count(Favorite.id)).filter(Favorite.created_at >= since).scalar() or 0
+
+    # DAU (unique users/sessions per day, averaged)
+    dau = db.session.query(
+        func.count(func.distinct(TrackingEvent.user_id + TrackingEvent.device_fingerprint))
+    ).filter(TrackingEvent.created_at >= since).scalar() or 0
+
+    # Daily trend (last 7 days)
+    daily_trend = []
+    for i in range(6, -1, -1):
+        day = datetime.utcnow().date() - timedelta(days=i)
+        day_start = datetime.combine(day, datetime.min.time())
+        day_end = datetime.combine(day, datetime.max.time())
+
+        day_searches = db.session.query(func.count(TrackingEvent.id)).filter(
+            TrackingEvent.event_type == 'search',
+            TrackingEvent.created_at >= day_start,
+            TrackingEvent.created_at <= day_end
+        ).scalar() or 0
+
+        day_clicks = db.session.query(func.count(Click.id)).filter(
+            Click.created_at >= day_start,
+            Click.created_at <= day_end
+        ).scalar() or 0
+
+        daily_trend.append({
+            'date': day.isoformat(),
+            'searches': day_searches,
+            'clicks': day_clicks,
+        })
+
+    return jsonify({
+        'success': True,
+        'data': {
+            'total_users': total_users,
+            'new_users': new_users,
+            'searches': search_count,
+            'pageviews': pageview_count,
+            'clicks': click_count,
+            'favorites': fav_count,
+            'dau': dau,
+            'daily_trend': daily_trend,
+        }
+    })
+
+
+@admin_bp.route('/admin/analytics/funnel')
+@requires_auth
+def analytics_funnel():
+    """Get conversion funnel: search -> view_hotel -> compare -> click_book."""
+    days = request.args.get('days', 30, type=int)
+    since = datetime.utcnow() - timedelta(days=days)
+
+    event_counts = {}
+    for event_type in ['search', 'view_hotel', 'compare', 'click_book', 'favorite']:
+        count = db.session.query(func.count(TrackingEvent.id)).filter(
+            TrackingEvent.event_type == event_type,
+            TrackingEvent.created_at >= since
+        ).scalar() or 0
+        event_counts[event_type] = count
+
+    total_searches = event_counts.get('search', 1) or 1
+
+    return jsonify({
+        'success': True,
+        'data': {
+            'funnel': [
+                {'step': 'search', 'label': '搜索', 'count': event_counts.get('search', 0), 'rate': 100.0},
+                {'step': 'view_hotel', 'label': '查看酒店', 'count': event_counts.get('view_hotel', 0),
+                 'rate': round(event_counts.get('view_hotel', 0) / total_searches * 100, 1)},
+                {'step': 'compare', 'label': '比价', 'count': event_counts.get('compare', 0),
+                 'rate': round(event_counts.get('compare', 0) / total_searches * 100, 1)},
+                {'step': 'click_book', 'label': '点击预订', 'count': event_counts.get('click_book', 0),
+                 'rate': round(event_counts.get('click_book', 0) / total_searches * 100, 1)},
+                {'step': 'favorite', 'label': '收藏', 'count': event_counts.get('favorite', 0),
+                 'rate': round(event_counts.get('favorite', 0) / total_searches * 100, 1)},
+            ]
+        }
+    })
+
+
+@admin_bp.route('/admin/analytics/users')
+@requires_auth
+def analytics_users():
+    """Get user analytics: registration rate, activity, top users."""
+    days = request.args.get('days', 30, type=int)
+    since = datetime.utcnow() - timedelta(days=days)
+
+    total_users = db.session.query(func.count(User.id)).scalar() or 0
+    new_users = db.session.query(func.count(User.id)).filter(User.created_at >= since).scalar() or 0
+
+    # Active users (users with tracking events)
+    active_users = db.session.query(func.count(distinct(TrackingEvent.user_id))).filter(
+        TrackingEvent.user_id.isnot(None),
+        TrackingEvent.created_at >= since
+    ).scalar() or 0
+
+    # Users with clicks (conversion)
+    converting_users = db.session.query(func.count(distinct(Click.user_id))).filter(
+        Click.user_id.isnot(None),
+        Click.created_at >= since
+    ).scalar() or 0
+
+    # Top users by search count
+    top_searchers = db.session.query(
+        TrackingEvent.user_id,
+        func.count(TrackingEvent.id).label('search_count')
+    ).filter(
+        TrackingEvent.event_type == 'search',
+        TrackingEvent.user_id.isnot(None),
+        TrackingEvent.created_at >= since
+    ).group_by(TrackingEvent.user_id).order_by(func.count(TrackingEvent.id).desc()).limit(10).all()
+
+    # Top users by click count
+    top_clickers = db.session.query(
+        Click.user_id,
+        func.count(Click.id).label('click_count')
+    ).filter(
+        Click.user_id.isnot(None),
+        Click.created_at >= since
+    ).group_by(Click.user_id).order_by(func.count(Click.id).desc()).limit(10).all()
+
+    return jsonify({
+        'success': True,
+        'data': {
+            'total_users': total_users,
+            'new_users': new_users,
+            'active_users': active_users,
+            'converting_users': converting_users,
+            'conversion_rate': round(converting_users / total_users * 100, 1) if total_users else 0,
+            'top_searchers': [{'user_id': u.user_id, 'count': u.search_count} for u in top_searchers],
+            'top_clickers': [{'user_id': u.user_id, 'count': u.click_count} for u in top_clickers],
+        }
+    })

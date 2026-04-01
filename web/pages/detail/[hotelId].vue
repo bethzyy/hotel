@@ -195,6 +195,15 @@ async function loadHotel() {
         ogDescription: hotel.value.description?.substring(0, 160),
         ogImage: hotel.value.image_url,
       })
+
+      // Track view hotel event
+      const tracking = useTracking()
+      tracking.trackViewHotel({
+        hotelId: hotel.value.hotel_id,
+        hotelName: hotel.value.name,
+        provider: hotel.value.provider,
+        price: hotel.value.price_per_night,
+      })
     }
   } catch (e: any) {
     error.value = e.message || '加载失败'

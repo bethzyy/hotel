@@ -17,5 +17,7 @@ auth.init()
 
 onMounted(() => {
   auth.checkAuth()
+  const tracking = useTracking()
+  tracking.init()
 })
 </script>

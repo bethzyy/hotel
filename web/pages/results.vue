@@ -1,5 +1,8 @@
 <template>
   <div class="container py-4">
+    <!-- Search Limit Banner -->
+    <SearchLimit />
+
     <!-- Search Info Header -->
     <div v-if="searchInfo" class="search-info mb-4">
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -96,6 +99,16 @@ async function search() {
     useSeoMeta({
       title: `${place}酒店搜索结果 - ${hotels.value.length}家酒店`,
       description: `搜索${place}酒店，共找到${hotels.value.length}家酒店，对比价格找到最优惠的。`,
+    })
+
+    // Track search event
+    const tracking = useTracking()
+    tracking.trackSearch({
+      provider: provider || undefined,
+      place: place || undefined,
+      checkIn: checkIn || undefined,
+      checkOut: checkOut || undefined,
+      resultCount: hotels.value.length,
     })
   } catch (e: any) {
     hotels.value = []

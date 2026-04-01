@@ -73,10 +73,15 @@ export const useAuthStore = defineStore('auth', {
       }
       const { get } = useApi()
       try {
-        const data = await get<{ authenticated: boolean; user?: AuthState['user'] }>('/auth/me')
+        const data = await get<{ authenticated: boolean; user?: AuthState['user']; membership?: any }>('/auth/me')
         if (data.authenticated && data.user) {
           this.user = data.user
           localStorage.setItem('auth_user', JSON.stringify(data.user))
+          // Update membership store
+          if (data.membership) {
+            const ms = useMembershipStore()
+            ms.updateFromAuth(data.membership)
+          }
         } else {
           this.logout()
         }

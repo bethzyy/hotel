@@ -151,6 +151,23 @@ export interface ApiResponse<T = unknown> {
   cached?: boolean
 }
 
+export interface Membership {
+  tier: 'free' | 'basic' | 'premium'
+  expires_at: string | null
+  is_member: boolean
+  search_remaining: number
+  search_limit: number
+}
+
+export interface PaymentPlan {
+  id: string
+  name: string
+  price: number
+  currency: string
+  days: number
+  features: string[]
+}
+
 export interface SearchParams {
   provider?: string
   // RollingGo params

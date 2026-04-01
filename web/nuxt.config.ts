@@ -32,10 +32,11 @@ export default defineNuxtConfig({
   },
 
   // Dev server proxy to Flask API (avoids CORS in development)
+  // Nitro devProxy strips the matched prefix, so target includes /api
   nitro: {
     devProxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5000/api',
         changeOrigin: true,
       },
       '/health': {
@@ -44,6 +45,13 @@ export default defineNuxtConfig({
       },
     },
   },
+
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
+  ],
 
   app: {
     head: {

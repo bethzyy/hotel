@@ -22,3 +22,12 @@ mcp>=1.0.0
 
 # Utilities
 python-dotenv>=1.0.0
+
+# Redis (for rate limiting and caching)
+redis>=5.0.0
+
+# Security
+cryptography>=41.0.0
+
+# Scheduling (for price monitoring)
+APScheduler>=3.10.0
