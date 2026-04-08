@@ -11,14 +11,14 @@
         </NuxtLink>
         <NuxtLink to="/favorites" class="nav-link text-white position-relative">
           <i class="bi bi-heart"></i>
-          <span v-if="favorites.count > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem">
+          <span v-if="favorites.count > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-white text-dark" style="font-size:0.6rem">
             {{ favorites.count }}
           </span>
         </NuxtLink>
-        <NuxtLink v-if="!auth.isAuthenticated" to="/login" class="btn btn-outline-light btn-sm">
+        <NuxtLink v-if="!auth.isAuthenticated" to="/login" class="btn btn-light btn-sm rounded-pill">
           <i class="bi bi-person me-1"></i>登录
         </NuxtLink>
-        <button v-else class="btn btn-outline-light btn-sm" @click="auth.logout()">
+        <button v-else class="btn btn-light btn-sm rounded-pill" @click="auth.logout()">
           <i class="bi bi-box-arrow-right me-1"></i>退出
         </button>
       </div>

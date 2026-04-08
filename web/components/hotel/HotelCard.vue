@@ -64,19 +64,19 @@
         <div class="d-flex gap-2 mt-3">
           <NuxtLink
             :to="`/detail/${hotel.hotel_id}?provider=${hotel.provider}&check_in=${checkIn}&check_out=${checkOut}`"
-            class="btn btn-sm btn-outline-primary"
+            class="btn btn-sm btn-outline-primary rounded-pill"
           >
             <i class="bi bi-eye me-1"></i>详情
           </NuxtLink>
           <button
             v-if="hotel.booking_url"
-            class="btn btn-sm btn-outline-secondary"
+            class="btn btn-sm btn-outline-secondary rounded-pill"
             @click="trackAndBook(hotel)"
           >
             <i class="bi bi-calendar-check me-1"></i>预订
           </button>
           <button
-            class="btn btn-sm btn-outline-secondary"
+            class="btn btn-sm btn-outline-secondary rounded-pill"
             @click="toggleComparison"
           >
             <i class="bi bi-arrow-left-right me-1"></i>比价
