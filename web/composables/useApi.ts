@@ -39,7 +39,11 @@ export const useApi = () => {
   }
 
   async function post<T = unknown>(url: string, body?: unknown): Promise<T> {
-    return apiFetch<ApiResponse<T>>(url, { method: 'POST', body }).then(r => {
+    return apiFetch<ApiResponse<T>>(url, {
+      method: 'POST',
+      body,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    }).then(r => {
       if (!r.success) throw new Error(r.error || 'Request failed')
       return r.data as T
     })

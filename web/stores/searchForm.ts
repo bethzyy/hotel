@@ -66,7 +66,6 @@ export const useSearchFormStore = defineStore('searchForm', {
   },
 
   persist: {
-    pick: ['provider', 'cityName', 'checkIn', 'checkOut', 'keyword', 'place', 'placeType', 'checkInDate', 'stayNights', 'adultCount', 'childCount', 'minStar', 'maxPrice', 'size'],
     beforeHydrate: () => {
       // Nuke corrupted localStorage BEFORE it overwrites SSR-hydrated state
       try {

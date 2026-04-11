@@ -171,7 +171,12 @@ class PaymentService:
             user.membership_tier = 'premium'
             user.membership_expires_at = new_expires
 
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"[Payment] Activate subscription DB error: {e}")
+            return False
         logger.info(f"[Payment] Subscription activated: user={subscription.user_id} plan={subscription.plan}")
         return True
 

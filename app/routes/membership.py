@@ -20,16 +20,20 @@ def _check_membership(user_id):
         return None
 
     # Auto-downgrade expired memberships
-    if user.membership_tier != 'free' and user.membership_expires_at:
-        now = datetime.now(timezone.utc)
-        expires = user.membership_expires_at
-        if expires.tzinfo is None:
-            now = now.replace(tzinfo=None)
-        if expires <= now:
-            user.membership_tier = 'free'
-            user.membership_expires_at = None
-            db.session.commit()
-            logger.info(f"[Membership] Auto-downgraded expired membership: user={user_id}")
+    try:
+        if user.membership_tier != 'free' and user.membership_expires_at:
+            now = datetime.now(timezone.utc)
+            expires = user.membership_expires_at
+            if expires.tzinfo is None:
+                now = now.replace(tzinfo=None)
+            if expires <= now:
+                user.membership_tier = 'free'
+                user.membership_expires_at = None
+                db.session.commit()
+                logger.info(f"[Membership] Auto-downgraded expired membership: user={user_id}")
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"[Membership] Auto-downgrade DB error: user={user_id}: {e}")
 
     return user
 
@@ -43,10 +47,14 @@ def _get_search_remaining(user):
     today = date.today()
 
     # Reset counter if it's a new day
-    if user.last_search_date != today:
-        user.search_count_today = 0
-        user.last_search_date = today
-        db.session.commit()
+    try:
+        if user.last_search_date != today:
+            user.search_count_today = 0
+            user.last_search_date = today
+            db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"[Membership] Reset search count DB error: user={user.id}: {e}")
 
     return max(0, free_limit - user.search_count_today)
 
@@ -57,12 +65,16 @@ def _increment_search_count(user):
         return
 
     today = date.today()
-    if user.last_search_date != today:
-        user.search_count_today = 0
-        user.last_search_date = today
+    try:
+        if user.last_search_date != today:
+            user.search_count_today = 0
+            user.last_search_date = today
 
-    user.search_count_today += 1
-    db.session.commit()
+        user.search_count_today += 1
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"[Membership] Increment search count DB error: user={user.id}: {e}")
 
 
 @membership_bp.route('/membership/info', methods=['GET'])

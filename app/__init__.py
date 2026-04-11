@@ -117,9 +117,11 @@ def create_app(config=None):
     limiter.init_app(app)
     app.limiter = limiter
 
-    # Initialize CORS
+    # Initialize CORS — restrict origins, never wildcard with credentials
     from flask_cors import CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+    from config import CORS_ORIGINS
+    allowed_origins = [o.strip() for o in CORS_ORIGINS.split(',') if o.strip()]
+    CORS(app, resources={r"/api/*": {"origins": allowed_origins}}, supports_credentials=True)
 
     # Initialize cache service (Redis when available, SQLite fallback)
     from app.services.cache import CacheService

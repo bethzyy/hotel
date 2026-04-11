@@ -20,6 +20,14 @@ export default defineNuxtConfig({
     },
   },
 
+  vite: {
+    server: {
+      fs: {
+        allow: ['.', 'node_modules'],
+      },
+    },
+  },
+
   // SSR rendering rules
   routeRules: {
     '/': { swr: 3600 }, // ISR 1h for homepage

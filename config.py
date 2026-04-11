@@ -134,3 +134,8 @@ ALIPAY_NOTIFY_URL = os.environ.get('ALIPAY_NOTIFY_URL', '')
 # Development: empty string → Flask-Limiter falls back to memory://
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0' if FLASK_ENV == 'production' else '')
 REDIS_AVAILABLE = bool(REDIS_URL)
+
+# CORS Configuration
+# Production: comma-separated allowed origins, e.g. "https://hotel.example.com,https://app.example.com"
+# Development: defaults to localhost
+CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'http://localhost:3000,http://localhost:5000')

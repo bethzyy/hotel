@@ -59,7 +59,11 @@ class PriceMonitor:
                 logger.error(f"[PriceMonitor] Error checking alert {alert.id}: {e}")
 
         if checked > 0:
-            db.session.commit()
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                logger.error(f"[PriceMonitor] Batch commit DB error: {e}")
             logger.info(f"[PriceMonitor] Checked {checked} alerts, triggered {triggered}")
 
         return {'checked': checked, 'triggered': triggered}

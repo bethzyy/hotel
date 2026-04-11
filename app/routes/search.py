@@ -2,13 +2,38 @@
 Search API routes
 Supports multiple MCP providers (RollingGo, Tuniu)
 """
+import json as _json
+import logging
+
 from flask import Blueprint, request, jsonify, current_app, make_response
 from flask_jwt_extended import get_jwt_identity
 from app.extensions import limiter
 from app.services.hotel_provider import get_provider, get_available_providers, HotelProviderError
 from app.utils import get_cache_service, generate_cache_key
 
+logger = logging.getLogger(__name__)
+
 search_bp = Blueprint('search', __name__)
+
+
+def _parse_json_body():
+    """Parse JSON request body with multi-encoding fallback (UTF-8 → GBK)."""
+    data = request.get_json(silent=True)
+    if data is not None:
+        return data
+    # Fallback: try decoding raw body with GBK if UTF-8 fails
+    raw = request.get_data()
+    if raw:
+        try:
+            return _json.loads(raw.decode('utf-8'))
+        except UnicodeDecodeError:
+            try:
+                result = _json.loads(raw.decode('gbk'))
+                logger.warning(f"[Search] GBK fallback triggered from {request.remote_addr}")
+                return result
+            except Exception:
+                pass
+    return None
 
 
 def _check_search_quota():
@@ -80,7 +105,7 @@ def search_hotels():
         JSON response with hotel list
     """
     try:
-        data = request.get_json()
+        data = _parse_json_body()
         if not data:
             return jsonify({
                 'success': False,

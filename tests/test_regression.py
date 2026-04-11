@@ -119,10 +119,10 @@ class TestProxyRoutePriority:
         assert 'providers' in data or 'success' in data
 
     def test_non_api_routes_proxied(self, client):
-        """非 API 路由应由 catch-all 代理处理（测试环境返回 5xx）。"""
+        """非 API 路由应返回 404（无 catch-all 代理时不匹配任何路由）。"""
         resp = client.get('/some-random-page')
-        # Nuxt 不运行时返回 5xx（代理失败），而非 200（被 Flask 直接处理）
-        assert resp.status_code >= 500
+        # 无代理时 Flask 直接返回 404
+        assert resp.status_code == 404
 
     def test_health_endpoint_not_proxied(self, client):
         """/health 端点应直接由 Flask 处理。"""
@@ -155,12 +155,13 @@ class TestProviderToggle:
         assert 'store.setProvider' in content, \
             "Provider toggle should use store.setProvider() action"
 
-    def test_search_form_wrapped_in_client_only(self):
-        """SearchForm 应使用 ClientOnly 避免 SSR hydration mismatch。"""
+    def test_search_form_no_ssr_hydration_issue(self):
+        """SearchForm 不应有 SSR hydration 问题的模式。"""
         with open('web/components/search/SearchForm.vue', 'r', encoding='utf-8') as f:
             content = f.read()
-        assert '<ClientOnly>' in content, \
-            "SearchForm.vue should be wrapped in <ClientOnly> to avoid SSR hydration mismatch"
+        # 不应使用 storeToRefs（Nuxt SSR 会导致双层 Ref 包装）
+        assert 'storeToRefs' not in content, \
+            "SearchForm.vue should NOT use storeToRefs"
 
 
 class TestFrontendConfig:
