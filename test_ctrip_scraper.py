@@ -107,7 +107,7 @@ class CtripScraper:
                     # 可能是纯 JSON
                     try:
                         return response.json()
-                    except:
+                    except Exception:
                         pass
 
                 # 保存原始响应用于调试

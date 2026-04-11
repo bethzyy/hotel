@@ -50,7 +50,7 @@ async def scrape_ctrip():
                         if 'json' in ct:
                             data = await response.json()
                             api_data.append({'url': response.url, 'data': data})
-                except:
+                except Exception:
                     pass
 
         page.on('response', handle_response)

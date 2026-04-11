@@ -76,7 +76,7 @@ def test_price_extraction():
             else:
                 print(f"  Input: {text}")
                 print(f"  Expected: No price | Got: {price} {currency}")
-        except:
+        except Exception:
             print(f"{status} {description}")
             print(f"  Got: {price} {currency}")
         print()

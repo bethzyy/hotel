@@ -35,17 +35,20 @@ class CacheService:
         """Initialize SQLite fallback tables (only when Redis is not available)."""
         if self._redis is not None:
             return
-        cursor = self.conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS api_cache (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                cache_key TEXT UNIQUE NOT NULL,
-                response TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                expires_at TIMESTAMP
-            )
-        ''')
-        self.conn.commit()
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS api_cache (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    cache_key TEXT UNIQUE NOT NULL,
+                    response TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    expires_at TIMESTAMP
+                )
+            ''')
+            self.conn.commit()
+        except Exception:
+            pass
 
     # ==================== Cache Methods ====================
 
@@ -93,17 +96,20 @@ class CacheService:
                 pass
 
         # SQLite fallback
-        from datetime import timezone as tz
-        now_utc = datetime.now(tz.utc)
-        expires_ts = now_utc.timestamp() + ttl_seconds
-        expires_dt = datetime.fromtimestamp(expires_ts, tz=tz.utc)
-        expires_at_str = expires_dt.isoformat()
-        cursor = self.conn.cursor()
-        cursor.execute(
-            'INSERT OR REPLACE INTO api_cache (cache_key, response, expires_at) VALUES (?, ?, ?)',
-            (cache_key, json.dumps(response), expires_at_str)
-        )
-        self.conn.commit()
+        try:
+            from datetime import timezone as tz
+            now_utc = datetime.now(tz.utc)
+            expires_ts = now_utc.timestamp() + ttl_seconds
+            expires_dt = datetime.fromtimestamp(expires_ts, tz=tz.utc)
+            expires_at_str = expires_dt.isoformat()
+            cursor = self.conn.cursor()
+            cursor.execute(
+                'INSERT OR REPLACE INTO api_cache (cache_key, response, expires_at) VALUES (?, ?, ?)',
+                (cache_key, json.dumps(response), expires_at_str)
+            )
+            self.conn.commit()
+        except Exception:
+            pass
 
     def delete_cache(self, cache_key: str):
         """Delete cached response."""
@@ -113,18 +119,24 @@ class CacheService:
             except Exception:
                 pass
             return
-        cursor = self.conn.cursor()
-        cursor.execute('DELETE FROM api_cache WHERE cache_key = ?', (cache_key,))
-        self.conn.commit()
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute('DELETE FROM api_cache WHERE cache_key = ?', (cache_key,))
+            self.conn.commit()
+        except Exception:
+            pass
 
     def clear_expired_cache(self):
         """Remove expired cache entries. No-op for Redis (TTL is automatic)."""
         if self._redis:
             return
-        cursor = self.conn.cursor()
-        cursor.execute('DELETE FROM api_cache WHERE expires_at IS NOT NULL AND expires_at < ?',
-                        (datetime.now().isoformat(),))
-        self.conn.commit()
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute('DELETE FROM api_cache WHERE expires_at IS NOT NULL AND expires_at < ?',
+                            (datetime.now().isoformat(),))
+            self.conn.commit()
+        except Exception:
+            pass
 
     # ==================== Compatibility Methods (delegate to SQLAlchemy) ====================
 
@@ -155,7 +167,10 @@ class CacheService:
             db.session.add(history)
             db.session.commit()
         except Exception:
-            pass
+            try:
+                db.session.rollback()
+            except Exception:
+                pass
 
     def close(self):
         """Close database connections."""
