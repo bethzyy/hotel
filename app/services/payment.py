@@ -33,17 +33,22 @@ class PaymentService:
         if not user:
             raise ValueError('User not found')
 
-        # Create subscription record
-        subscription = Subscription(
-            user_id=user_id,
-            plan=plan,
-            amount=plan_info['amount'],
-            currency='CNY',
-            status='pending',
-            payment_provider=payment_provider,
-        )
-        db.session.add(subscription)
-        db.session.commit()
+        try:
+            # Create subscription record
+            subscription = Subscription(
+                user_id=user_id,
+                plan=plan,
+                amount=plan_info['amount'],
+                currency='CNY',
+                status='pending',
+                payment_provider=payment_provider,
+            )
+            db.session.add(subscription)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"[Payment] Create order DB error: {e}")
+            raise
 
         # Delegate to specific provider
         if payment_provider == 'wechat':

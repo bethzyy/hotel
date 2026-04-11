@@ -208,7 +208,7 @@ def show_status():
             count = cursor.fetchone()[0]
             print(f"  SQLite 缓存记录: {count} 条")
             conn.close()
-        except:
+        except Exception:
             print("  SQLite: 无法读取")
 
     print("-" * 40)

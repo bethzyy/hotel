@@ -14,4 +14,4 @@ def get_cache_service():
 def generate_cache_key(prefix: str, data: dict) -> str:
     """Generate cache key from data."""
     data_str = json.dumps(data, sort_keys=True)
-    return f"{prefix}:{hashlib.md5(data_str.encode()).hexdigest()}"
+    return f"{prefix}:{hashlib.sha256(data_str.encode()).hexdigest()}"

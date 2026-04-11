@@ -187,12 +187,17 @@ def login():
     store.delete_code(phone)
 
     # Find or create user
-    user = User.query.filter_by(phone=phone).first()
-    if not user:
-        user = User(phone=phone)
-        db.session.add(user)
-        db.session.commit()
-        logger.info(f"[Auth] New user registered: {phone}")
+    try:
+        user = User.query.filter_by(phone=phone).first()
+        if not user:
+            user = User(phone=phone)
+            db.session.add(user)
+            db.session.commit()
+            logger.info(f"[Auth] New user registered: {phone}")
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"[Auth] DB error during login: {e}")
+        return jsonify({'success': False, 'error': '登录失败，请重试'}), 500
 
     # Generate JWT token
     additional_claims = {'phone': phone}
