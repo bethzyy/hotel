@@ -191,7 +191,7 @@ def search_hotels():
         # Execute search
         result = provider.search_hotels(**search_params)
 
-        # Build response data BEFORE adding is_favorite (to avoid cache pollution)
+        # Build response data
         response_data = {
             'hotels': result.get('hotels', []),
             'total': result.get('total', 0),
@@ -199,18 +199,6 @@ def search_hotels():
             'supports_booking': provider.supports_booking,
             'supports_pagination': provider.supports_pagination
         }
-
-        # Save clean data to cache (without is_favorite)
-        if current_app.config.get('CACHE_ENABLED', True):
-            cache.set_cache(
-                cache_key,
-                response_data,
-                current_app.config.get('CACHE_TTL', 3600)
-            )
-
-        # Add is_favorite AFTER caching (per-user data, not cacheable)
-        for hotel in response_data.get('hotels', []):
-            hotel['is_favorite'] = cache.is_favorite(hotel.get('hotel_id', ''))
 
         # Add pagination info for Tuniu
         if provider_name == 'tuniu':
@@ -232,7 +220,17 @@ def search_hotels():
                 'place': data.get('city_name', '')
             })
 
-        # Save to search history
+        # Save to cache BEFORE adding is_favorite (avoid cache pollution with per-user data)
+        if current_app.config.get('CACHE_ENABLED', True):
+            cache.set_cache(
+                cache_key,
+                response_data,
+                current_app.config.get('CACHE_TTL', 3600)
+            )
+
+        # Add is_favorite AFTER caching (per-user data, not cacheable)
+        for hotel in response_data.get('hotels', []):
+            hotel['is_favorite'] = cache.is_favorite(hotel.get('hotel_id', ''))
         cache.add_search_history(
             query=response_data.get('query', ''),
             place=response_data.get('place', ''),
