@@ -18,8 +18,8 @@ _ENCRYPTION_KEY = os.environ.get('ENCRYPTION_KEY', '').encode()
 def encrypt_data(plaintext: str) -> str:
     """Encrypt sensitive data using AES-256-CBC."""
     if not _ENCRYPTION_KEY:
-        # Fallback: simple obfuscation for development
-        return base64.b64encode(plaintext.encode()).decode()
+        logger.error("[Security] ENCRYPTION_KEY not set — refusing to encrypt with insecure fallback")
+        raise RuntimeError('ENCRYPTION_KEY environment variable is required for encryption')
 
     try:
         from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -44,7 +44,8 @@ def encrypt_data(plaintext: str) -> str:
 def decrypt_data(ciphertext: str) -> str:
     """Decrypt data encrypted with encrypt_data."""
     if not _ENCRYPTION_KEY:
-        return base64.b64decode(ciphertext.encode()).decode()
+        logger.error("[Security] ENCRYPTION_KEY not set — refusing to decrypt with insecure fallback")
+        raise RuntimeError('ENCRYPTION_KEY environment variable is required for decryption')
 
     try:
         from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes

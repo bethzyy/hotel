@@ -88,8 +88,13 @@ def add_favorite():
             hotel_name=data.get('hotel_name', data.get('name', '')),
             hotel_data=json.dumps(data, ensure_ascii=False)
         )
-        db.session.add(fav)
-        db.session.commit()
+        try:
+            db.session.add(fav)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Add favorite DB error: user={user_id}: {e}")
+            return jsonify({'success': False, 'error': '收藏失败，请重试'}), 500
         return jsonify({'success': True, 'message': '已添加收藏'})
     except Exception as e:
         db.session.rollback()

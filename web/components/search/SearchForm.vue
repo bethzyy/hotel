@@ -203,11 +203,11 @@ function hideCitySuggestions() {
   setTimeout(() => { showCitySuggestions.value = false }, 150)
 }
 
-function adjustCount(field: keyof typeof store, delta: number) {
+function adjustCount(field: 'adultCount' | 'childCount' | 'stayNights', delta: number) {
   const val = store[field] as number
   const min = field === 'adultCount' ? 1 : field === 'stayNights' ? 1 : 0
   const max = field === 'stayNights' ? 30 : 10
-  ;(store as any)[field] = Math.min(max, Math.max(min, val + delta))
+  store[field] = Math.min(max, Math.max(min, val + delta))
 }
 
 async function loadHistory() {

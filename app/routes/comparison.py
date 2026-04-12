@@ -884,7 +884,7 @@ def test_serper():
     config_status = {
         'enabled': serper_enabled,
         'has_api_key': bool(serper_api_key),
-        'api_key_prefix': serper_api_key[:8] + '...' if serper_api_key else None,
+        'has_api_key': bool(serper_api_key),
         'timeout': serper_timeout
     }
 
@@ -1013,7 +1013,6 @@ def test_serper():
         return jsonify({
             'success': False,
             'error': f'Unexpected error: {str(e)}',
-            'traceback': traceback.format_exc(),
             'config': config_status
         })
 
@@ -1052,7 +1051,7 @@ def test_tavily():
     config_status = {
         'enabled': tavily_enabled,
         'has_api_key': bool(tavily_api_key),
-        'api_key_prefix': tavily_api_key[:8] + '...' if tavily_api_key else None,
+        'has_api_key': bool(tavily_api_key),
         'timeout': tavily_timeout
     }
 
@@ -1226,6 +1225,5 @@ def test_tavily():
         return jsonify({
             'success': False,
             'error': f'Unexpected error: {str(e)}',
-            'traceback': traceback.format_exc(),
             'config': config_status
         })
