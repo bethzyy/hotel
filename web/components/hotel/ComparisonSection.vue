@@ -55,6 +55,35 @@
         </div>
       </div>
 
+      <!-- External platform prices -->
+      <div
+        v-for="ext in comparisonData.external_prices"
+        :key="ext.platform"
+        class="comparison-item"
+      >
+        <div class="d-flex align-items-center gap-1">
+          <i v-if="ext.icon" :class="ext.icon" style="font-size:0.85rem"></i>
+          <span class="provider-name">{{ ext.platform_name }}</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span v-if="ext.price_cny" class="provider-price">
+            ¥{{ Math.round(ext.price_cny) }}
+          </span>
+          <span v-else-if="ext.price" class="provider-price">
+            {{ ext.currency === 'CNY' ? '¥' : ext.currency + ' ' }}{{ ext.price }}
+          </span>
+          <a
+            v-if="ext.url"
+            :href="`/api/click/track?url=${encodeURIComponent(ext.url)}&hotel_id=${hotelId}&provider=${ext.platform}`"
+            target="_blank"
+            class="btn btn-sm btn-outline-primary py-0 px-2"
+            style="font-size:0.7rem"
+          >
+            去看看
+          </a>
+        </div>
+      </div>
+
       <!-- Best price summary -->
       <div v-if="comparisonData.best_price?.save" class="mt-2 text-center" style="font-size:0.8rem">
         <span class="text-success fw-bold">
