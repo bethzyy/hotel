@@ -925,13 +925,6 @@ footer {
   justify-content: center;
 }
 
-.hotel-image:not([style*="background-image"])::after {
-  content: '\F1A4';
-  font-family: 'bootstrap-icons';
-  font-size: 3rem;
-  color: var(--gray-400);
-}
-
 /* =====================================================
    23. Card Enhancements
    ===================================================== */

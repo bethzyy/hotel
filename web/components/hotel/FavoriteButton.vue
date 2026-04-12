@@ -1,6 +1,6 @@
 <template>
   <button
-    class="btn favorite-btn position-absolute top-0 end-0 m-2 z-1"
+    class="btn favorite-btn position-absolute top-0 end-0 m-2"
     :class="isFavorite ? 'btn-danger active' : 'btn-outline-danger'"
     @click.stop="toggle"
     :title="isFavorite ? '取消收藏' : '收藏'"

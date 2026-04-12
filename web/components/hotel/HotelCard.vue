@@ -2,7 +2,7 @@
   <div class="hotel-card" :style="{ '--index': index }">
     <div class="row g-0">
       <!-- Image -->
-      <div class="col-md-4">
+      <div class="col-md-4 position-relative">
         <HotelImage :src="hotel.image_url" :alt="hotel.name" />
         <FavoriteButton
           :hotel-id="hotel.hotel_id"

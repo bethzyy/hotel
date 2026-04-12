@@ -1,6 +1,6 @@
 <template>
   <div class="hotel-image-wrapper">
-    <div class="hotel-image" :style="bgStyle">
+    <div class="hotel-image">
       <img
         v-if="src && !imgError"
         :src="src"
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   src?: string
@@ -24,9 +24,4 @@ const props = defineProps<{
 }>()
 
 const imgError = ref(false)
-
-const bgStyle = computed(() => {
-  if (!props.src || imgError.value) return {}
-  return { backgroundImage: `url(${props.src})` }
-})
 </script>

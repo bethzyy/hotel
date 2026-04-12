@@ -40,7 +40,7 @@
         :key="hotel.hotel_id"
         :hotel="hotel"
         :index="idx"
-        :check-in="route.query.check_in as string"
+        :check-in="(route.query.check_in || route.query.check_in_date) as string"
         :check-out="route.query.check_out as string"
       />
     </div>

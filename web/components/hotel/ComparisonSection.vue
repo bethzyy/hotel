@@ -11,7 +11,7 @@
     </div>
 
     <div v-else-if="!comparisonData" class="text-muted" style="font-size:0.8rem">
-      暂无比价数据
+      {{ errorMsg || '暂无比价数据' }}
     </div>
 
     <template v-else>
@@ -81,6 +81,7 @@ const props = defineProps<{
 
 const loading = ref(false)
 const comparisonData = ref<ComparisonData | null>(null)
+const errorMsg = ref('')
 
 const providerNames: Record<string, string> = {
   rollinggo: 'RollingGo',
@@ -105,6 +106,7 @@ const isSourceBest = computed(() => {
 
 async function loadComparison() {
   loading.value = true
+  errorMsg.value = ''
   const { get } = useApi()
   try {
     comparisonData.value = await get<ComparisonData>(`/compare/${props.provider}/${props.hotelId}`, {
@@ -113,8 +115,9 @@ async function loadComparison() {
       hotel_name: props.hotelName || '',
       adult_count: '2',
     })
-  } catch {
+  } catch (e: any) {
     comparisonData.value = null
+    errorMsg.value = e?.message || '比价请求失败'
   } finally {
     loading.value = false
   }
