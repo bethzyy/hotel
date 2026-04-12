@@ -146,7 +146,7 @@ def search_hotels():
             }
         else:
             # RollingGo
-            required = ['query', 'place', 'place_type']
+            required = ['place', 'place_type']
             for field in required:
                 if not data.get(field):
                     return jsonify({
@@ -155,7 +155,7 @@ def search_hotels():
                     }), 400
 
             search_params = {
-                'query': data['query'],
+                'query': data.get('query') or data.get('place'),
                 'place': data['place'],
                 'place_type': data['place_type'],
                 'check_in_date': data.get('check_in_date'),
