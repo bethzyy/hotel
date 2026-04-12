@@ -18,6 +18,9 @@ admin_bp = Blueprint('admin', __name__)
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '')
 
+if not ADMIN_PASSWORD:
+    logger.warning("[Admin] ADMIN_PASSWORD not set — admin dashboard is DISABLED")
+
 
 def check_auth(username, password):
     if not ADMIN_PASSWORD:

@@ -37,8 +37,8 @@ def encrypt_data(plaintext: str) -> str:
 
         return base64.b64encode(iv + encrypted).decode()
     except ImportError:
-        logger.warning("cryptography not installed, using base64 fallback")
-        return base64.b64encode(plaintext.encode()).decode()
+        logger.error("[Security] cryptography library not installed — cannot encrypt safely")
+        raise RuntimeError('cryptography library is required for encryption. Install with: pip install cryptography')
 
 
 def decrypt_data(ciphertext: str) -> str:
@@ -63,7 +63,8 @@ def decrypt_data(ciphertext: str) -> str:
         unpadder = padding.PKCS7(128).unpadder()
         return (unpadder.update(padded) + unpadder.finalize()).decode()
     except ImportError:
-        return base64.b64decode(ciphertext.encode()).decode()
+        logger.error("[Security] cryptography library not installed — cannot decrypt safely")
+        raise RuntimeError('cryptography library is required for decryption. Install with: pip install cryptography')
 
 
 def verify_signature(data: str, signature: str, secret: str) -> bool:

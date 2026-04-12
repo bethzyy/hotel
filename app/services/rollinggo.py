@@ -193,6 +193,12 @@ class RollingGoService:
         # Build full command
         cmd = ['npx', 'rollinggo'] + args
 
+        # Validate args don't contain shell metacharacters (defense-in-depth)
+        import re
+        for arg in args:
+            if re.search(r'[`$\\|;&]', str(arg)):
+                raise RollingGoError(f"Invalid character in argument")
+
         # Add API key if available
         api_key = self._get_api_key()
         if api_key:

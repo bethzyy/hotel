@@ -115,7 +115,8 @@ class PaymentService:
 
     def _handle_wechat_callback(self, raw_data):
         """Handle WeChat Pay callback. Placeholder."""
-        # TODO: Verify signature, update subscription status
+        # TODO: Implement WeChat Pay V3 signature verification
+        logger.warning("[Payment] WeChat callback received WITHOUT signature verification — not production-safe")
         subscription_id = raw_data.get('subscription_id')
         if not subscription_id:
             return False
@@ -123,7 +124,8 @@ class PaymentService:
 
     def _handle_alipay_callback(self, raw_data):
         """Handle Alipay callback. Placeholder."""
-        # TODO: Verify signature, update subscription status
+        # TODO: Implement Alipay RSA signature verification
+        logger.warning("[Payment] Alipay callback received WITHOUT signature verification — not production-safe")
         subscription_id = raw_data.get('subscription_id')
         if not subscription_id:
             return False

@@ -128,9 +128,9 @@ def send_verification_code():
     if count >= 5:
         return jsonify({'success': False, 'error': '今日发送次数已达上限'}), 429
 
-    # Generate 6-digit code
-    import random
-    code = str(random.randint(100000, 999999))
+    # Generate 6-digit code using cryptographically secure random
+    import secrets
+    code = str(secrets.randbelow(900000) + 100000)
 
     # Store code (Redis handles TTL automatically in production)
     store.set_code(phone, code, 300)
