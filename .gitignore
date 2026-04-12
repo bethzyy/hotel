@@ -38,3 +38,17 @@ data/*.db
 
 # Claude Code 本地配置
 .claude/settings.local.json
+# Test/debug artifacts (root level)
+/test_*.py
+/test_*.json
+/response.json
+/ctrip_*
+*.output
+
+# Empty directories
+/skills/
+/test/
+
+# IDE
+.vscode/
+.idea/
