@@ -31,11 +31,17 @@
       <SkeletonCard v-for="i in 5" :key="i" />
     </div>
 
+    <!-- Fallback notice (independent, always shows when applicable) -->
+    <div v-if="fallbackFrom && hotels.length > 0" class="alert alert-info d-flex align-items-center mb-3" role="alert">
+      <i class="bi bi-info-circle me-2"></i>
+      已按距"<strong>{{ fallbackFrom }}</strong>"的实际距离排序（通过坐标计算）
+    </div>
+
     <!-- Empty -->
-    <EmptyState v-else-if="hotels.length === 0" />
+    <EmptyState v-if="!pending && hotels.length === 0" />
 
     <!-- Hotel Cards -->
-    <div v-else class="d-flex flex-column gap-3">
+    <div v-if="hotels.length > 0" class="d-flex flex-column gap-3">
       <HotelCard
         v-for="(hotel, idx) in sortedHotels"
         :key="hotel.hotel_id"
@@ -85,6 +91,7 @@ const resolvedCheckOut = computed(() => {
 
 const hotels = ref<Hotel[]>([])
 const searchInfo = ref<{ place: string; dateRange: string; provider: string } | null>(null)
+const fallbackFrom = ref('')
 
 const isRollingGo = computed(() => route.query.provider === 'rollinggo')
 
@@ -111,6 +118,7 @@ async function search() {
     const data = await post<Hotel[]>('/search', q)
     hotels.value = data.hotels || []
     hasMore.value = !!data.has_more
+    fallbackFrom.value = data.fallback_from || ''
 
     const checkIn = (route.query.check_in || route.query.check_in_date) as string
     const checkOut = (route.query.check_out || '') as string

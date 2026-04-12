@@ -4,6 +4,7 @@ Supports multiple MCP providers (RollingGo, Tuniu)
 """
 import json as _json
 import logging
+import math
 
 from flask import Blueprint, request, jsonify, current_app, make_response
 from flask_jwt_extended import get_jwt_identity
@@ -33,6 +34,37 @@ def _parse_json_body():
                 return result
             except Exception:
                 pass
+    return None
+
+
+def _haversine(lat1, lon1, lat2, lon2):
+    """Calculate distance in meters between two coordinates using haversine formula."""
+    R = 6371000  # Earth radius in meters
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlam = math.radians(lon2 - lon1)
+    a = math.sin(dphi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlam / 2) ** 2
+    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+def _geocode(query: str):
+    """
+    Geocode a place name using Nominatim (OpenStreetMap).
+    Returns (lat, lon) or None.
+    """
+    try:
+        import httpx
+        r = httpx.get(
+            'https://nominatim.openstreetmap.org/search',
+            params={'q': query, 'format': 'json', 'limit': 1, 'accept-language': 'zh'},
+            headers={'User-Agent': 'HotelSearch/1.0'},
+            timeout=10.0,
+        )
+        data = r.json()
+        if data:
+            return float(data[0]['lat']), float(data[0]['lon'])
+    except Exception as e:
+        logger.warning(f'Geocoding failed for "{query}": {e}')
     return None
 
 
@@ -154,10 +186,28 @@ def search_hotels():
                         'error': f'Missing required field: {field}'
                     }), 400
 
+            # When landmark + city are both provided, use LLM to determine optimal params
+            place_val = data['place']
+            place_type_val = data['place_type']
+            query_val = data.get('query') or data.get('place')
+            llm_min_star = None
+
+            if data.get('city_name') and place_val != data['city_name']:
+                from app.services.intent_parser import get_intent_parser
+                parser = get_intent_parser()
+                intent = parser.parse(f"{data['city_name']}{place_val}")
+                if intent:
+                    place_val = f"{intent.get('city', data['city_name'])}{intent.get('place', place_val)}"
+                    place_type_val = intent.get('placeType', '详细地址')
+                    query_val = place_val
+                    llm_min_star = intent.get('minStar')
+                    if intent.get('maxPrice') and not data.get('max_price'):
+                        data['max_price'] = intent['maxPrice']
+
             search_params = {
-                'query': data.get('query') or data.get('place'),
-                'place': data['place'],
-                'place_type': data['place_type'],
+                'query': query_val,
+                'place': place_val,
+                'place_type': place_type_val,
                 'check_in_date': data.get('check_in_date'),
                 'stay_nights': data.get('stay_nights'),
                 'adult_count': data.get('adult_count', 2),
@@ -191,6 +241,61 @@ def search_hotels():
         # Execute search
         result = provider.search_hotels(**search_params)
 
+        # Post-filter: RollingGo API ignores star_ratings, filter locally
+        min_star = data.get('min_star') or data.get('minStar') or llm_min_star
+        if provider_name == 'rollinggo' and min_star:
+            try:
+                min_star_f = float(min_star)
+                hotels = result.get('hotels', [])
+                result['hotels'] = [h for h in hotels
+                                    if (h.get('star_rating') or 0) >= min_star_f]
+            except (ValueError, TypeError):
+                pass
+            except (ValueError, TypeError):
+                pass
+
+        # RollingGo fallback: landmark not in API → geocode + distance sort
+        fallback_from = None
+        if (provider_name == 'rollinggo'
+                and not result.get('hotels')
+                and data.get('city_name')
+                and data.get('place') != data.get('city_name')):
+            landmark = data.get('place', '')
+            city = data.get('city_name', '')
+            logger.info(f"RollingGo: 0 results for '{landmark}', "
+                        f"geocoding + city search with '{city}'")
+            fallback_from = landmark
+
+            # 1. Geocode the landmark
+            coords = _geocode(f'{landmark} {city}')
+
+            # 2. Search hotels in the city
+            city_params = {**search_params}
+            city_params['place'] = city
+            city_params['place_type'] = '城市'
+            city_params['query'] = city
+            result = provider.search_hotels(**city_params)
+
+            # 3. If geocoding succeeded, calculate real distances and re-sort
+            if coords:
+                landmark_lat, landmark_lon = coords
+                logger.info(f"Geocoded '{landmark}' → ({landmark_lat}, {landmark_lon})")
+                for hotel in result.get('hotels', []):
+                    h_lat = hotel.get('latitude')
+                    h_lon = hotel.get('longitude')
+                    if h_lat and h_lon:
+                        try:
+                            hotel['distance'] = round(_haversine(
+                                landmark_lat, landmark_lon, float(h_lat), float(h_lon)
+                            ))
+                        except (ValueError, TypeError):
+                            pass
+                # Re-sort by distance (hotels without coords go to end)
+                result['hotels'] = sorted(
+                    result.get('hotels', []),
+                    key=lambda h: h.get('distance') if h.get('distance') is not None else float('inf')
+                )
+
         # Build response data
         response_data = {
             'hotels': result.get('hotels', []),
@@ -199,6 +304,9 @@ def search_hotels():
             'supports_booking': provider.supports_booking,
             'supports_pagination': provider.supports_pagination
         }
+
+        if fallback_from:
+            response_data['fallback_from'] = fallback_from
 
         # Add pagination info for Tuniu
         if provider_name == 'tuniu':
