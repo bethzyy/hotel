@@ -32,6 +32,9 @@
 
         <p v-if="hotel.address" class="text-muted mb-2" style="font-size:0.85rem">
           <i class="bi bi-geo-alt me-1"></i>{{ hotel.address }}
+          <span v-if="hotel.distance != null" class="badge bg-light text-primary ms-2" style="font-size:0.75rem">
+            <i class="bi bi-signpost-split me-1"></i>{{ formatDistance(hotel.distance) }}
+          </span>
         </p>
 
         <!-- Tags -->
@@ -118,5 +121,10 @@ function toggleComparison() {
 function trackAndBook(hotel: Hotel) {
   const url = `/api/click/track?url=${encodeURIComponent(hotel.booking_url || '')}&hotel_id=${hotel.hotel_id}&provider=${hotel.provider}&hotel_name=${encodeURIComponent(hotel.name)}&source=card`
   window.open(url, '_blank')
+}
+
+function formatDistance(meters: number): string {
+  if (meters < 1000) return `${Math.round(meters)}米`
+  return `${(meters / 1000).toFixed(1)}公里`
 }
 </script>

@@ -18,9 +18,10 @@
           </span>
         </div>
         <div class="btn-group">
-          <button class="btn btn-sm" :class="{ active: sortBy === 'default' }" @click="sortBy = 'default'">默认</button>
+          <button class="btn btn-sm" :class="{ active: sortBy === 'default' }" @click="sortBy = 'default'">{{ isRollingGo ? '距离' : '默认' }}</button>
           <button class="btn btn-sm" :class="{ active: sortBy === 'price' }" @click="sortBy = 'price'">价格</button>
           <button class="btn btn-sm" :class="{ active: sortBy === 'rating' }" @click="sortBy = 'rating'">评分</button>
+          <button v-if="isRollingGo" class="btn btn-sm" :class="{ active: sortBy === 'distance' }" @click="sortBy = 'distance'">距离</button>
         </div>
       </div>
     </div>
@@ -85,12 +86,19 @@ const resolvedCheckOut = computed(() => {
 const hotels = ref<Hotel[]>([])
 const searchInfo = ref<{ place: string; dateRange: string; provider: string } | null>(null)
 
+const isRollingGo = computed(() => route.query.provider === 'rollinggo')
+
 const sortedHotels = computed(() => {
   const list = [...hotels.value]
   if (sortBy.value === 'price') {
     list.sort((a, b) => (a.price_per_night || Infinity) - (b.price_per_night || Infinity))
   } else if (sortBy.value === 'rating') {
     list.sort((a, b) => (b.rating || 0) - (a.rating || 0))
+  } else if (sortBy.value === 'distance') {
+    list.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity))
+  } else if (isRollingGo.value) {
+    // Default for RollingGo: sort by distance
+    list.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity))
   }
   return list
 })

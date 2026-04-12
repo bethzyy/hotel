@@ -69,25 +69,27 @@
           </div>
         </template>
 
-        <!-- RollingGo: Place + Date + Stay -->
+        <!-- RollingGo: City + Landmark + Date + Stay -->
         <template v-else>
-          <div class="destination-input-wrapper mb-3">
-            <div class="input-group input-group-lg">
-              <span class="input-group-text bg-primary text-white border-0">
-                <i class="bi bi-geo-alt-fill"></i>
-              </span>
-              <input v-model="store.place" type="text" class="form-control border-start-0" placeholder="输入目的地（景点、城市、机场、酒店...）" required>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small text-muted">城市</label>
+              <div class="position-relative">
+                <input v-model="store.cityName" type="text" class="form-control" placeholder="选择或输入城市" required
+                  @focus="showRgCitySuggestions = true" @blur="hideRgCitySuggestions">
+                <div v-if="showRgCitySuggestions && rgFilteredCities.length" class="city-suggestions dropdown-menu show position-absolute w-100" style="z-index:10">
+                  <a v-for="city in rgFilteredCities" :key="city" class="dropdown-item" href="#"
+                    @mousedown.prevent="store.cityName = city; showRgCitySuggestions = false">{{ city }}</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small text-muted">景点/地标（可选）</label>
+              <input v-model="store.place" type="text" class="form-control" placeholder="如：香山、天安门、新宿">
             </div>
           </div>
 
           <div class="row g-3 mb-3">
-            <div class="col-md-4">
-              <label class="form-label small text-muted">地点类型</label>
-              <select v-model="store.placeType" class="form-select" required>
-                <option value="">选择类型...</option>
-                <option v-for="pt in placeTypes" :key="pt" :value="pt">{{ pt }}</option>
-              </select>
-            </div>
             <div class="col-md-4">
               <label class="form-label small text-muted">入住日期</label>
               <input v-model="store.checkInDate" type="date" class="form-control">
@@ -186,6 +188,7 @@ const showAdvanced = ref(false)
 const isSearching = ref(false)
 const history = ref<{ query: string; place: string; provider: string }[]>([])
 const showCitySuggestions = ref(false)
+const showRgCitySuggestions = ref(false)
 
 // Validate persisted dates on mount
 onMounted(() => {
@@ -201,6 +204,16 @@ const filteredCities = computed(() => {
 
 function hideCitySuggestions() {
   setTimeout(() => { showCitySuggestions.value = false }, 150)
+}
+
+const rgFilteredCities = computed(() => {
+  const q = store.cityName.trim()
+  if (!q) return POPULAR_CITIES.slice(0, 8)
+  return POPULAR_CITIES.filter(c => c.includes(q)).slice(0, 8)
+})
+
+function hideRgCitySuggestions() {
+  setTimeout(() => { showRgCitySuggestions.value = false }, 150)
 }
 
 function adjustCount(field: 'adultCount' | 'childCount' | 'stayNights', delta: number) {
@@ -237,7 +250,7 @@ async function handleSearch() {
     post('/history', {
       query: store.provider === 'tuniu' ? store.cityName : store.place,
       place: store.provider === 'tuniu' ? store.cityName : store.place,
-      place_type: store.provider === 'rollinggo' ? store.placeType : '城市',
+      place_type: store.provider === 'rollinggo' ? (store.place ? '景点' : '城市') : '城市',
       provider: store.provider,
     }).catch(() => {})
 
@@ -256,12 +269,16 @@ async function handleSearch() {
         },
       })
     } else {
+      // Auto-infer place_type: landmark if place provided, otherwise city
+      const effectivePlace = store.place || store.cityName
+      const effectivePlaceType = store.place ? '景点' : '城市'
       await navigateTo({
         path: '/results',
         query: {
           provider: 'rollinggo',
-          place: store.place,
-          place_type: store.placeType,
+          place: effectivePlace,
+          place_type: effectivePlaceType,
+          city_name: store.cityName || undefined,
           check_in_date: store.checkInDate,
           stay_nights: String(store.stayNights),
           adult_count: String(store.adultCount),
