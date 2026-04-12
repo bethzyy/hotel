@@ -1,3 +1,13 @@
+# ---- Stage 1: Build Nuxt frontend ----
+FROM node:20-alpine AS frontend
+
+WORKDIR /web
+COPY web/package*.json ./
+RUN npm ci --prefer-offline
+COPY web/ ./
+RUN npm run generate
+
+# ---- Stage 2: Python runtime ----
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -14,6 +24,9 @@ RUN pip install --no-cache-dir -r requirements.txt \
 
 # Copy application code
 COPY . .
+
+# Copy Nuxt build output from frontend stage
+COPY --from=frontend /web/.output/public /app/web/dist
 
 # Create data directory for SQLite
 RUN mkdir -p /app/data

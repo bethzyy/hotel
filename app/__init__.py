@@ -6,12 +6,15 @@ import os
 import logging
 import logging.handlers
 from pathlib import Path
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 
 
 def create_app(config=None):
     """Create and configure the Flask application."""
-    app = Flask(__name__)
+    # Nuxt SPA static files directory
+    dist_dir = str(Path(__file__).resolve().parent.parent / 'web' / 'dist')
+
+    app = Flask(__name__, static_folder=dist_dir)
 
     # Configure logging
     from config import DEBUG, BASE_DIR
@@ -209,33 +212,29 @@ def create_app(config=None):
     # Robots.txt
     @app.route('/robots.txt')
     def robots_txt():
-        from flask import send_from_directory
         return send_from_directory(app.static_folder, 'robots.txt', mimetype='text/plain')
 
-    # Main page routes
-    @app.route('/')
-    def index():
-        from flask import render_template
-        return render_template('index.html')
+    # SPA catch-all: serve Nuxt static files, fallback to index.html for client-side routing
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def spa_catch_all(path):
+        """Serve Nuxt SPA static files. Non-file routes fall back to index.html."""
+        if path:
+            # Try to serve the exact file first (e.g., _nuxt/xxx.js, favicon.svg)
+            file_path = Path(app.static_folder) / path
+            if file_path.is_file():
+                return send_from_directory(app.static_folder, path)
 
-    @app.route('/results')
-    def results():
-        from flask import render_template
-        return render_template('results.html')
+        # Fallback to index.html for SPA client-side routing
+        index_path = Path(app.static_folder) / 'index.html'
+        if index_path.is_file():
+            return send_from_directory(app.static_folder, 'index.html')
 
-    @app.route('/detail/<hotel_id>')
-    def detail(hotel_id):
-        from flask import render_template
-        return render_template('detail.html', hotel_id=hotel_id)
-
-    @app.route('/booking')
-    def booking():
-        from flask import render_template
-        return render_template('booking.html')
-
-    @app.route('/order')
-    def order():
-        from flask import render_template
-        return render_template('order.html')
+        # No Nuxt build found — return helpful message
+        return jsonify({
+            'success': False,
+            'error': 'Frontend not built. Run: cd web && npm run generate',
+            'api_docs': '/api/search, /api/hotel/<id>, /health',
+        }), 503
 
     return app

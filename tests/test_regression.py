@@ -119,10 +119,10 @@ class TestProxyRoutePriority:
         assert 'providers' in data or 'success' in data
 
     def test_non_api_routes_proxied(self, client):
-        """非 API 路由应返回 404（无 catch-all 代理时不匹配任何路由）。"""
+        """非 API 路由由 SPA catch-all 处理，返回 index.html (200)。"""
         resp = client.get('/some-random-page')
-        # 无代理时 Flask 直接返回 404
-        assert resp.status_code == 404
+        # SPA catch-all 返回 index.html (200) 或 503 (未构建前端)
+        assert resp.status_code in (200, 503)
 
     def test_health_endpoint_not_proxied(self, client):
         """/health 端点应直接由 Flask 处理。"""

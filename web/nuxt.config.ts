@@ -3,6 +3,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
 
+  // SPA mode — no SSR, outputs static files for Flask to serve
+  ssr: false,
+
   modules: ['@pinia/nuxt'],
 
   css: [
@@ -14,7 +17,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:5000/api',
+      apiBase: '/api',  // Same-origin — no proxy needed
       siteName: process.env.NUXT_PUBLIC_SITE_NAME || '酒店搜索比价',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || '',
     },
@@ -28,29 +31,11 @@ export default defineNuxtConfig({
     },
   },
 
-  // SSR rendering rules
-  routeRules: {
-    '/': { swr: 3600 }, // ISR 1h for homepage
-    '/results': { ssr: true },
-    '/detail/**': { ssr: true },
-    '/booking': { ssr: false },
-    '/order': { ssr: false },
-    '/login': { ssr: false },
-    '/favorites': { ssr: false },
-  },
-
-  // Dev server proxy to Flask API (avoids CORS in development)
-  // Nitro devProxy strips the matched prefix, so target includes /api
+  // Generate output directory (nuxt generate → .output/public)
   nitro: {
-    devProxy: {
-      '/api': {
-        target: 'http://localhost:5000/api',
-        changeOrigin: true,
-      },
-      '/health': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-      },
+    prerender: {
+      crawlLinks: false,
+      routes: ['/'],
     },
   },
 
