@@ -40,8 +40,8 @@
         :key="hotel.hotel_id"
         :hotel="hotel"
         :index="idx"
-        :check-in="(route.query.check_in || route.query.check_in_date) as string"
-        :check-out="route.query.check_out as string"
+        :check-in="resolvedCheckIn"
+        :check-out="resolvedCheckOut"
       />
     </div>
 
@@ -63,6 +63,24 @@ const sortBy = ref('default')
 const loadingMore = ref(false)
 const hasMore = ref(false)
 const pending = ref(true)
+
+// Resolve check-in/check-out dates for both Tuniu and RollingGo
+const resolvedCheckIn = computed(() => {
+  return (route.query.check_in || route.query.check_in_date || '') as string
+})
+const resolvedCheckOut = computed(() => {
+  const checkOut = route.query.check_out as string
+  if (checkOut) return checkOut
+  // RollingGo: calculate check_out from check_in_date + stay_nights
+  const checkIn = (route.query.check_in_date || route.query.check_in) as string
+  const nights = Number(route.query.stay_nights) || 1
+  if (checkIn) {
+    const d = new Date(checkIn)
+    d.setDate(d.getDate() + nights)
+    return d.toISOString().split('T')[0]
+  }
+  return ''
+})
 
 const hotels = ref<Hotel[]>([])
 const searchInfo = ref<{ place: string; dateRange: string; provider: string } | null>(null)
