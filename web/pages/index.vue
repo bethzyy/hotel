@@ -1,9 +1,7 @@
 <template>
-  <div class="container py-4">
-    <div class="row justify-content-center">
-      <div class="col-lg-8 col-xl-7">
-        <SearchForm />
-      </div>
+  <div class="hero-section">
+    <div class="hero-content">
+      <SearchForm />
     </div>
   </div>
 </template>

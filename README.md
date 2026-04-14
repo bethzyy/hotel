@@ -2,6 +2,21 @@
 
 多平台酒店搜索、比价与预订助手，支持 RollingGo（全球）和途牛（国内）双数据源。
 
+## 界面预览
+
+<table>
+<tr>
+<td><img src="docs/homepage.png" alt="首页搜索" width="280"/></td>
+<td><img src="docs/results.png" alt="搜索结果" width="280"/></td>
+<td><img src="docs/comparison.png" alt="跨平台比价" width="280"/></td>
+</tr>
+<tr>
+<td align="center">首页 — 搜索表单</td>
+<td align="center">搜索结果 — 酒店列表</td>
+<td align="center">跨平台比价</td>
+</tr>
+</table>
+
 ## 功能特性
 
 - **多平台搜索**: RollingGo（全球酒店）+ 途牛（国内酒店）
@@ -15,7 +30,7 @@
 ## 技术栈
 
 - **后端**: Python Flask
-- **前端**: Bootstrap 5 + Vanilla JavaScript
+- **前端**: Nuxt 3 (SPA) + Bootstrap 5
 - **数据存储**: SQLite
 - **酒店数据**:
   - RollingGo MCP API（全球酒店搜索）

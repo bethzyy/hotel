@@ -1,30 +1,28 @@
 <template>
   <div>
-    <div class="text-center py-4 mb-2">
-      <h1 class="gradient-text display-4 fw-bold mb-2">发现理想酒店</h1>
-      <p class="text-muted">搜索全球酒店，对比多平台价格，找到最低价</p>
+    <div class="text-center py-3 mb-1">
+      <h1 class="hero-title display-4 mb-2">发现理想酒店</h1>
+      <p class="hero-subtitle">搜索全球酒店，对比多平台价格，找到最低价</p>
     </div>
 
     <div class="search-container">
       <form class="search-form" @submit.prevent="handleSearch">
-        <!-- Provider Toggle -->
-        <div class="d-flex gap-3 mb-4">
-          <div
+        <!-- Provider Segment Control -->
+        <div class="provider-segment mb-3">
+          <button
             v-for="p in providers" :key="p.id"
-            class="provider-card flex-fill p-3 text-center"
-            :class="{ selected: store.provider === p.id }"
+            type="button"
+            class="provider-tab"
+            :class="{ active: store.provider === p.id }"
             @click="store.setProvider(p.id)"
           >
-            <span class="mb-0 fw-medium" style="cursor:pointer">
-              {{ p.name }}
-            </span>
-            <div style="font-size:0.75rem" class="text-muted">{{ p.description }}</div>
-          </div>
+            {{ p.name }}
+          </button>
         </div>
 
         <!-- Tuniu: City + Date Range -->
         <template v-if="store.provider === 'tuniu'">
-          <div class="row g-3 mb-3">
+          <div class="row g-2 mb-2">
             <div class="col-md-4">
               <label class="form-label small text-muted">城市</label>
               <div class="position-relative">
@@ -45,7 +43,7 @@
               <input v-model="store.checkOut" type="date" class="form-control" required>
             </div>
           </div>
-          <div class="row g-3 mb-3">
+          <div class="row g-2 mb-2">
             <div class="col-md-4">
               <label class="form-label small text-muted">成人数</label>
               <div class="input-group">
@@ -71,7 +69,7 @@
 
         <!-- RollingGo: City + Landmark + Date + Stay -->
         <template v-else>
-          <div class="row g-3 mb-3">
+          <div class="row g-2 mb-2">
             <div class="col-md-6">
               <label class="form-label small text-muted">城市</label>
               <div class="position-relative">
@@ -89,7 +87,7 @@
             </div>
           </div>
 
-          <div class="row g-3 mb-3">
+          <div class="row g-2 mb-2">
             <div class="col-md-4">
               <label class="form-label small text-muted">入住日期</label>
               <input v-model="store.checkInDate" type="date" class="form-control">
@@ -104,7 +102,7 @@
             </div>
           </div>
 
-          <div class="row g-3 mb-3">
+          <div class="row g-2 mb-2">
             <div class="col-md-6">
               <label class="form-label small text-muted">成人数</label>
               <div class="input-group">
@@ -130,7 +128,7 @@
               <i :class="showAdvanced ? 'bi bi-chevron-up' : 'bi bi-chevron-down'" class="ms-1"></i>
             </button>
           </div>
-          <div v-if="showAdvanced" class="row g-3 mb-3">
+          <div v-if="showAdvanced" class="row g-2 mb-2">
             <div class="col-md-4">
               <label class="form-label small text-muted">最低星级</label>
               <select v-model="store.minStar" class="form-select">

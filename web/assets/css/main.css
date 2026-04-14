@@ -1,5 +1,6 @@
 /* Hotel Search Application - Global Styles */
 /* Design tokens are in variables.css */
+/* Style: Luxury Navy + Gold + Liquid Glass (Hotel/Hospitality) */
 
 /* Global Styles */
 * {
@@ -16,24 +17,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom Scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--gray-100);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--gray-300);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -41,13 +41,14 @@ html {
 }
 
 /* =====================================================
-   3. Navbar
+   3. Navbar (White glass navbar)
    ===================================================== */
 .navbar {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
-  box-shadow: var(--shadow-sm);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--gray-200);
   transition: all var(--transition-base);
-  backdrop-filter: blur(10px);
 }
 
 .navbar.scrolled {
@@ -56,45 +57,109 @@ html {
 
 .navbar-brand {
   font-weight: 700;
-  font-size: 1.2rem;
-  color: white;
+  font-size: 1.15rem;
+  color: var(--primary-500);
   letter-spacing: var(--tracking-tight);
 }
 
 .navbar .btn-light {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  color: white;
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  color: var(--gray-700);
   font-weight: 500;
+  border-radius: var(--radius-full);
 }
 
 .navbar .btn-light:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.08);
 }
 
 .nav-link {
   font-weight: 500;
-  transition: opacity var(--transition-fast);
+  color: var(--gray-600);
+  transition: color var(--transition-fast);
 }
 
 .nav-link:hover {
-  opacity: 0.9;
+  color: var(--primary-500);
 }
 
 /* =====================================================
-   4. Search Container
+   4. Hero Section
+   ===================================================== */
+.hero-section {
+  position: relative;
+  min-height: calc(100vh - 57px - 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(170deg, #f0f4ff 0%, #ffffff 35%, #faf8f2 100%);
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  right: -5%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(30, 58, 138, 0.06) 0%, transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-section::after {
+  content: '';
+  position: absolute;
+  bottom: -5%;
+  left: -8%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 800px;
+  padding: var(--space-10) var(--space-4);
+}
+
+/* Hero title: luxury navy gradient */
+.hero-title {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  color: var(--gray-500);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+/* =====================================================
+   5. Search Container (Glass card)
    ===================================================== */
 .search-container {
   position: relative;
-  max-width: 700px;
+  max-width: 720px;
   margin: 0 auto;
-  background: white;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   padding: var(--space-8);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-card-raised);
-  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-glass);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   overflow: hidden;
 }
 
@@ -104,74 +169,27 @@ html {
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary-500), var(--accent-gold));
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-500), var(--primary-700), var(--accent-gold));
 }
 
 /* =====================================================
-   4.1 Redesigned Search Styles
-   ===================================================== */
-
-/* Gradient text for title */
-.gradient-text {
-  color: var(--heading-color);
-  letter-spacing: var(--tracking-tight);
-}
-
-/* Destination input - prominent style */
-.destination-input-wrapper .form-control {
-  font-size: 1.25rem;
-  padding: 1rem 1.25rem;
-  border: 2px solid var(--primary-200);
-  border-left: none;
-}
-
-.destination-input-wrapper .form-control:focus {
-  border-color: var(--primary-500);
-  box-shadow: 0 0 0 4px var(--primary-100);
-}
-
-.destination-input-wrapper .input-group-text {
-  font-size: 1.25rem;
-  padding: 1rem 1.25rem;
-}
-
-/* Main search section */
-.search-main-section {
-  padding: var(--space-4) 0;
-}
-
-/* Compact labels */
-.form-label.small {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.25rem;
-  font-weight: 600;
-}
-
-/* Rounded pill button */
-.btn.rounded-pill {
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
-}
-
-/* =====================================================
-   5. Form Styles
+   6. Search Form Styles
    ===================================================== */
 .search-form .form-control,
 .search-form .form-select {
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
   font-size: var(--text-base);
   transition: all var(--transition-fast);
+  background: white;
 }
 
 .search-form .form-control:focus,
 .search-form .form-select:focus {
-  border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px var(--primary-100);
+  border-color: var(--primary-700);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
   outline: none;
 }
 
@@ -181,14 +199,22 @@ html {
 
 .search-form .form-label {
   font-weight: 500;
-  color: var(--gray-700);
+  color: var(--gray-600);
   margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
 }
 
 /* Input Groups */
 .input-group .btn {
   width: 44px;
-  border-radius: var(--radius-lg) !important;
+  border-radius: var(--radius-md) !important;
+  border-color: var(--gray-200);
+  color: var(--gray-600);
+  background: var(--gray-50);
+}
+
+.input-group .btn:hover {
+  background: var(--gray-100);
 }
 
 .input-group .btn:first-child {
@@ -206,26 +232,41 @@ html {
   border-radius: 0 !important;
 }
 
-/* Provider Cards */
-.provider-card {
+/* =====================================================
+   7. Provider Toggle (Segment control)
+   ===================================================== */
+.provider-segment {
+  display: inline-flex;
+  background: var(--gray-100);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+  width: 100%;
+}
+
+.provider-tab {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+  font-weight: 500;
   cursor: pointer;
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-base);
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+}
+
+.provider-tab:hover {
+  color: var(--gray-700);
+}
+
+.provider-tab.active {
   background: white;
-}
-
-.provider-card:hover {
-  border-color: var(--primary-300);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-.provider-card.selected {
-  border-color: var(--primary-500);
-  background: linear-gradient(135deg, var(--primary-50), white);
-  transform: translateY(-2px);
-  box-shadow: 0 0 0 3px var(--primary-100);
+  color: var(--primary-500);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
 .provider-card input[type="radio"] {
@@ -234,38 +275,61 @@ html {
 }
 
 /* =====================================================
-   6. Button System
+   8. Button System
    ===================================================== */
 .btn {
   font-weight: 600;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-4);
   transition: all var(--transition-fast);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  background: var(--primary-500);
   border: none;
   color: white;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card-hover);
+  background: var(--primary-600);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-btn);
 }
 
 .btn-primary:active {
-  transform: translateY(0);
+  transform: scale(0.97);
 }
 
 .btn-primary:focus {
-  box-shadow: 0 0 0 3px var(--primary-200);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.2);
+}
+
+/* Search CTA - Gold accent */
+.btn-search-cta {
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+  border: none;
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-base);
+  letter-spacing: 0.02em;
+}
+
+.btn-search-cta:hover {
+  background: linear-gradient(135deg, var(--accent-gold-light), var(--accent-gold));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold);
+}
+
+.btn-search-cta:active {
+  transform: scale(0.97);
 }
 
 .btn-outline-primary {
-  border: 2px solid var(--primary-500);
-  color: var(--primary-600);
+  border: 1.5px solid var(--primary-700);
+  color: var(--primary-700);
   background: transparent;
 }
 
@@ -277,19 +341,19 @@ html {
 }
 
 .btn-outline-secondary {
-  border: 2px solid var(--gray-300);
+  border: 1.5px solid var(--gray-200);
   color: var(--gray-600);
   background: transparent;
 }
 
 .btn-outline-secondary:hover {
-  background: var(--gray-100);
-  border-color: var(--gray-400);
+  background: var(--gray-50);
+  border-color: var(--gray-300);
   color: var(--gray-700);
 }
 
 .btn-outline-danger {
-  border: 2px solid var(--danger);
+  border: 1.5px solid var(--danger);
   color: var(--danger);
 }
 
@@ -301,7 +365,7 @@ html {
 }
 
 .btn-outline-light {
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
   color: white;
 }
 
@@ -333,11 +397,11 @@ html {
 }
 
 /* =====================================================
-   7. Hotel Cards
+   9. Hotel Cards
    ===================================================== */
 .hotel-card {
   border: 1px solid var(--gray-100);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   transition: all var(--transition-base);
   animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -347,9 +411,9 @@ html {
 }
 
 .hotel-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-card-raised);
-  border-color: var(--primary-200);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--gray-200);
 }
 
 .hotel-image-wrapper {
@@ -364,7 +428,7 @@ html {
   left: 0;
   right: 0;
   height: 40%;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.4));
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.35));
   pointer-events: none;
 }
 
@@ -374,7 +438,7 @@ html {
   background-color: var(--gray-100);
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+  border-radius: var(--radius-card) 0 0 var(--radius-card);
 }
 
 .hotel-image img {
@@ -414,7 +478,7 @@ html {
 }
 
 .hotel-name {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   margin-bottom: var(--space-1);
   color: var(--heading-color);
@@ -424,7 +488,7 @@ html {
 
 .star-rating {
   color: var(--accent-gold);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   letter-spacing: 2px;
 }
 
@@ -432,7 +496,7 @@ html {
   font-family: var(--font-number);
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary-600);
+  color: var(--primary-500);
   text-align: right;
   line-height: 1.2;
 }
@@ -447,7 +511,7 @@ html {
 
 /* Rating Badge */
 .rating-badge {
-  background: linear-gradient(135deg, var(--accent-gold), #fbbf24);
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
   color: white;
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
@@ -459,7 +523,7 @@ html {
 }
 
 /* =====================================================
-   8. Tags
+   10. Tags
    ===================================================== */
 .hotel-tags {
   display: flex;
@@ -473,10 +537,9 @@ html {
   background-color: var(--gray-100);
   border-radius: var(--radius-sm);
   font-size: var(--text-xs);
-  color: var(--gray-600);
+  color: var(--gray-500);
 }
 
-/* Amenities Preview (for search results) */
 .amenities-preview {
   display: flex;
   flex-wrap: wrap;
@@ -488,8 +551,8 @@ html {
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.5rem;
-  background: linear-gradient(135deg, var(--success-light), white);
-  border: 1px solid var(--success);
+  background: var(--success-light);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: var(--radius-sm);
   font-size: 0.7rem;
   color: var(--gray-700);
@@ -502,7 +565,7 @@ html {
 .hotel-tag {
   display: inline-block;
   padding: var(--space-2) var(--space-4);
-  background: linear-gradient(135deg, var(--primary-50), white);
+  background: var(--primary-50);
   border: 1px solid var(--primary-100);
   border-radius: var(--radius-full);
   font-size: var(--text-sm);
@@ -512,14 +575,14 @@ html {
 }
 
 /* =====================================================
-   9. Hotel Detail Page
+   11. Hotel Detail Page
    ===================================================== */
 .hotel-header {
   background: linear-gradient(135deg, var(--primary-50), white);
   padding: var(--space-8);
   border-radius: var(--radius-2xl);
   margin-bottom: var(--space-6);
-  border: 1px solid var(--primary-100);
+  border: 1px solid var(--gray-100);
   box-shadow: var(--shadow-sm);
 }
 
@@ -529,7 +592,7 @@ html {
   background-color: var(--gray-100);
   background-size: cover;
   background-position: center;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   transition: transform var(--transition-slow);
 }
@@ -560,7 +623,7 @@ html {
 
 .gallery-thumb:hover,
 .gallery-thumb.active {
-  border-color: var(--primary-500);
+  border-color: var(--primary-700);
   transform: scale(1.05);
   box-shadow: var(--shadow-sm);
 }
@@ -569,13 +632,13 @@ html {
 .price-section {
   padding: var(--space-4);
   background: linear-gradient(135deg, var(--primary-50), white);
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--primary-100);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--gray-100);
   box-shadow: var(--shadow-sm);
 }
 
 /* =====================================================
-   10. Amenity Items
+   12. Amenity Items
    ===================================================== */
 .amenity-item {
   padding: var(--space-3);
@@ -588,7 +651,7 @@ html {
 
 .amenity-item:hover {
   background-color: var(--primary-50);
-  border-color: var(--primary-200);
+  border-color: var(--primary-100);
 }
 
 .amenity-item i {
@@ -597,7 +660,7 @@ html {
 }
 
 /* =====================================================
-   11. Room Plan Cards
+   13. Room Plan Cards
    ===================================================== */
 .room-plan-card {
   border: 1px solid var(--gray-200);
@@ -607,19 +670,19 @@ html {
 }
 
 .room-plan-card:hover {
-  border-color: var(--primary-300);
+  border-color: var(--primary-700);
   background: var(--primary-50);
   box-shadow: var(--shadow-sm);
   transform: translateX(4px);
 }
 
 /* =====================================================
-   12. Booking Page
+   14. Booking Page
    ===================================================== */
 .form-section {
   background: var(--gray-50);
   padding: var(--space-6);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-card);
   margin-bottom: var(--space-6);
   border: 1px solid var(--gray-200);
   box-shadow: var(--shadow-sm);
@@ -654,18 +717,20 @@ html {
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  background: var(--primary-500);
   border: none;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-card);
   padding: var(--space-4) var(--space-6);
   font-weight: 600;
   font-size: var(--text-lg);
   transition: all var(--transition-base);
+  color: white;
 }
 
 .submit-btn:hover {
+  background: var(--primary-600);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+  box-shadow: var(--shadow-btn);
 }
 
 .submit-btn:active {
@@ -673,7 +738,7 @@ html {
 }
 
 /* =====================================================
-   13. Loading Overlay
+   15. Loading Overlay
    ===================================================== */
 .loading-overlay {
   position: fixed;
@@ -696,18 +761,18 @@ html {
 }
 
 /* =====================================================
-   14. Search Info
+   16. Search Info
    ===================================================== */
 .search-info {
   padding: var(--space-4);
   background-color: white;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   border: 1px solid var(--gray-100);
 }
 
 /* =====================================================
-   15. Sort Buttons
+   17. Sort Buttons
    ===================================================== */
 .btn-group .btn {
   border-radius: 0;
@@ -722,13 +787,13 @@ html {
 }
 
 .btn-group .btn.active {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  background: var(--primary-500);
   color: white;
   border-color: var(--primary-500);
 }
 
 /* =====================================================
-   16. Badge Styles
+   18. Badge Styles
    ===================================================== */
 .badge {
   font-weight: 500;
@@ -745,7 +810,7 @@ html {
 }
 
 /* =====================================================
-   17. Animations
+   19. Animations
    ===================================================== */
 @keyframes fadeInUp {
   from {
@@ -770,94 +835,63 @@ html {
 }
 
 @keyframes heartbeat {
-  0%, 100% {
-    transform: scale(1);
-  }
-  25% {
-    transform: scale(1.2);
-  }
-  50% {
-    transform: scale(0.95);
-  }
-  75% {
-    transform: scale(1.1);
-  }
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.2); }
+  50% { transform: scale(0.95); }
+  75% { transform: scale(1.1); }
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 @keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
-/* Page Enter Animation */
 .page-enter {
   animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Card Stagger Animation */
 .hotel-card {
   animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: calc(var(--index, 0) * 0.08s);
   opacity: 0;
 }
 
-/* Button press effect */
 .btn:active {
   transform: scale(0.97);
 }
 
 /* =====================================================
-   18. Skeleton Loading
+   20. Skeleton Loading
    ===================================================== */
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--gray-100) 25%,
-    var(--gray-200) 50%,
-    var(--gray-100) 75%
-  );
+  background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--radius-md);
 }
 
 .skeleton-card {
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-card);
   overflow: hidden;
 }
 
-.skeleton-image {
-  height: 180px;
-}
+.skeleton-image { height: 180px; }
 
 .skeleton-text {
   height: 16px;
   margin-bottom: var(--space-2);
 }
 
-.skeleton-text.short {
-  width: 60%;
-}
-
-.skeleton-text.medium {
-  width: 80%;
-}
+.skeleton-text.short { width: 60%; }
+.skeleton-text.medium { width: 80%; }
 
 /* =====================================================
-   19. Empty State
+   21. Empty State
    ===================================================== */
 .empty-state {
   text-align: center;
@@ -891,15 +925,16 @@ html {
 }
 
 /* =====================================================
-   20. Footer
+   22. Footer
    ===================================================== */
 footer {
   border-top: 1px solid var(--gray-200);
   background: white;
+  color: var(--gray-400);
 }
 
 /* =====================================================
-   21. History Items
+   23. History Items
    ===================================================== */
 #historyList .badge {
   cursor: pointer;
@@ -910,12 +945,12 @@ footer {
 }
 
 #historyList .badge:hover {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  background: var(--primary-500);
   color: white;
 }
 
 /* =====================================================
-   22. Placeholder Image
+   24. Placeholder Image
    ===================================================== */
 .hotel-image[src=""],
 .hotel-image:not([style*="background-image"]) {
@@ -926,17 +961,17 @@ footer {
 }
 
 /* =====================================================
-   23. Card Enhancements
+   25. Card Enhancements
    ===================================================== */
 .card {
   border: 1px solid var(--gray-100);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
 }
 
 .card:hover {
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .card-header {
@@ -947,11 +982,11 @@ footer {
 
 .card-header i {
   margin-right: var(--space-2);
-  color: var(--primary-500);
+  color: var(--primary-700);
 }
 
 /* =====================================================
-   24. Description Preview (results page)
+   26. Description Preview
    ===================================================== */
 .desc-preview {
   display: -webkit-box;
@@ -963,7 +998,7 @@ footer {
 }
 
 /* =====================================================
-   25. Order Success/Error Pages
+   27. Order Pages
    ===================================================== */
 .order-success-icon {
   width: 80px;
@@ -998,50 +1033,44 @@ footer {
 }
 
 /* =====================================================
-   25. Responsive Design
+   28. Responsive Design
    ===================================================== */
 @media (max-width: 768px) {
-  /* Touch targets */
   .btn,
   .nav-link {
-    min-height: 48px;
+    min-height: 44px;
     padding: var(--space-3) var(--space-4);
   }
 
-  /* Search container */
   .search-container {
     padding: var(--space-6);
     margin: 0 var(--space-4);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
   }
 
-  /* Hotel cards */
   .hotel-card .row {
     flex-direction: column;
   }
 
   .hotel-image {
     min-height: 200px;
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
   }
 
-  /* Detail page */
   .hotel-main-image {
     height: 250px;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-card);
   }
 
   .hotel-header {
     padding: var(--space-4);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-card);
   }
 
-  /* Price section */
   .price-section {
     margin-top: var(--space-4);
   }
 
-  /* Sort buttons */
   .btn-group {
     flex-wrap: wrap;
     gap: var(--space-2);
@@ -1053,15 +1082,26 @@ footer {
     padding: var(--space-2) var(--space-3);
   }
 
-  /* Order summary - not sticky on mobile */
   .order-summary {
     position: static;
     margin-bottom: var(--space-4);
   }
 
-  /* Provider cards */
   .provider-card {
     margin-bottom: var(--space-3);
+  }
+
+  .hero-section {
+    min-height: auto;
+    padding: var(--space-8) 0;
+  }
+
+  .hero-content {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .hero-title {
+    font-size: 1.75rem !important;
   }
 }
 
@@ -1083,7 +1123,6 @@ footer {
     font-size: 1rem;
   }
 
-  /* Mobile search button */
   .mobile-search-btn {
     position: fixed;
     bottom: 0;
@@ -1091,13 +1130,13 @@ footer {
     right: 0;
     padding: var(--space-4);
     background: white;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
     z-index: 100;
   }
 }
 
 /* =====================================================
-   26. Print Styles
+   29. Print Styles
    ===================================================== */
 @media print {
   .navbar,
@@ -1118,7 +1157,7 @@ footer {
 }
 
 /* =====================================================
-   27. Booking Dates Section (detail page)
+   30. Booking Dates Section
    ===================================================== */
 #bookingDatesSection {
   background: linear-gradient(135deg, var(--primary-50), white);
@@ -1130,7 +1169,7 @@ footer {
 }
 
 /* =====================================================
-   28. Country/Area Badge (results page)
+   31. Country/Area Badge
    ===================================================== */
 .badge.bg-info.bg-opacity-10 {
   background-color: rgba(59, 130, 246, 0.1) !important;
@@ -1141,7 +1180,7 @@ footer {
 }
 
 /* =====================================================
-   29. Room Card Enhancements
+   32. Room Card Enhancements
    ===================================================== */
 .room-plan-card .badge.bg-light {
   font-size: 0.75rem;
@@ -1152,7 +1191,7 @@ footer {
 }
 
 /* =====================================================
-   30. Price Comparison Section (search results)
+   33. Price Comparison Section
    ===================================================== */
 .comparison-section {
   background: var(--gray-50);
@@ -1173,7 +1212,7 @@ footer {
 }
 
 .comparison-section .section-title i {
-  color: var(--primary-500);
+  color: var(--primary-700);
 }
 
 .comparison-list {
@@ -1194,7 +1233,7 @@ footer {
 }
 
 .comparison-item:hover {
-  border-color: var(--primary-200);
+  border-color: var(--primary-100);
   background: var(--primary-50);
 }
 
@@ -1213,7 +1252,7 @@ footer {
   font-family: var(--font-number);
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--primary-600);
+  color: var(--primary-500);
 }
 
 .comparison-item.best .provider-price {
@@ -1239,7 +1278,7 @@ footer {
 }
 
 /* =====================================================
-   31. External Platform Prices (Serper)
+   34. External Platform Prices
    ===================================================== */
 .external-price-row {
   background-color: var(--gray-50);
@@ -1254,18 +1293,15 @@ footer {
   border-top: 1px dashed var(--gray-200);
 }
 
-/* External price section header */
 .external-price-row + .external-price-row td {
   border-top: 1px solid var(--gray-100);
 }
 
-/* Table secondary header for external prices */
 .table-secondary {
   background-color: var(--gray-100);
   font-weight: 500;
 }
 
-/* Comparison loading state */
 .comparison-section .loading-text {
   font-size: 0.75rem;
   color: var(--gray-500);
@@ -1281,7 +1317,7 @@ footer {
 }
 
 /* =====================================================
-   32. External Platforms Collapsible Panel
+   35. External Platforms Panel
    ===================================================== */
 .external-platforms-panel .btn-outline-secondary {
   font-size: 0.85rem;
@@ -1307,10 +1343,9 @@ footer {
 
 .external-platforms-panel .comparison-item.external:hover {
   background: var(--primary-50);
-  border-color: var(--primary-200);
+  border-color: var(--primary-100);
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .comparison-section {
     padding: var(--space-2);

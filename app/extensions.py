@@ -12,7 +12,7 @@ _storage_uri = _redis_url if _redis_url else "memory://"
 
 limiter = Limiter(
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"],
+    default_limits=[],
     storage_uri=_storage_uri,
     headers_enabled=True
 )

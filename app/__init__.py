@@ -211,12 +211,14 @@ def create_app(config=None):
 
     # Robots.txt
     @app.route('/robots.txt')
+    @limiter.exempt
     def robots_txt():
         return send_from_directory(app.static_folder, 'robots.txt', mimetype='text/plain')
 
     # SPA catch-all: serve Nuxt static files, fallback to index.html for client-side routing
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
+    @limiter.exempt
     def spa_catch_all(path):
         """Serve Nuxt SPA static files. Non-file routes fall back to index.html."""
         if path:
