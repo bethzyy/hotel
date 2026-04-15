@@ -633,19 +633,25 @@ def _unified_search(data: dict, destination: str):
                 executor.submit(_search_single_provider, 'tuniu', tuniu_params): 'tuniu',
                 executor.submit(_search_single_provider, 'rollinggo', rollinggo_params): 'rollinggo',
             }
-            for future in as_completed(futures, timeout=20):
-                provider_name = futures[future]
-                try:
-                    _, result = future.result()
-                    if result is not None:
-                        if provider_name == 'tuniu':
-                            tuniu_result = result
+            try:
+                for future in as_completed(futures, timeout=25):
+                    provider_name = futures[future]
+                    try:
+                        _, result = future.result()
+                        if result is not None:
+                            if provider_name == 'tuniu':
+                                tuniu_result = result
+                            else:
+                                rollinggo_result = result
                         else:
-                            rollinggo_result = result
-                    else:
-                        warnings.append(f'{provider_name} search returned no results')
-                except Exception as e:
-                    warnings.append(f'{provider_name} search error: {str(e)}')
+                            warnings.append(f'{provider_name} search returned no results')
+                    except Exception as e:
+                        warnings.append(f'{provider_name} search error: {str(e)}')
+            except TimeoutError:
+                # One or both providers timed out — use whatever we got
+                unfinished = [futures[f] for f in futures if not f.done()]
+                warnings.append(f'Provider(s) timed out: {", ".join(unfinished)}')
+                logger.warning("[Unified] Timeout waiting for providers: %s", unfinished)
 
         # Merge results
         from app.services.search_merger import SearchMerger
