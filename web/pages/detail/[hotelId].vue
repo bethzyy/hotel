@@ -31,6 +31,7 @@
                 <i class="bi bi-star-fill"></i>{{ hotel.rating }}
               </span>
               <span v-if="hotel.brand_name || hotel.brand" class="badge bg-light text-dark">{{ hotel.brand_name || hotel.brand }}</span>
+              <SourceBadge :sources="hotel._sources" :provider="hotel.provider" />
             </div>
             <!-- Policies -->
             <div v-if="hotel.policies" class="mt-2 d-flex gap-3 flex-wrap" style="font-size:0.85rem">
@@ -57,13 +58,22 @@
                 :provider="hotel.provider"
                 :is-favorite="hotel.is_favorite"
               />
+              <!-- Tuniu booking (for tuniu or merged hotels) -->
+              <button
+                v-if="hotel.provider === 'tuniu' || hotel._sources?.includes('tuniu')"
+                class="btn btn-primary"
+                @click="showBookingModal = true"
+              >
+                <i class="bi bi-calendar-check me-1"></i>在线预订
+              </button>
+              <!-- RollingGo booking URL -->
               <a
                 v-if="hotel.booking_url"
                 :href="`/api/click/track?url=${encodeURIComponent(hotel.booking_url)}&hotel_id=${hotel.hotel_id}&provider=${hotel.provider}&hotel_name=${encodeURIComponent(hotel.name)}&source=detail`"
                 target="_blank"
-                class="btn btn-primary"
+                class="btn btn-outline-primary"
               >
-                <i class="bi bi-calendar-check me-1"></i>立即预订
+                <i class="bi bi-globe2 me-1"></i>全球预订
               </a>
             </div>
           </div>
