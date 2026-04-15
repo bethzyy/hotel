@@ -803,6 +803,7 @@ cd web && npm run dev
 | 2.2.0 | 2026-04-01 | Phase 6 | 价格监控 + 推荐奖励 + 优惠券系统 |
 | 2.3.0 | 2026-04-01 | Phase 7 | Redis 基础设施 + 安全加固 + 个性化推荐 + 审计日志 |
 | 3.0.0 | 2026-04-15 | Phase 8 | 双供应商统一搜索整合 -- 智能路由 + 双源融合 + 详情页增强 |
+| 3.0.1 | 2026-04-15 | Phase 8 实施 | 后端: destination统一搜索 + ThreadPoolExecutor双源并行 + SearchMerger融合 + HotelMatcher阈值修复 + placeType纠正 + TimeoutError容错. 前端: SearchForm统一搜索框 + results.vue来源统计 + SourceBadge来源标签 + 详情页双入口预订 |
 
 ---
 
