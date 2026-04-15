@@ -614,7 +614,7 @@ def _unified_search(data: dict, destination: str):
         place = (intent.get('place') or destination) if intent else destination
         place_type = (intent.get('placeType') or '城市') if intent else '城市'
         rollinggo_params = {
-            'query': keyword or place,
+            'query': f"{place} {keyword}" if keyword else place,
             'place': place,
             'place_type': place_type,
             'check_in_date': check_in,

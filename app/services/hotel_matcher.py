@@ -171,6 +171,7 @@ class HotelMatcher:
         """
         Normalize hotel name for comparison.
 
+        - Strip English suffix in parentheses, e.g. "(Jin Jiang Hotel)"
         - Convert to lowercase
         - Remove common suffixes (Hotel, Inn, Resort, etc.)
         - Remove special characters
@@ -178,6 +179,10 @@ class HotelMatcher:
         """
         if not name:
             return ""
+
+        # Remove English suffix in parentheses at end of name
+        # e.g. "上海锦江饭店(Jin Jiang Hotel)" → "上海锦江饭店"
+        name = re.sub(r'\s*\([A-Za-z][^)]*\)\s*$', '', name)
 
         # Convert to lowercase
         name = name.lower()
@@ -323,29 +328,35 @@ class HotelMatcher:
             candidate_name = candidate.get('name', '')
             candidate_lat = candidate.get('latitude')
             candidate_lng = candidate.get('longitude')
+            candidate_address = candidate.get('address', '')
 
             # Calculate name similarity
             name_similarity = self.calculate_name_similarity(source_name, candidate_name)
 
-            # Calculate location similarity
+            # Calculate location similarity (coordinates preferred)
             location_match, distance = self.calculate_location_similarity(
                 source_lat, source_lng, candidate_lat, candidate_lng
             )
 
+            # Address-based location fallback when coordinates are missing
+            address_match = False
+            if not location_match:
+                address_match = self._addresses_overlap(source_address, candidate_address)
+
             # Calculate overall confidence
             confidence = self._calculate_confidence(
                 name_similarity,
-                location_match,
+                location_match or address_match,
                 distance
             )
 
             # Only include if above threshold
-            # Logic: match if confidence is high enough, OR name is very similar (0.9+), OR name+location both good
-            # NOTE: threshold raised from 0.8 to 0.9 to prevent same-brand different-branch mismatches
-            #   e.g. "北京王府井希尔顿" vs "北京希尔顿" (sim=0.82) should NOT match
+            # Match if: confidence is high enough, OR name is very similar (0.9+),
+            # OR name+location both good, OR high name similarity + address overlap
             if (confidence >= self.NAME_SIMILARITY_THRESHOLD or
                 name_similarity >= 0.9 or  # Very high name similarity - near-exact match
-                (name_similarity >= 0.5 and location_match)):  # Reasonable name + location match
+                (name_similarity >= 0.5 and location_match) or  # Name + coordinate match
+                (name_similarity >= 0.85 and address_match)):  # High name + address overlap
                 logger.debug(f"[Matcher] Match accepted: '{candidate_name}' - "
                            f"conf={confidence:.2f}, name_sim={name_similarity:.2f}, "
                            f"loc_match={location_match}, dist={distance}m")
@@ -391,6 +402,19 @@ class HotelMatcher:
             base_confidence += location_score * 0.4
 
         return base_confidence
+
+    @staticmethod
+    def _addresses_overlap(addr1: str, addr2: str) -> bool:
+        """
+        Check if two addresses refer to the same area.
+
+        Uses SequenceMatcher on address text as a whole.
+        Returns True if address similarity >= 0.5 (same general area).
+        """
+        if not addr1 or not addr2:
+            return False
+        similarity = SequenceMatcher(None, addr1, addr2).ratio()
+        return similarity >= 0.5
 
     def search_in_other_provider(
         self,
