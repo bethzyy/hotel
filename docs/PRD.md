@@ -1,8 +1,8 @@
 # 酒店搜索与比价平台 - 产品需求文档 (PRD)
 
-**版本**: 3.0.0
+**版本**: 3.0.2
 **更新日期**: 2026-04-15
-**状态**: Phase 8 双供应商统一搜索整合
+**状态**: Phase 8 双供应商统一搜索整合（已实施）
 
 ---
 
@@ -95,7 +95,7 @@
 从 v3.0 开始，搜索 API 支持统一搜索模式，后端自动路由到最佳供应商组合。
 
 ##### 智能路由
-- 用户输入目的地 -> AI 意图解析（GLM-4-flash）-> 判断国内/国际
+- 用户输入目的地 -> 城市列表匹配判断国内/港澳台/国际 -> AI 意图解析（GLM-4-flash）提取 RollingGo 参数
 - **国内目的地**: 双源并行查询（Tuniu + RollingGo）-> 结果融合去重
 - **国际目的地**: 仅 RollingGo
 
@@ -117,7 +117,7 @@
 后端通过 `SearchMerger` 服务将两个供应商的结果合并：
 
 1. 优先 Tuniu 结果（有房型详情+价格+预订能力）
-2. 用 `HotelMatcher` 匹配 RollingGo 中的同一家酒店（名称相似度 60% + 坐标距离 40%）
+2. 用 `HotelMatcher` 匹配 RollingGo 中的同一家酒店（名称相似度 60% + 坐标距离 40%，坐标缺失时用地址文本相似度兜底）
 3. 匹配到的酒店进行字段级合并
 4. 未匹配的 RollingGo 酒店追加到列表末尾
 
@@ -150,7 +150,7 @@
     "sources": {
       "tuniu": 8,
       "rollinggo": 12,
-      "matched": 5
+      "merged_pairs": 5
     },
     "supports_booking": true
   }
@@ -184,13 +184,12 @@
 
 #### 详情页数据融合（v3.0）
 
-详情页展示主供应商完整数据 + 异步加载第二供应商补充数据：
+详情页展示主供应商完整数据，融合酒店显示双入口预订：
 
 - **主数据**: 主供应商的完整详情（房型+价格+政策+图片）
-- **补充数据**: 第二供应商匹配结果（距离+坐标+设施+bookingUrl）
+- **来源标识**: SourceBadge 组件显示数据来源（途牛/全球/双源）
+- **双入口预订**: 融合酒店同时显示"在线预订"（途牛直连）和"全球预订"（外部链接）
 - **第三方比价**: Tavily/Serper 搜索携程/Agoda/Expedia 等平台价格
-
-详情 API 新增 `enrich=true` 参数，启用后自动查询第二供应商并合并。
 
 ### 2.4 预订系统（仅途牛）
 
@@ -573,7 +572,7 @@
 
 | 技术 | 用途 |
 |------|------|
-| Nuxt.js 3 | SSR/SSG 框架 |
+| Nuxt.js 3 | SPA 框架（ssr: false）|
 | Vue 3 + TypeScript | UI 框架 |
 | Pinia | 状态管理（auth, favorites, membership） |
 | Bootstrap 5 + Bootstrap Icons | UI 组件和图标 |
@@ -650,8 +649,9 @@ hotel/
 │   │   ├── tuniu.py              # 途牛 MCP 客户端
 │   │   ├── tavily.py             # Tavily 搜索服务
 │   │   ├── serper.py             # Serper 搜索服务
-│   │   ├── hotel_matcher.py      # 酒店名称匹配
+│   │   ├── hotel_matcher.py      # 酒店名称匹配（含英文后缀剥离+地址兜底）
 │   │   ├── search_merger.py       # 双源搜索融合服务
+│   │   ├── intent_parser.py      # AI 意图解析（GLM-4-flash）
 │   │   ├── currency.py           # 多币种转换
 │   │   ├── cache.py              # SQLite 缓存服务
 │   │   ├── payment.py            # 支付服务抽象层
@@ -681,7 +681,7 @@ hotel/
 │   │   └── useTracking.ts        # 埋点 SDK
 │   ├── components/
 │   │   ├── layout/               # AppNavbar, MobileTabBar
-│   │   ├── hotel/                # HotelCard, ComparisonSection, FavoriteButton, PriceBadge
+│   │   ├── hotel/                # HotelCard, ComparisonSection, FavoriteButton, PriceBadge, SourceBadge
 │   │   ├── search/               # SearchForm, SearchHistory
 │   │   ├── membership/           # PlanCard, SearchLimit, UpgradeModal
 │   │   ├── common/               # EmptyState, SkeletonCard
@@ -804,7 +804,8 @@ cd web && npm run dev
 | 2.3.0 | 2026-04-01 | Phase 7 | Redis 基础设施 + 安全加固 + 个性化推荐 + 审计日志 |
 | 3.0.0 | 2026-04-15 | Phase 8 | 双供应商统一搜索整合 -- 智能路由 + 双源融合 + 详情页增强 |
 | 3.0.1 | 2026-04-15 | Phase 8 实施 | 后端: destination统一搜索 + ThreadPoolExecutor双源并行 + SearchMerger融合 + HotelMatcher阈值修复 + placeType纠正 + TimeoutError容错. 前端: SearchForm统一搜索框 + results.vue来源统计 + SourceBadge来源标签 + 详情页双入口预订 |
+| 3.0.2 | 2026-04-15 | Bugfix | HotelMatcher剥离英文括号后缀 + 地址文本相似度兜底(坐标缺失时) + RollingGo query组合place+keyword + PRD与代码同步修正 |
 
 ---
 
-*文档基于代码库分析生成，最后更新 2026-04-15*
+*文档基于代码库分析生成，最后更新 2026-04-15 (v3.0.2)*
