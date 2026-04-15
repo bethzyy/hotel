@@ -117,6 +117,28 @@ class HotelMatcher:
             'W': 'W Hotel',
             '柏悦': 'Park Hyatt',
             '君悦': 'Grand Hyatt',
+            '华尔道夫': 'Waldorf Astoria',
+            '瑰丽': 'Rosewood',
+            '安缦': 'Aman',
+            '悦榕庄': 'Banyan Tree',
+            '六善': 'Six Senses',
+            '康莱德': 'Conrad',
+            '费尔蒙': 'Fairmont',
+            '莱佛士': 'Raffles',
+            '卓美亚': 'Jumeirah',
+            '安达仕': 'Andaz',
+            '嘉悦里': 'Canopy by Hilton',
+            '逸林': 'DoubleTree',
+            'JW万豪': 'JW Marriott',
+            '万丽': 'Renaissance',
+            '万怡': 'Courtyard',
+            '雅乐轩': 'Aloft',
+            '源宿': 'Element',
+            '福朋喜来登': 'Four Points',
+            '和平饭店': 'Fairmont',
+            '万达': 'Wanda',
+            '开元': 'New Century',
+            '金陵': 'Jinling',
         }
 
         # Normalize both brands
@@ -186,15 +208,24 @@ class HotelMatcher:
         if not name:
             return None
 
-        # Common hotel brands
+        # Common hotel brands (expanded for cross-provider matching)
         brands = [
             'Hilton', 'Marriott', 'Sheraton', 'Hyatt', 'InterContinental',
             'Westin', 'Four Seasons', 'Ritz-Carlton', 'Shangri-La',
             'Mandarin Oriental', 'Peninsula', 'St. Regis', 'W Hotel',
             'Novotel', 'Accor', 'Ibis', 'Crowne Plaza', 'Holiday Inn',
             'Hampton', 'Courtyard', 'Fairfield', 'DoubleTree',
+            'Waldorf Astoria', 'Rosewood', 'Aman', 'Banyan Tree',
+            'Six Senses', 'Conrad', 'Fairmont', 'Raffles', 'Jumeirah',
+            'Andaz', 'Canopy by Hilton', 'JW Marriott', 'Renaissance',
+            'Aloft', 'Element', 'Four Points',
             '喜来登', '希尔顿', '万豪', '香格里拉', '洲际', '威斯汀',
-            '凯悦', '四季', '丽思卡尔顿', '半岛', '文华东方'
+            '凯悦', '四季', '丽思卡尔顿', '半岛', '文华东方',
+            '华尔道夫', '瑰丽', '安缦', '悦榕庄', '六善',
+            '康莱德', '费尔蒙', '莱佛士', '卓美亚', '安达仕',
+            'JW万豪', '万丽', '万怡', '雅乐轩', '源宿', '福朋喜来登',
+            '汉庭', '如家', '锦江', '全季', '亚朵', '维也纳',
+            '桔子水晶', '格林豪泰', '速8', '布丁', '宜必思',
         ]
 
         name_lower = name.lower()
@@ -309,9 +340,11 @@ class HotelMatcher:
             )
 
             # Only include if above threshold
-            # Logic: match if confidence is high enough, OR name is very similar (0.8+), OR name+location both good
+            # Logic: match if confidence is high enough, OR name is very similar (0.9+), OR name+location both good
+            # NOTE: threshold raised from 0.8 to 0.9 to prevent same-brand different-branch mismatches
+            #   e.g. "北京王府井希尔顿" vs "北京希尔顿" (sim=0.82) should NOT match
             if (confidence >= self.NAME_SIMILARITY_THRESHOLD or
-                name_similarity >= 0.8 or  # Very high name similarity - likely same hotel
+                name_similarity >= 0.9 or  # Very high name similarity - near-exact match
                 (name_similarity >= 0.5 and location_match)):  # Reasonable name + location match
                 logger.debug(f"[Matcher] Match accepted: '{candidate_name}' - "
                            f"conf={confidence:.2f}, name_sim={name_similarity:.2f}, "

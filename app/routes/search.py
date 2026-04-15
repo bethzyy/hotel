@@ -5,6 +5,7 @@ Supports multiple MCP providers (RollingGo, Tuniu)
 import json as _json
 import logging
 import math
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from flask import Blueprint, request, jsonify, current_app, make_response
 from flask_jwt_extended import get_jwt_identity
@@ -144,6 +145,12 @@ def search_hotels():
                 'error': 'Request body is required'
             }), 400
 
+        # --- Unified search mode (v3.0): destination parameter ---
+        destination = data.get('destination', '').strip()
+        if destination:
+            return _unified_search(data, destination)
+
+        # --- Legacy single-provider mode (backward compatible) ---
         provider_name = data.get('provider', current_app.config.get('DEFAULT_PROVIDER', 'tuniu'))
 
         # Get provider
@@ -156,6 +163,8 @@ def search_hotels():
             }), 400
 
         # Build search parameters based on provider
+        llm_min_star = None
+
         if provider_name == 'tuniu':
             # Validate Tuniu required fields
             required = ['city_name', 'check_in', 'check_out']
@@ -190,7 +199,6 @@ def search_hotels():
             place_val = data['place']
             place_type_val = data['place_type']
             query_val = data.get('query') or data.get('place')
-            llm_min_star = None
 
             if data.get('city_name') and place_val != data['city_name']:
                 from app.services.intent_parser import get_intent_parser
@@ -460,3 +468,308 @@ def list_providers():
             'default': current_app.config.get('DEFAULT_PROVIDER', 'tuniu')
         }
     })
+
+
+# ---------------------------------------------------------------------------
+# Unified search (v3.0) — destination-based dual-source query
+# ---------------------------------------------------------------------------
+
+# Major Chinese cities used to detect domestic destinations
+_DOMESTIC_CITIES = {
+    '北京', '上海', '广州', '深圳', '杭州', '成都', '南京', '武汉', '西安',
+    '重庆', '天津', '苏州', '厦门', '青岛', '大连', '宁波', '无锡', '长沙',
+    '郑州', '佛山', '东莞', '沈阳', '哈尔滨', '长春', '济南', '烟台', '福州',
+    '合肥', '常州', '南通', '嘉兴', '绍兴', '温州', '南昌', '太原', '石家庄',
+    '昆明', '丽江', '桂林', '三亚', '海口', '珠海', '中山', '惠州', '贵阳',
+    '南宁', '兰州', '银川', '西宁', '呼和浩特', '乌鲁木齐', '拉萨',
+    # Common aliases
+    '京城', '魔都', '羊城', '鹏城', '蓉城', '泉城', '春城', '星城',
+}
+
+# Regions that are Chinese-speaking but outside mainland
+_OUTBOUND_CN = {'香港', '澳门', '台北', '台中', '高雄', '台南', '花莲'}
+
+
+def _is_domestic(destination: str) -> bool:
+    """Check if a destination is likely domestic China."""
+    for city in _DOMESTIC_CITIES:
+        if city in destination:
+            return True
+    return False
+
+
+def _is_outbound_cn(destination: str) -> bool:
+    """Check if destination is HK/MO/TW."""
+    for place in _OUTBOUND_CN:
+        if place in destination:
+            return True
+    return False
+
+
+def _extract_city_from_destination(destination: str, intent: dict) -> str:
+    """Extract city name from destination for Tuniu query."""
+    # Priority: intent_parser result > direct city match > fallback
+    if intent and intent.get('city'):
+        return intent['city']
+    for city in _DOMESTIC_CITIES:
+        if city in destination:
+            return city
+    # Fallback: first 2 Chinese chars
+    import re
+    m = re.search(r'[\u4e00-\u9fff]{2,4}(?:市|县|区)', destination)
+    if m:
+        return m.group(0).rstrip('市县区')
+    return destination[:2]
+
+
+def _search_single_provider(provider_name, search_params, timeout=15):
+    """Search a single provider with timeout. Returns (provider_name, result_or_error)."""
+    try:
+        provider = get_provider(provider_name)
+        result = provider.search_hotels(**search_params)
+        return (provider_name, result)
+    except Exception as e:
+        logger.warning(f"[Unified] {provider_name} search failed: {e}")
+        return (provider_name, None)
+
+
+def _unified_search(data: dict, destination: str):
+    """
+    Unified search: destination → auto-route to single/dual source.
+
+    Flow:
+    1. Determine domestic/international via city matching
+    2. Parse intent via LLM for better RollingGo params
+    3. Domestic: parallel query Tuniu + RollingGo → merge
+    4. International: RollingGo only
+    """
+    check_in = data.get('check_in', '')
+    check_out = data.get('check_out', '')
+    keyword = data.get('keyword', '')
+    adult_count = data.get('adult_count', 2)
+    child_count = data.get('child_count', 0)
+
+    if not check_in or not check_out:
+        return jsonify({
+            'success': False,
+            'error': 'check_in and check_out are required'
+        }), 400
+
+    # Step 1: Determine route
+    is_domestic = _is_domestic(destination)
+    is_outbound = _is_outbound_cn(destination)
+    logger.info(f"[Unified] destination='{destination}', domestic={is_domestic}, outbound={is_outbound}")
+
+    # Step 2: Parse intent for RollingGo params
+    intent = None
+    try:
+        from app.services.intent_parser import get_intent_parser
+        parser = get_intent_parser()
+        intent = parser.parse(destination)
+        if intent:
+            # Fix common LLM misclassifications: short destination → likely a city
+            if intent.get('placeType') == '详细地址' and len(destination) <= 4:
+                intent['placeType'] = '城市'
+                logger.info(f"[Unified] Corrected placeType to '城市' for short destination: '{destination}'")
+            logger.info(f"[Unified] Intent parsed: {intent}")
+    except Exception as e:
+        logger.warning(f"[Unified] Intent parsing failed: {e}")
+
+    # Step 3: Check cache
+    cache = get_cache_service()
+    cache_params = {
+        'destination': destination,
+        'check_in': check_in,
+        'check_out': check_out,
+        'adult_count': adult_count,
+        'keyword': keyword,
+    }
+    cache_key = generate_cache_key('search:unified', cache_params)
+
+    if current_app.config.get('CACHE_ENABLED', True):
+        cached = cache.get_cache(cache_key)
+        if cached:
+            return jsonify({'success': True, 'data': cached, 'cached': True})
+
+    # Step 4: Execute search(es)
+    tuniu_result = None
+    rollinggo_result = None
+    warnings = []
+
+    if is_domestic:
+        # --- Domestic: dual-source parallel query ---
+        city = _extract_city_from_destination(destination, intent)
+
+        tuniu_params = {
+            'city_name': city,
+            'check_in': check_in,
+            'check_out': check_out,
+            'adult_count': adult_count,
+            'child_count': child_count,
+        }
+        if keyword:
+            tuniu_params['keyword'] = keyword
+
+        # RollingGo params from intent (use 'or' to handle empty string)
+        place = (intent.get('place') or destination) if intent else destination
+        place_type = (intent.get('placeType') or '城市') if intent else '城市'
+        rollinggo_params = {
+            'query': keyword or place,
+            'place': place,
+            'place_type': place_type,
+            'check_in_date': check_in,
+            'stay_nights': data.get('stay_nights', 1),
+            'adult_count': adult_count,
+            'child_count': child_count,
+            'size': 20,
+        }
+        if intent and intent.get('maxPrice'):
+            rollinggo_params['max_price'] = intent['maxPrice']
+
+        logger.info(f"[Unified] Domestic dual-source: Tuniu city={city}, RollingGo place={place}")
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            futures = {
+                executor.submit(_search_single_provider, 'tuniu', tuniu_params): 'tuniu',
+                executor.submit(_search_single_provider, 'rollinggo', rollinggo_params): 'rollinggo',
+            }
+            for future in as_completed(futures, timeout=20):
+                provider_name = futures[future]
+                try:
+                    _, result = future.result()
+                    if result is not None:
+                        if provider_name == 'tuniu':
+                            tuniu_result = result
+                        else:
+                            rollinggo_result = result
+                    else:
+                        warnings.append(f'{provider_name} search returned no results')
+                except Exception as e:
+                    warnings.append(f'{provider_name} search error: {str(e)}')
+
+        # Merge results
+        from app.services.search_merger import SearchMerger
+        merger = SearchMerger()
+
+        # TuniuProvider.search_hotels() already returns normalized data
+        tuniu_hotels = tuniu_result.get('hotels', []) if tuniu_result else []
+        for h in tuniu_hotels:
+            h['provider'] = 'tuniu'
+        # RollingGoProvider.search_hotels() also returns normalized data
+        rg_hotels = rollinggo_result.get('hotels', []) if rollinggo_result else []
+        for h in rg_hotels:
+            h['provider'] = 'rollinggo'
+
+        merged = merger.merge(tuniu_hotels, rg_hotels)
+
+        response_data = {
+            'hotels': merged['hotels'],
+            'total': merged['total'],
+            'provider': 'auto',
+            'merged': True,
+            'sources': merged['sources'],
+            'supports_booking': True,
+            'query': f"Hotels near {destination}",
+            'place': destination,
+        }
+        if warnings:
+            response_data['warnings'] = warnings
+
+    elif is_outbound:
+        # --- HK/MO/TW: RollingGo only (no Tuniu coverage) ---
+        place = (intent.get('place') or destination) if intent else destination
+        place_type = (intent.get('placeType') or '城市') if intent else '城市'
+        try:
+            provider = get_provider('rollinggo')
+            rollinggo_result = provider.search_hotels(
+                query=keyword or place,
+                place=place,
+                place_type=place_type,
+                check_in_date=check_in,
+                stay_nights=data.get('stay_nights', 1),
+                adult_count=adult_count,
+                child_count=child_count,
+                size=20,
+            )
+            hotels = rollinggo_result.get('hotels', [])
+            for h in hotels:
+                h['provider'] = 'rollinggo'
+
+            response_data = {
+                'hotels': hotels,
+                'total': rollinggo_result.get('total', len(hotels)),
+                'provider': 'rollinggo',
+                'merged': False,
+                'supports_booking': False,
+                'query': f"Hotels in {destination}",
+                'place': destination,
+            }
+        except Exception as e:
+            logger.error(f"[Unified] RollingGo search for outbound failed: {e}")
+            response_data = {
+                'hotels': [], 'total': 0, 'provider': 'rollinggo',
+                'merged': False, 'error': str(e),
+                'query': f"Hotels in {destination}", 'place': destination,
+            }
+
+    else:
+        # --- International: RollingGo only ---
+        place = (intent.get('place') or destination) if intent else destination
+        place_type = (intent.get('placeType') or '城市') if intent else '城市'
+        try:
+            provider = get_provider('rollinggo')
+            rollinggo_result = provider.search_hotels(
+                query=keyword or place,
+                place=place,
+                place_type=place_type,
+                check_in_date=check_in,
+                stay_nights=data.get('stay_nights', 1),
+                adult_count=adult_count,
+                child_count=child_count,
+                size=20,
+            )
+            hotels = rollinggo_result.get('hotels', [])
+            for h in hotels:
+                h['provider'] = 'rollinggo'
+
+            response_data = {
+                'hotels': hotels,
+                'total': rollinggo_result.get('total', len(hotels)),
+                'provider': 'rollinggo',
+                'merged': False,
+                'supports_booking': False,
+                'query': f"Hotels in {destination}",
+                'place': destination,
+            }
+        except Exception as e:
+            logger.error(f"[Unified] RollingGo search for international failed: {e}")
+            response_data = {
+                'hotels': [], 'total': 0, 'provider': 'rollinggo',
+                'merged': False, 'error': str(e),
+                'query': f"Hotels in {destination}", 'place': destination,
+            }
+
+    # Step 5: Cache + is_favorite
+    if current_app.config.get('CACHE_ENABLED', True):
+        cache.set_cache(cache_key, response_data, current_app.config.get('CACHE_TTL', 3600))
+
+    for hotel in response_data.get('hotels', []):
+        hotel['is_favorite'] = cache.is_favorite(hotel.get('hotel_id', ''))
+
+    cache.add_search_history(
+        query=response_data.get('query', ''),
+        place=destination,
+        place_type='城市'
+    )
+
+    # Search quota
+    search_user = _check_search_quota()
+    resp = jsonify({'success': True, 'data': response_data, 'cached': False})
+
+    if search_user and not search_user.is_member:
+        from app.routes.membership import _increment_search_count, _get_search_remaining
+        _increment_search_count(search_user)
+        remaining = _get_search_remaining(search_user)
+        resp.headers['X-Search-Remaining'] = str(remaining)
+
+    return resp

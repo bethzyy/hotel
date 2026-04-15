@@ -141,30 +141,27 @@ class TuniuService:
         Raises:
             TuniuError: If the request fails
         """
-        try:
-            # Try to get existing event loop
+        max_retries = 2
+        for attempt in range(max_retries + 1):
             try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    # If loop is running, use thread pool
-                    import concurrent.futures
-                    with concurrent.futures.ThreadPoolExecutor() as executor:
-                        future = executor.submit(
-                            asyncio.run,
-                            self._call_mcp_tool_async(tool_name, arguments)
-                        )
-                        return future.result(timeout=self.timeout)
-            except RuntimeError:
-                pass
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                    future = executor.submit(
+                        asyncio.run,
+                        self._call_mcp_tool_async(tool_name, arguments)
+                    )
+                    return future.result(timeout=self.timeout)
 
-            # Create new event loop
-            return asyncio.run(self._call_mcp_tool_async(tool_name, arguments))
-
-        except TuniuError:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to run Tuniu MCP call: {e}")
-            raise TuniuError(f"Tuniu API call failed: {str(e)}")
+            except TuniuError:
+                raise
+            except Exception as e:
+                if attempt < max_retries:
+                    logger.warning(f"Tuniu MCP call attempt {attempt + 1} failed, retrying: {e}")
+                    import time
+                    time.sleep(1)
+                else:
+                    logger.error(f"Failed to run Tuniu MCP call after {max_retries + 1} attempts: {e}")
+                    raise TuniuError(f"Tuniu API call failed: {str(e)}")
 
     def search_hotels(
         self,
@@ -231,7 +228,7 @@ class TuniuService:
             Hotel detail with room plans and preBookParam
         """
         arguments = {
-            "hotelId": hotel_id,
+            "hotelId": int(hotel_id),
             "checkIn": check_in,
             "checkOut": check_out,
             "adultCount": adult_count,
@@ -270,7 +267,7 @@ class TuniuService:
             Order result with order_id, confirmation_number, payment_url
         """
         arguments = {
-            "hotelId": hotel_id,
+            "hotelId": str(hotel_id),
             "roomId": room_id,
             "preBookParam": pre_book_param,
             "checkInDate": check_in_date,
@@ -295,32 +292,49 @@ class TuniuService:
         Returns:
             Normalized hotel dict
         """
-        # Handle nested price object
-        price_obj = raw_hotel.get('price', {})
+        # Handle price: Tuniu returns lowestPrice as direct field, or nested in price object
+        price_obj = raw_hotel.get('price')
         price_per_night = None
         currency = 'CNY'
 
         if price_obj and isinstance(price_obj, dict):
             price_per_night = price_obj.get('lowestPrice') or price_obj.get('price')
             currency = price_obj.get('currency', 'CNY')
+        elif raw_hotel.get('lowestPrice'):
+            price_per_night = raw_hotel.get('lowestPrice')
         elif raw_hotel.get('price'):
             price_per_night = raw_hotel.get('price')
-            currency = raw_hotel.get('currency', 'CNY')
+
+        # Handle star rating: Tuniu returns starName (string) and/or numeric starRating
+        star_rating = raw_hotel.get('starRating') or raw_hotel.get('star_rating')
+        star_name = raw_hotel.get('starName', '')
+        if not star_rating and star_name:
+            # Map common Tuniu starName values to numeric
+            star_map = {
+                '经济型': 2.0, '舒适型': 3.0, '高档型': 4.0,
+                '豪华型': 5.0, '二星级': 2.0, '二星及以下': 1.5,
+                '三星级': 3.0, '四星级': 4.0, '五星级': 5.0,
+            }
+            star_rating = star_map.get(star_name)
 
         return {
             'hotel_id': str(raw_hotel.get('hotelId') or raw_hotel.get('hotel_id', '')),
             'name': raw_hotel.get('name') or raw_hotel.get('hotelName', ''),
             'address': raw_hotel.get('address', ''),
-            'star_rating': raw_hotel.get('starRating') or raw_hotel.get('star_rating'),
+            'star_rating': star_rating,
+            'star_name': star_name,
             'rating': raw_hotel.get('rating') or raw_hotel.get('userRating') or raw_hotel.get('commentScore'),
             'price_per_night': price_per_night,
             'currency': currency,
-            'image_url': raw_hotel.get('imageUrl') or raw_hotel.get('image_url') or raw_hotel.get('mainImage', ''),
+            'image_url': raw_hotel.get('imageUrl') or raw_hotel.get('image_url') or raw_hotel.get('mainImage', '') or raw_hotel.get('firstPic', ''),
             'provider': provider,
             # Tuniu specific fields
             'brand_name': raw_hotel.get('brandName'),
             'business': raw_hotel.get('business'),
-            'comment_digest': raw_hotel.get('commentDigest')
+            'comment_digest': raw_hotel.get('commentDigest'),
+            'meal': raw_hotel.get('meal'),
+            'refund': raw_hotel.get('refund'),
+            'room_name': raw_hotel.get('roomName'),
         }
 
     @staticmethod
@@ -342,12 +356,17 @@ class TuniuService:
                 normalized = TuniuService.normalize_hotel(hotel)
                 hotels.append(normalized)
 
+        # Tuniu returns totalPageNum/currentPageNum or totalCount/pageNum
+        current_page = response.get('currentPageNum') or response.get('pageNum', 1)
+        total_pages = response.get('totalPageNum') or 0
+        total_count = response.get('totalCount') or len(hotels)
+
         return {
             'hotels': hotels,
-            'total': response.get('totalCount') or len(hotels),
+            'total': total_count,
             'query_id': response.get('queryId'),  # For pagination
-            'page_num': response.get('pageNum', 1),
-            'has_more': response.get('hasMore', False)
+            'page_num': current_page,
+            'has_more': total_pages > current_page
         }
 
     @staticmethod
@@ -355,48 +374,115 @@ class TuniuService:
         """
         Normalize raw hotel detail data from Tuniu API to standard format.
 
-        Args:
-            raw_detail: Raw hotel detail dict from API
-            provider: Provider name
-
-        Returns:
-            Normalized hotel detail dict
+        Tuniu detail returns:
+        { hotelId, hotelName, hotelNameEn, starName, firstPic, cityName, cityCode,
+          business, commentScore, policies: {checkInTime, checkOutTime, cancelPolicy},
+          roomTypes: [{ roomTypeId, roomTypeName, bedType, maxOccupancy, roomSize, floor,
+                        images: [], ratePlans: [{ ratePlanName, vendorRatePlanId, rmbPrices,
+                        preBookParam, mealText, cancelDesc, stock }] }],
+          reviews: {score, count} }
         """
-        # Start with basic hotel normalization
         normalized = TuniuService.normalize_hotel(raw_detail, provider)
 
-        # Add detail-specific fields
+        # Compute lowest price from room types
+        room_types = raw_detail.get('roomTypes') or raw_detail.get('roomList') or []
+        lowest_price = None
+        for rt in room_types:
+            for rp in rt.get('ratePlans', []):
+                try:
+                    p = float(rp.get('rmbPrices', 0))
+                    if p and (lowest_price is None or p < lowest_price):
+                        lowest_price = p
+                except (ValueError, TypeError):
+                    pass
+
+        if lowest_price and not normalized.get('price_per_night'):
+            normalized['price_per_night'] = lowest_price
+
+        # Policies
+        raw_policies = raw_detail.get('policies', {})
+
+        # Room images from first room type (for gallery)
+        all_images = []
+        for rt in room_types:
+            for img in (rt.get('images') or []):
+                if img not in all_images:
+                    all_images.append(img)
+        if raw_detail.get('firstPic') and raw_detail['firstPic'] not in all_images:
+            all_images.insert(0, raw_detail['firstPic'])
+
         normalized.update({
             'description': raw_detail.get('description') or raw_detail.get('introduction', ''),
-            'images': raw_detail.get('images') or raw_detail.get('imageList', []),
+            'images': all_images if all_images else [raw_detail.get('firstPic', '')],
             'amenities': raw_detail.get('amenities') or raw_detail.get('hotelAmenities', []),
-            'room_plans': TuniuService._normalize_room_plans(
-                raw_detail.get('roomPlans') or raw_detail.get('roomList', [])
-            ),
-            # Tuniu specific fields for booking
-            'pre_book_param': raw_detail.get('preBookParam')
+            'room_plans': TuniuService._normalize_room_plans(room_types),
+            # Policies
+            'policies': {
+                'check_in_time': raw_policies.get('checkInTime', ''),
+                'check_out_time': raw_policies.get('checkOutTime', ''),
+                'cancel_policy': raw_policies.get('cancelPolicy', ''),
+            } if raw_policies else None,
+            # Reviews
+            'reviews': raw_detail.get('reviews'),
+            # Extra fields
+            'hotel_name_en': raw_detail.get('hotelNameEn', ''),
         })
 
         return normalized
 
     @staticmethod
-    def _normalize_room_plans(raw_plans: List) -> List[Dict]:
-        """Normalize room plans to standard format."""
+    def _normalize_room_plans(raw_room_types: List) -> List[Dict]:
+        """
+        Normalize Tuniu roomTypes + ratePlans into flat RoomPlan list.
+
+        Tuniu structure: roomTypes[].ratePlans[] — one room type has multiple rate plans.
+        We flatten them so each rate plan becomes a RoomPlan.
+        Frontend groups by room_type_id for display.
+        """
         plans = []
-        for plan in raw_plans:
-            normalized_plan = {
-                'room_id': plan.get('roomId') or plan.get('room_id', ''),
-                'name': plan.get('name') or plan.get('roomName', ''),
-                'description': plan.get('description', ''),
-                'price': plan.get('price') or plan.get('pricePerNight'),
-                'currency': plan.get('currency', 'CNY'),
-                'available': plan.get('available', True) or plan.get('canBook', True),
-                'amenities': plan.get('amenities', []),
-                # Tuniu specific fields for booking
-                'pre_book_param': plan.get('preBookParam'),
-                'room_count': plan.get('roomCount', 1)
-            }
-            plans.append(normalized_plan)
+        if not raw_room_types:
+            return plans
+
+        for rt in raw_room_types:
+            room_type_id = str(rt.get('roomTypeId', ''))
+            room_name = rt.get('roomTypeName', '')
+            bed_type = rt.get('bedType', '')
+            max_occupancy = rt.get('maxOccupancy')
+            room_size = rt.get('roomSize')
+            floor = rt.get('floor', '')
+            has_window = rt.get('hasWindow')
+            room_images = rt.get('images', [])
+
+            for rp in rt.get('ratePlans', []):
+                try:
+                    price = float(rp.get('rmbPrices', 0)) if rp.get('rmbPrices') else None
+                except (ValueError, TypeError):
+                    price = None
+
+                plan = {
+                    'room_id': room_type_id,
+                    'room_type_id': room_type_id,
+                    'room_name': room_name,
+                    'bed_type': bed_type,
+                    'room_size': f"{room_size}㎡" if room_size else None,
+                    'max_occupancy': max_occupancy,
+                    'floor': floor,
+                    'has_window': has_window,
+                    'room_images': room_images,
+                    # Rate plan info
+                    'rate_plan_name': rp.get('ratePlanName', ''),
+                    'rate_plan_id': rp.get('vendorRatePlanId', ''),
+                    'price': price,
+                    'currency': 'CNY',
+                    'breakfast': rp.get('mealText', ''),
+                    'cancel_policy': rp.get('cancelDesc', ''),
+                    'available': rp.get('stock') is None or (rp.get('stock') or 0) > 0,
+                    # For booking
+                    'pre_book_param': rp.get('preBookParam'),
+                    'room_count': 1,
+                }
+                plans.append(plan)
+
         return plans
 
     @staticmethod
