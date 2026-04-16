@@ -1,58 +1,54 @@
-# 可执行文件
-*.exe
-*.app
-*.out
+# Environment & secrets
+.env
+.env.*
+!.env.example
+!.env.production.example
 
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+.venv/
 venv/
-.venv
-
-# Node.js
-node_modules/
-web/.nuxt/
-web/.output/
-
-# 日志
-*.log
-logs/
-
-# 临时文件
-*.tmp
-*.bak
-.DS_Store
-Thumbs.db
-
-# 构建产物
+env/
+*.egg-info/
 dist/
 build/
 
-# 环境变量（含 API 密钥）
-.env
-.env.*
-!.env.example
+# Node
+node_modules/
 
-# 数据库
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Debug
+*.pyc
+*.exe
+*.app
+*.out
+web/.nuxt/
+web/.output/
+logs/
+*.tmp
+*.bak
 data/*.db
-
-# Claude Code 本地配置
 .claude/settings.local.json
-# Test/debug artifacts (root level)
 /test_*.py
 /test_*.json
 /response.json
 /ctrip_*
 *.output
-
-# Empty directories
 /skills/
 /test/
-
-# IDE
-.vscode/
-.idea/
-
-# Claude Code temp artifacts
 CUsers*
-*.output
