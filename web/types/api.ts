@@ -26,6 +26,8 @@ export interface Hotel {
   _sources?: string[]  // ['tuniu', 'rollinggo'] for merged, ['tuniu'] or ['rollinggo'] for single
   _match_confidence?: number  // Match confidence for merged hotels
   rollinggo_hotel_id?: string  // RollingGo hotel ID for merged hotels
+  sort_rating?: number  // Effective rating for sorting (real or star-based estimate)
+  sort_rating_source?: 'real' | 'estimated' | 'none'
   // Tuniu search fields
   hotel_id: string
   name: string

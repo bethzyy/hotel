@@ -607,15 +607,34 @@ def _unified_search(data: dict, destination: str):
             'adult_count': adult_count,
             'child_count': child_count,
         }
-        if keyword:
+        # For landmark/POI searches, use poiName parameter (Tuniu supports area-based search)
+        # For pure city searches, use keyword if provided
+        if intent:
+            intent_place = intent.get('place', '')
+            intent_city = intent.get('city', '')
+            if intent_place and intent_place != intent_city:
+                # Landmark search: use poiName for area-based filtering
+                tuniu_params['poi_name'] = intent_place
+            elif keyword:
+                tuniu_params['keyword'] = keyword
+        elif keyword:
             tuniu_params['keyword'] = keyword
 
         # RollingGo params from intent (use 'or' to handle empty string)
         place = (intent.get('place') or destination) if intent else destination
         place_type = (intent.get('placeType') or '城市') if intent else '城市'
+        # RollingGo place must include city for recognition: "北京香山" not just "香山"
+        rg_city = (intent.get('city') or '') if intent else ''
+        if rg_city and rg_city not in place:
+            rg_place = rg_city + place
+        else:
+            rg_place = place
+        # Build query: city + place + keyword (deduplicate to avoid "北京 北京香山")
+        rg_query_parts = list(dict.fromkeys(p for p in [rg_city, place, keyword] if p))
+        rg_query = ' '.join(rg_query_parts)
         rollinggo_params = {
-            'query': f"{place} {keyword}" if keyword else place,
-            'place': place,
+            'query': rg_query,
+            'place': rg_place,
             'place_type': place_type,
             'check_in_date': check_in,
             'stay_nights': data.get('stay_nights', 1),
@@ -626,8 +645,9 @@ def _unified_search(data: dict, destination: str):
         if intent and intent.get('maxPrice'):
             rollinggo_params['max_price'] = intent['maxPrice']
 
-        logger.info(f"[Unified] Domestic dual-source: Tuniu city={city}, RollingGo place={place}")
+        logger.info(f"[Unified] Domestic dual-source: Tuniu city={city} poi={tuniu_params.get('poi_name')}, RollingGo query={rg_query} place={rg_place} placeType={place_type}")
 
+        # Dual-source parallel search (Tuniu now supports poiName for landmark searches)
         with ThreadPoolExecutor(max_workers=2) as executor:
             futures = {
                 executor.submit(_search_single_provider, 'tuniu', tuniu_params): 'tuniu',
@@ -755,10 +775,15 @@ def _unified_search(data: dict, destination: str):
                 'query': f"Hotels in {destination}", 'place': destination,
             }
 
-    # Step 5: Cache + is_favorite
+    # Step 5: Inject sort_rating BEFORE caching (so cached data includes it)
+    for hotel in response_data.get('hotels', []):
+        _inject_sort_rating(hotel)
+
+    # Step 6: Cache (includes sort_rating, but NOT user-specific data)
     if current_app.config.get('CACHE_ENABLED', True):
         cache.set_cache(cache_key, response_data, current_app.config.get('CACHE_TTL', 3600))
 
+    # Step 7: Inject user-specific data AFTER caching (prevents cache pollution)
     for hotel in response_data.get('hotels', []):
         hotel['is_favorite'] = cache.is_favorite(hotel.get('hotel_id', ''))
 
@@ -779,3 +804,30 @@ def _unified_search(data: dict, destination: str):
         resp.headers['X-Search-Remaining'] = str(remaining)
 
     return resp
+
+
+# Star rating → equivalent user rating mapping (based on Tuniu cross-data)
+_STAR_RATING_MAP = {5: 4.8, 4: 4.5, 3: 4.2, 2: 4.0, 1: 3.8}
+
+
+def _inject_sort_rating(hotel: dict):
+    """
+    Inject sort_rating and sort_rating_source for ranking.
+    - Has real rating → sort_rating = rating, source = 'real'
+    - No rating but has star_rating → sort_rating = mapped estimate, source = 'estimated'
+    """
+    rating = hotel.get('rating')
+    if rating and isinstance(rating, (int, float)) and rating > 0:
+        hotel['sort_rating'] = float(rating)
+        hotel['sort_rating_source'] = 'real'
+        return
+
+    star = hotel.get('star_rating')
+    if star and isinstance(star, (int, float)):
+        star_int = max(1, min(5, int(round(star))))
+        hotel['sort_rating'] = _STAR_RATING_MAP.get(star_int, 4.0)
+        hotel['sort_rating_source'] = 'estimated'
+        return
+
+    hotel['sort_rating'] = 3.5
+    hotel['sort_rating_source'] = 'none'

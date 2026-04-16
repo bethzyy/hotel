@@ -18,10 +18,10 @@ const label = computed(() => {
 })
 
 const badgeClass = computed(() => {
-  if (props.sources?.length === 2) return 'bg-info bg-opacity-10 text-info'
-  if (props.provider === 'tuniu') return 'bg-primary bg-opacity-10 text-primary'
-  if (props.provider === 'rollinggo') return 'bg-success bg-opacity-10 text-success'
-  return 'bg-secondary bg-opacity-10 text-secondary'
+  if (props.sources?.length === 2) return 'bg-info text-white'
+  if (props.provider === 'tuniu') return 'bg-primary text-white'
+  if (props.provider === 'rollinggo') return 'bg-success text-white'
+  return 'bg-secondary text-white'
 })
 
 const icon = computed(() => {

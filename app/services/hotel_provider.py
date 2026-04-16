@@ -200,6 +200,7 @@ class TuniuProvider(HotelProvider):
         adult_count: int = 2,
         child_count: int = 0,
         keyword: Optional[str] = None,
+        poi_name: Optional[str] = None,
         page_num: int = 1,
         query_id: Optional[str] = None,
         **kwargs
@@ -213,6 +214,7 @@ class TuniuProvider(HotelProvider):
                 adult_count=adult_count,
                 child_count=child_count,
                 keyword=keyword,
+                poi_name=poi_name,
                 page_num=page_num,
                 query_id=query_id
             )

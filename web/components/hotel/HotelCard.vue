@@ -23,6 +23,7 @@
               <NuxtLink
                 :to="`/detail/${hotel.hotel_id}?provider=${hotel.provider}&check_in=${checkIn}&check_out=${checkOut}`"
                 class="text-decoration-none text-dark"
+                @click.native="saveSearchSnippet"
               >
                 {{ hotel.name }}
               </NuxtLink>
@@ -77,13 +78,16 @@
           </span>
         </div>
 
-        <!-- Rating badge -->
-        <div v-if="hotel.rating" class="mt-1">
-          <span class="rating-badge">
-            <i class="bi bi-star-fill"></i>
-            {{ hotel.rating }}
-            <span v-if="hotel.review_count" style="font-weight:400; font-size:0.75rem">({{ hotel.review_count }})</span>
+        <!-- Rating / Star info -->
+        <div class="mt-1 d-flex gap-2 align-items-center">
+          <span v-if="hotel.rating" class="badge bg-success text-white" style="font-size:0.75rem">
+            <i class="bi bi-star-fill me-1"></i>{{ hotel.rating }}分
+            <span v-if="hotel.review_count" style="font-weight:400; font-size:0.65rem">({{ hotel.review_count }}条)</span>
           </span>
+          <span v-if="hotel.star_rating && hotel.star_rating >= 3" class="badge bg-warning bg-opacity-75 text-dark" style="font-size:0.7rem">
+            <i class="bi bi-star-fill me-1"></i>{{ starLabel(hotel.star_rating) }}
+          </span>
+          <span v-if="!hotel.rating" class="text-muted" style="font-size:0.7rem">暂无用户评价</span>
         </div>
 
         <!-- Country/Area badge -->
@@ -149,6 +153,17 @@ const props = defineProps<{
 
 const showComparison = ref(false)
 
+function saveSearchSnippet() {
+  const snippet: Record<string, any> = {}
+  const h = props.hotel
+  for (const k of ['name', 'address', 'image_url', 'star_rating', 'rating', 'distance', 'brand', 'brand_name', 'amenities', 'tags', 'latitude', 'longitude', 'area_code', 'area_name']) {
+    if ((h as any)[k] != null && (h as any)[k] !== '') snippet[k] = (h as any)[k]
+  }
+  if (Object.keys(snippet).length > 0) {
+    try { sessionStorage.setItem(`hotel_snippet:${h.hotel_id}`, JSON.stringify(snippet)) } catch {}
+  }
+}
+
 function toggleComparison() {
   showComparison.value = !showComparison.value
 }
@@ -165,5 +180,10 @@ function trackAndBook(hotel: Hotel) {
 function formatDistance(meters: number): string {
   if (meters < 1000) return `${Math.round(meters)}米`
   return `${(meters / 1000).toFixed(1)}公里`
+}
+
+function starLabel(rating: number): string {
+  const labels: Record<number, string> = { 5: '五星级', 4: '四星级', 3: '三星级' }
+  return labels[Math.round(rating)] || `${Math.round(rating)}星级`
 }
 </script>

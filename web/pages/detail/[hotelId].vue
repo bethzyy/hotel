@@ -94,6 +94,10 @@
           ></div>
         </div>
       </div>
+      <!-- Fallback: single image from search snippet -->
+      <div v-else-if="hotel.image_url" class="mb-4">
+        <div class="hotel-main-image" :style="{ backgroundImage: `url(${hotel.image_url})` }"></div>
+      </div>
 
       <!-- Description -->
       <div v-if="hotel.description" class="card mb-4">
@@ -192,6 +196,10 @@
                     ¥{{ Math.round(room.price) }}
                     <small>/晚</small>
                   </div>
+                  <div v-else-if="getReferencePrice(room)" class="price-badge text-muted" style="font-size:1rem">
+                    ~¥{{ getReferencePrice(room) }}
+                    <small>/晚参考</small>
+                  </div>
                   <span v-if="!room.available" class="badge bg-secondary">已满</span>
                 </div>
                 <button
@@ -288,6 +296,25 @@ function truncatePolicy(policy: string): string {
   return policy.substring(0, 30) + '...'
 }
 
+function getReferencePrice(room: RoomPlan): string | null {
+  const policies = (room as any).cancellation_policies
+  if (policies && Array.isArray(policies) && policies.length > 0) {
+    const amount = policies[0].amount
+    if (amount && typeof amount === 'number') {
+      // Check-in/out dates for night calculation
+      const ci = hotel.value?.check_in
+      const co = hotel.value?.check_out
+      let nights = 1
+      if (ci && co) {
+        const diff = (new Date(co)).getTime() - (new Date(ci)).getTime()
+        nights = Math.max(1, Math.round(diff / 86400000))
+      }
+      return String(Math.round(amount / nights))
+    }
+  }
+  return null
+}
+
 function openBooking(room: RoomPlan) {
   selectedRoom.value = room
   bookingError.value = ''
@@ -363,6 +390,21 @@ async function loadHotel() {
   try {
     const data = await get<HotelDetail>(`/hotel/${hotelId}`, params)
     hotel.value = data
+
+    // 从搜索结果 sessionStorage 补全空字段（RollingGo 详情 API 经常返回空壳）
+    if (hotel.value) {
+      try {
+        const raw = sessionStorage.getItem(`hotel_snippet:${hotelId}`)
+        if (raw) {
+          const snippet = JSON.parse(raw)
+          for (const [k, v] of Object.entries(snippet)) {
+            if ((hotel.value as any)[k] == null || (hotel.value as any)[k] === '') {
+              (hotel.value as any)[k] = v
+            }
+          }
+        }
+      } catch {}
+    }
 
     if (hotel.value) {
       useSeoMeta({

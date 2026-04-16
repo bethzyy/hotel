@@ -171,8 +171,10 @@ class TuniuService:
         adult_count: int = 2,
         child_count: int = 0,
         keyword: Optional[str] = None,
+        poi_name: Optional[str] = None,
         page_num: int = 1,
-        query_id: Optional[str] = None
+        query_id: Optional[str] = None,
+        max_pages: int = 3
     ) -> Dict:
         """
         Search for hotels using Tuniu MCP.
@@ -184,27 +186,60 @@ class TuniuService:
             adult_count: Number of adults (default: 2)
             child_count: Number of children (default: 0)
             keyword: Hotel name or brand keyword (optional)
+            poi_name: POI/landmark name for area-based search (e.g., "香山", "外滩")
             page_num: Page number for pagination (default: 1)
             query_id: Query ID for pagination (required for pages > 1)
+            max_pages: Max pages to fetch (default: 3, each page has ~8 hotels)
 
         Returns:
             Search results with hotel list and pagination info
         """
+        # Build arguments for first page
         arguments = {
             "cityName": city_name,
             "checkIn": check_in,
             "checkOut": check_out,
-            "adultCount": adult_count,
-            "childCount": child_count,
+            "adultNum": adult_count,
+            "childNum": child_count,
             "pageNum": page_num
         }
 
         if keyword:
             arguments["keyword"] = keyword
+        if poi_name:
+            arguments["poiName"] = poi_name
         if query_id:
             arguments["queryId"] = query_id
 
-        return self._call_tool("tuniu_hotel_search", arguments)
+        result = self._call_tool("tuniu_hotel_search", arguments)
+
+        # Multi-page fetch: auto-fetch additional pages
+        total_pages = result.get('totalPageNum') or 1
+        result_query_id = result.get('queryId')
+
+        if max_pages > 1 and result_query_id and total_pages > page_num:
+            for p in range(page_num + 1, min(total_pages + 1, page_num + max_pages)):
+                try:
+                    next_args = {
+                        "queryId": result_query_id,
+                        "pageNum": p
+                    }
+                    next_result = self._call_tool("tuniu_hotel_search", next_args)
+
+                    # Merge hotel lists — normalize to 'hotelList' key
+                    next_hotels = next_result.get('hotelList') or next_result.get('hotels') or next_result.get('data') or []
+                    curr_hotels = result.get('hotelList') or result.get('hotels') or result.get('data') or []
+                    result['hotelList'] = curr_hotels  # Ensure normalized key
+                    curr_hotels.extend(next_hotels)
+
+                    # Update pagination info
+                    result['currentPageNum'] = p
+                    logger.info(f"[Tuniu] Fetched page {p}/{total_pages}, total hotels: {len(curr_hotels)}")
+                except TuniuError as e:
+                    logger.warning(f"[Tuniu] Failed to fetch page {p}: {e}")
+                    break
+
+        return result
 
     def get_hotel_detail(
         self,
@@ -231,8 +266,8 @@ class TuniuService:
             "hotelId": int(hotel_id),
             "checkIn": check_in,
             "checkOut": check_out,
-            "adultCount": adult_count,
-            "childCount": child_count
+            "adultNum": adult_count,
+            "childNum": child_count
         }
 
         return self._call_tool("tuniu_hotel_detail", arguments)
@@ -284,13 +319,6 @@ class TuniuService:
     def normalize_hotel(raw_hotel: Dict, provider: str = "tuniu") -> Dict:
         """
         Normalize raw hotel data from Tuniu API to standard format.
-
-        Args:
-            raw_hotel: Raw hotel dict from API
-            provider: Provider name
-
-        Returns:
-            Normalized hotel dict
         """
         # Handle price: Tuniu returns lowestPrice as direct field, or nested in price object
         price_obj = raw_hotel.get('price')
@@ -348,8 +376,8 @@ class TuniuService:
         Returns:
             Normalized response with hotels list and pagination info
         """
-        hotels = []
         raw_hotels = response.get('hotelList') or response.get('hotels') or response.get('data', [])
+        hotels = []
 
         if isinstance(raw_hotels, list):
             for hotel in raw_hotels:

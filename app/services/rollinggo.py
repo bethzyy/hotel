@@ -763,6 +763,19 @@ class RollingGoService:
                 except TypeError:
                     total_price = price_per_night
 
+            # 兜底：从 cancellation_policies 提取参考价（API 返回的退改金额即房间实际价格）
+            if not price_per_night:
+                raw_policies = plan.get('cancellationPolicies') or plan.get('cancellation_policies') or []
+                if raw_policies and isinstance(raw_policies, list) and len(raw_policies) > 0:
+                    try:
+                        amount = raw_policies[0].get('amount')
+                        if amount and isinstance(amount, (int, float)):
+                            price_per_night = round(amount / nights, 2)
+                            if not total_price:
+                                total_price = amount
+                    except (TypeError, AttributeError, ZeroDivisionError):
+                        pass
+
             # 格式化取消政策
             cancellation = RollingGoService._format_cancellation(
                 plan.get('cancellationPolicies') or plan.get('cancellation_policies')

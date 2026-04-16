@@ -18,9 +18,13 @@
           </span>
         </div>
         <div class="btn-group">
-          <button class="btn btn-sm" :class="{ active: sortBy === 'default' }" @click="sortBy = 'default'">默认</button>
-          <button class="btn btn-sm" :class="{ active: sortBy === 'price' }" @click="sortBy = 'price'">价格</button>
-          <button class="btn btn-sm" :class="{ active: sortBy === 'rating' }" @click="sortBy = 'rating'">评分</button>
+          <button class="btn btn-sm" :class="{ active: sortField === 'default' }" @click="toggleSort('default')">默认</button>
+          <button class="btn btn-sm" :class="{ active: sortField === 'price' }" @click="toggleSort('price')">
+            价格{{ sortField === 'price' ? (sortDir === 'asc' ? ' ↑' : ' ↓') : '' }}
+          </button>
+          <button class="btn btn-sm" :class="{ active: sortField === 'rating' }" @click="toggleSort('rating')">
+            口碑{{ sortField === 'rating' ? (sortDir === 'desc' ? ' ↓' : ' ↑') : '' }}
+          </button>
         </div>
       </div>
     </div>
@@ -76,7 +80,8 @@
 import type { Hotel, SearchResult } from '~/types/api'
 
 const route = useRoute()
-const sortBy = ref('default')
+const sortField = ref('default')
+const sortDir = ref<'asc' | 'desc'>('asc')
 const loadingMore = ref(false)
 const hasMore = ref(false)
 const pending = ref(true)
@@ -107,13 +112,39 @@ const fallbackFrom = ref('')
 
 const sortedHotels = computed(() => {
   const list = [...hotels.value]
-  if (sortBy.value === 'price') {
-    list.sort((a, b) => (a.price_per_night || Infinity) - (b.price_per_night || Infinity))
-  } else if (sortBy.value === 'rating') {
-    list.sort((a, b) => (b.rating || 0) - (a.rating || 0))
+  const dir = sortDir.value === 'asc' ? 1 : -1
+  if (sortField.value === 'price') {
+    list.sort((a, b) => dir * ((a.price_per_night || Infinity) - (b.price_per_night || Infinity)))
+  } else if (sortField.value === 'rating') {
+    // Use sort_rating (real or star-based estimate), tie-break: real > estimated > distance
+    list.sort((a, b) => {
+      const sa = a.sort_rating || 0
+      const sb = b.sort_rating || 0
+      if (sa !== sb) return dir * (sa - sb)
+      // Tie-break: real rating source wins
+      const sourceOrder = { real: 0, estimated: 1, none: 2 }
+      const ao = sourceOrder[a.sort_rating_source || 'none'] ?? 2
+      const bo = sourceOrder[b.sort_rating_source || 'none'] ?? 2
+      if (ao !== bo) return ao - bo
+      // Further tie-break: shorter distance first
+      return (a.distance || Infinity) - (b.distance || Infinity)
+    })
   }
   return list
 })
+
+function toggleSort(field: string) {
+  if (field === 'default') {
+    sortField.value = 'default'
+    return
+  }
+  if (sortField.value === field) {
+    sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortField.value = field
+    sortDir.value = field === 'price' ? 'asc' : 'desc'
+  }
+}
 
 function getSourceLabel(data: SearchResult): string {
   if (data.merged) return '双源融合'
